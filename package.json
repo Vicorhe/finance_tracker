@@ -9,7 +9,8 @@
     "next": "latest",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
-    "sass": "1.26.3"
+    "sass": "1.26.3",
+    "serverless-mysql": "^1.5.4"
   },
   "license": "MIT"
 }

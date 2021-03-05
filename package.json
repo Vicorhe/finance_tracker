@@ -6,9 +6,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "axios": "^0.21.1",
     "next": "latest",
+    "plaid": "^8.2.0",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-plaid-link": "^3.1.0",
     "sass": "1.26.3",
     "serverless-mysql": "^1.5.4"
   },

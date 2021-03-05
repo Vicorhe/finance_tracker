@@ -11,7 +11,6 @@ export default async function handler(req, res) {
       }
       console.log(err)
     });
-  console.log(response)
   const { access_token, item_id } = response
   const results = await query(
     `

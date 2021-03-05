@@ -11,7 +11,6 @@ export default async function handler(_, res) {
       country_codes: ['US'],
       language: 'en',
     });
-    console.log(`link token: ${response.link_token}`)
     return res.send({link_token: response.link_token}) 
   } catch (err) {
     return res.send({ err: err.message })

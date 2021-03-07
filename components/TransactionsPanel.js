@@ -4,24 +4,21 @@ import {
   Box,
   Heading,
   Divider,
-  Text,
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
 } from "@chakra-ui/react"
 import { ChevronLeftIcon } from '@chakra-ui/icons'
-import { useAreas } from '../lib/swr-hooks'
+import { useTransactions } from '../lib/swr-hooks'
 import Link from 'next/link'
 
 export default function Areas() {
-  const { areas, isError } = useAreas();
+  const { transactions, isError } = useTransactions(1);
   if (isError) return <div>"An error has occurred.";</div>
-  if (!areas) return <div> "Loading....";</div>
+  if (!transactions) return <div> "Loading....";</div>
   return (
     <Box mb="2rem">
       <Flex pb="1rem">
@@ -30,7 +27,7 @@ export default function Areas() {
             color: "teal"
           }} />
         </Link>
-        <Heading>Areas</Heading>
+        <Heading>Transactions</Heading>
         <Spacer />
       </Flex>
       <Divider colorScheme="telegram" mb="2rem" />
@@ -43,11 +40,11 @@ export default function Areas() {
           </Tr>
         </Thead>
         <Tbody>
-          {areas.map((a) => (
-            <Tr key={a.id}>
-              <Td>{a.name}</Td>
-              <Td>{a.description}</Td>
-              <Td isNumeric>{a.color}</Td>
+          {transactions.map((t) => (
+            <Tr key={t.id}>
+              <Td>{t.name}</Td>
+              <Td >{t.date}</Td>
+              <Td isNumeric>{t.amount}</Td>
             </Tr>
           ))}
         </Tbody>

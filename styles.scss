@@ -3,3 +3,10 @@ $backgroundColor: #2ecc71;
 // .app {
 //   background-color: $backgroundColor;
 // }
+html,
+body,
+body > div:first-child,
+div#__next,
+div#__next > div {
+  height: 100%;
+}

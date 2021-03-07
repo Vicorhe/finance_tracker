@@ -1,7 +1,7 @@
 import { query } from '../../../lib/db'
 
 export default async function handler(req, res) {
-  const { user_id } = req.body
+  const { user_id } = req.query
   try {
     if (!user_id) {
       return res

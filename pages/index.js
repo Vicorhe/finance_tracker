@@ -1,6 +1,7 @@
-import { Flex, Spacer, Box, Heading, Divider, Text, LinkBox } from "@chakra-ui/react"
+import { Flex, Spacer, Box, Text, LinkBox } from "@chakra-ui/react"
 import { useUsers } from '../lib/swr-hooks'
 import AddUserModal from '../components/AddUserModal'
+import Nav from '../components/Nav'
 import { ArrowForwardIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 import { useContext } from 'react'
@@ -14,13 +15,11 @@ export default function Home() {
   if (!users) return <div> "Loading....";</div>
   return (
     <Box pos="relative" height="100%">
-      <Flex pb="1rem">
-        <Heading>Choose Account</Heading>
-        <Spacer />
+      <Nav>
         <AddUserModal />
-      </Flex>
-      <Divider colorScheme="telegram" mb="2rem" />
-      <Box>
+      </Nav>
+
+      <Box overflowY="scroll">
         {users.map((u) => {
           return (
             <Link key={u.id} href={`/${u.name}`}>
@@ -50,7 +49,7 @@ export default function Home() {
           </Flex>
         </Link>
       </LinkBox>
-    </Box >
+    </Box>
 
   );
 }

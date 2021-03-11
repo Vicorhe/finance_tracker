@@ -1,22 +1,14 @@
 import {
-  Flex,
-  Spacer,
   Box,
-  Heading,
-  Divider,
-  Text,
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
 } from "@chakra-ui/react"
-import { ChevronLeftIcon } from '@chakra-ui/icons'
 import { useAreas } from '../lib/swr-hooks'
-import Link from 'next/link'
+import Nav from '../components/Nav'
 
 export default function Areas() {
   const { areas, isError } = useAreas();
@@ -24,16 +16,7 @@ export default function Areas() {
   if (!areas) return <div> "Loading....";</div>
   return (
     <Box mb="2rem">
-      <Flex pb="1rem">
-        <Link href="/">
-          <ChevronLeftIcon w={12} h={12} mr="1rem" _hover={{
-            color: "teal"
-          }} />
-        </Link>
-        <Heading>Areas</Heading>
-        <Spacer />
-      </Flex>
-      <Divider colorScheme="telegram" mb="2rem" />
+      <Nav title="Areas" notHome></Nav>
       <Table variant="striped" colorScheme="teal">
         <Thead>
           <Tr>

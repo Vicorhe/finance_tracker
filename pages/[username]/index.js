@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { Tabs, TabList, TabPanels, Tab, TabPanel, Flex, Spacer, Box, Heading, Divider, Text } from "@chakra-ui/react"
 import { ChevronLeftIcon } from '@chakra-ui/icons'
 import TransactionsPanel from '../../components/TransactionsPanel'
@@ -7,12 +6,7 @@ import {useContext} from 'react'
 import {UserContext} from '../../context'
 
 export default function Account() {
-  const router = useRouter()
-  const { username } = router.query
   const { user } = useContext(UserContext)
-  console.log('the following is a user object rendered in account component')
-  console.log(user)
-  console.log('end')
   return (
     <Box>
       <Flex pb="1rem">
@@ -21,7 +15,7 @@ export default function Account() {
             color: "teal"
           }} />
         </Link>
-        <Heading>{username}</Heading>
+        <Heading>{user.name}</Heading>
         <Spacer />
       </Flex>
       <Divider colorScheme="telegram" mb="2rem" />

@@ -8,13 +8,7 @@ import { UserContext } from '../context'
 
 export default function Home() {
   const { users, isError } = useUsers();
-  const { signinUser } = useContext(UserContext)
-
-  function handleSelectAccount(selected) {
-    console.log(selected)
-    console.log('here')
-    signinUser(selected)
-  }
+  const { setUser } = useContext(UserContext)
 
   if (isError) return <div>"An error has occurred.";</div>
   if (!users) return <div> "Loading....";</div>
@@ -31,7 +25,7 @@ export default function Home() {
           return (
             <Link key={u.id} href={`/${u.name}`}>
               <Box mb="1rem"
-                onClick={() => signinUser(u)}
+                onClick={() => setUser(u)}
               >
                 <Text fontSize="4xl">{u.name}</Text>
               </Box>

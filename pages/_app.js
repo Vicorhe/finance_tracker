@@ -4,15 +4,15 @@ import { ChakraProvider, Container } from '@chakra-ui/react';
 import { UserContext } from '../context'
 
 function MyApp({ Component, pageProps }) {
-  const [user, setUser] = useState({})
+  const [user, setUserState] = useState({})
 
-  function signinUser(u) {
-    setUser(u);
+  function setUser(u) {
+    setUserState(u);
   }
 
   return (
     <ChakraProvider>
-      <UserContext.Provider value={{user, signinUser}}>
+      <UserContext.Provider value={{user, setUser}}>
         <Container maxW="container.lg" p="2rem">
           <Component {...pageProps} />
         </Container>

@@ -1,25 +1,22 @@
-import { Flex, Spacer, Box, Text, LinkBox } from "@chakra-ui/react"
-import { useUsers } from '../lib/swr-hooks'
-import AddUserModal from '../components/AddUserModal'
-import Nav from '../components/Nav'
-import { ArrowForwardIcon } from '@chakra-ui/icons'
-import Link from 'next/link'
 import { useContext } from 'react'
 import { UserContext } from '../context'
+import { useUsers } from '../lib/swr-hooks'
+import Nav from '../components/Nav'
+import AddUserModal from '../components/AddUserModal'
+import LoadingError from '../components/LoadingError'
+import LoadingList from '../components/LoadingList'
+import { Flex, Spacer, Box, Text, LinkBox} from "@chakra-ui/react"
+import { ArrowForwardIcon } from '@chakra-ui/icons'
+import Link from 'next/link'
+import utilStyles from '../styles/utils.module.scss'
 
 export default function Home() {
   const { users, isError } = useUsers();
   const { setUser } = useContext(UserContext)
 
-  if (isError) return <div>"An error has occurred.";</div>
-  if (!users) return <div> "Loading....";</div>
-  return (
-    <Box pos="relative" height="100%">
-      <Nav>
-        <AddUserModal />
-      </Nav>
-
-      <Box overflowY="scroll">
+  function UserList(users) {
+    return (
+      <Box overflowY="scroll" flex="1" my="1rem">
         {users.map((u) => {
           return (
             <Link key={u.id} href={`/${u.name}`}>
@@ -32,7 +29,22 @@ export default function Home() {
           )
         })}
       </Box>
-      <LinkBox pos="absolute" bottom="4rem" width="100%">
+    )
+  }
+
+  return (
+    <Box className={utilStyles.page}>
+      <Nav>
+        <AddUserModal />
+      </Nav>
+      {
+        isError
+          ? LoadingError()
+          : !users
+            ? LoadingList()
+            : UserList(users)
+      }
+      <LinkBox >
         <Link href="/areas">
           <Flex
             alignItems="center"
@@ -41,7 +53,7 @@ export default function Home() {
             border="2px"
             borderColor="gray.900"
             _hover={{
-              boxShadow: "12px 12px 2px 1px rgba(0, 0, 255, .2)"
+              boxShadow: "10px 10px 4px 3px rgba(0, 0, 255, .2)"
             }}>
             <Text fontSize="4xl">Areas</Text>
             <Spacer />
@@ -50,6 +62,5 @@ export default function Home() {
         </Link>
       </LinkBox>
     </Box>
-
   );
 }

@@ -17,7 +17,7 @@ export default function Nav({ title = 'Choose Account', notHome = false, backLin
         <Spacer />
         {children}
       </Flex>
-      <Divider mb="1rem" />
+      <Divider/>
     </nav>
   )
 }

@@ -12,8 +12,8 @@ export default function AreasLink() {
             py="1rem"
             border="2px"
             _hover={{
-              boxShadow: "inset 0 0 0 6px #000",
-              transition: "box-shadow 0.2s ease-in"
+              boxShadow: "inset 0 0 0 2px #000",
+              transition: "box-shadow 0.15s ease-in"
             }}>
             <Text fontSize="4xl">Areas</Text>
             <Spacer />

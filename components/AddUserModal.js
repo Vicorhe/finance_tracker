@@ -16,7 +16,13 @@ import {
 import { mutate } from 'swr'
 
 export default function AddUserModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { isOpen, onOpen, onClose } = useDisclosure(
+    {
+      onClose: () => {
+        setName('')
+      }
+    }
+  )
   const [name, setName] = useState('')
   const [submitting, setSubmitting] = useState(false)
 
@@ -36,7 +42,6 @@ export default function AddUserModal() {
       setSubmitting(false)
       onClose()
       mutate('/api/user/get-all')
-      setName('')
       const json = await res.json()
       if (!res.ok) throw Error(json.message)
     } catch (e) {

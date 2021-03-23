@@ -11,13 +11,14 @@ import { useAreas } from '../lib/swr-hooks'
 import Nav from '../components/Nav'
 import LoadingError from '../components/LoadingError'
 import LoadingList from '../components/LoadingList'
+import AddAreaModal from '../components/AddAreaModal'
 import AreaMenuButton from '../components/AreaMenuButton'
 import utilStyles from '../styles/utils.module.scss'
 
 export default function Areas() {
   const { areas, isError } = useAreas();
 
-  function AreasTable(areas) {
+  function AreasTable() {
     return (
       <Table variant="simple" size="lg">
         <Thead>
@@ -44,13 +45,15 @@ export default function Areas() {
 
   return (
     <Box className={utilStyles.page}>
-      <Nav title="Areas" notHome></Nav>
+      <Nav title="Areas" notHome>
+        <AddAreaModal />
+      </Nav>
       {
         isError
           ? LoadingError()
           : !areas
             ? LoadingList()
-            : AreasTable(areas)
+            : AreasTable()
       }
     </Box>
   );

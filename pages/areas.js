@@ -5,16 +5,14 @@ import {
   Tbody,
   Tr,
   Th,
-  Td,
-  IconButton
+  Td
 } from "@chakra-ui/react"
 import { useAreas } from '../lib/swr-hooks'
-import { EditIcon } from '@chakra-ui/icons'
 import Nav from '../components/Nav'
 import LoadingError from '../components/LoadingError'
 import LoadingList from '../components/LoadingList'
 import AddAreaModal from '../components/AddAreaModal'
-import AreaMenuButton from '../components/AreaMenuButton'
+import EditAreaModal from '../components/EditAreaModal'
 import utilStyles from '../styles/utils.module.scss'
 
 export default function Areas() {
@@ -44,10 +42,7 @@ export default function Areas() {
                   backgroundColor={a.color} />
               </Td>
               <Td>
-              <IconButton 
-                icon={<EditIcon/>} 
-                size="sm"
-                variant="outline"/>
+                <EditAreaModal area={a} />
               </Td>
             </Tr>
           ))}

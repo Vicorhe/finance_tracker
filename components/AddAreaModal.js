@@ -11,7 +11,8 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input
+  Input,
+  Textarea
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
 import { SliderPicker } from 'react-color';
@@ -76,7 +77,7 @@ export default function AddAreaModal() {
             <ModalHeader>Define an area</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
-              <FormControl>
+              <FormControl mb="1.5rem">
                 <FormLabel>Name</FormLabel>
                 <Input
                   ref={initialRef}
@@ -85,10 +86,9 @@ export default function AddAreaModal() {
                   onChange={(e) => setName(e.target.value)}
                 />
               </FormControl>
-              <FormControl my="1.5rem">
+              <FormControl mb="1.25rem">
                 <FormLabel>Description</FormLabel>
-                <Input
-                  ref={initialRef}
+                <Textarea
                   placeholder="Devices, waranties, insurance.."
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
@@ -98,7 +98,6 @@ export default function AddAreaModal() {
                 <FormLabel>Color</FormLabel>
                 <Input
                   mb="1rem"
-                  ref={initialRef}
                   placeholder="#ffffff"
                   value={color}
                   onChange={(e) => setColor(e.target.value)}

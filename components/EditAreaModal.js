@@ -11,18 +11,22 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input
+  Input,
+  Textarea,
+  IconButton,
+  Spacer
 } from "@chakra-ui/react"
+import { EditIcon } from '@chakra-ui/icons'
 import { mutate } from 'swr'
 import { SliderPicker } from 'react-color';
 
-export default function AddAreaModal() {
+export default function EditAreaModal({ area }) {
   const { isOpen, onOpen, onClose } = useDisclosure(
     {
-      onClose: () => {
-        setName('')
-        setDescription('')
-        setColor('')
+      onOpen: () => {
+        setName(area.name)
+        setDescription(area.description)
+        setColor(!!area.color ? area.color : '#ffffff')
       }
     })
   const [name, setName] = useState('')
@@ -55,17 +59,19 @@ export default function AddAreaModal() {
     }
   }
 
-  const initialRef = React.useRef()
-
   function handleChangeComplete(color) {
     setColor(color.hex);
   };
 
   return (
     <>
-      <Button onClick={onOpen} size="lg">Add</Button>
+      <IconButton
+        icon={<EditIcon />}
+        size="sm"
+        variant="outline"
+        onClick={onOpen}
+      />
       <Modal
-        initialFocusRef={initialRef}
         isOpen={isOpen}
         onClose={onClose}
         size="lg"
@@ -73,23 +79,19 @@ export default function AddAreaModal() {
         <ModalOverlay />
         <ModalContent>
           <form onSubmit={submitHandler}>
-            <ModalHeader>Define an area</ModalHeader>
+            <ModalHeader>Edit Area {area.name}</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
-              <FormControl>
+              <FormControl mb="1.5rem">
                 <FormLabel>Name</FormLabel>
                 <Input
-                  ref={initialRef}
-                  placeholder="Electronics"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </FormControl>
-              <FormControl my="1.5rem">
+              <FormControl mb="1.25rem">
                 <FormLabel>Description</FormLabel>
-                <Input
-                  ref={initialRef}
-                  placeholder="Devices, waranties, insurance.."
+                <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
@@ -98,8 +100,6 @@ export default function AddAreaModal() {
                 <FormLabel>Color</FormLabel>
                 <Input
                   mb="1rem"
-                  ref={initialRef}
-                  placeholder="#ffffff"
                   value={color}
                   onChange={(e) => setColor(e.target.value)}
                 />
@@ -110,8 +110,10 @@ export default function AddAreaModal() {
             </ModalBody>
 
             <ModalFooter>
+              <Button disabled={submitting} colorScheme="red" mr={3} onClick={onClose}>Delete</Button>
+              <Spacer />
               <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
-                {submitting ? 'Creating ...' : 'Create'}
+                {submitting ? 'Saving ...' : 'Save'}
               </Button>
               <Button onClick={onClose}>Cancel</Button>
             </ModalFooter>

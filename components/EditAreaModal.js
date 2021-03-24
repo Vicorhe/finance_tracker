@@ -33,17 +33,23 @@ export default function EditAreaModal({ area }) {
   const [description, setDescription] = useState('')
   const [color, setColor] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
+
+  function handleChangeComplete(color) {
+    setColor(color.hex);
+  };
 
   async function submitHandler(e) {
     setSubmitting(true)
     e.preventDefault()
     try {
-      const res = await fetch('/api/area/create', {
+      const res = await fetch('/api/area/update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          id: area.id,
           name,
           description,
           color
@@ -59,9 +65,22 @@ export default function EditAreaModal({ area }) {
     }
   }
 
-  function handleChangeComplete(color) {
-    setColor(color.hex);
-  };
+  async function handleDelete(e) {
+    setDeleting(true)
+    e.preventDefault()
+    try {
+      const res = await fetch(`/api/area/delete?id=${area.id}`, {
+        method: 'POST'
+      })
+      setDeleting(false)
+      onClose()
+      mutate('/api/area/get-all')
+      const json = await res.json()
+      if (!res.ok) throw Error(json.message)
+    } catch (e) {
+      throw Error(e.message)
+    }
+  }
 
   return (
     <>
@@ -110,9 +129,9 @@ export default function EditAreaModal({ area }) {
             </ModalBody>
 
             <ModalFooter>
-              <Button disabled={submitting} colorScheme="red" mr={3} onClick={onClose}>Delete</Button>
+              <Button disabled={submitting || deleting} colorScheme="red" mr={3} onClick={handleDelete}>Delete</Button>
               <Spacer />
-              <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
+              <Button disabled={submitting || deleting} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Saving ...' : 'Save'}
               </Button>
               <Button onClick={onClose}>Cancel</Button>

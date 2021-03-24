@@ -14,11 +14,12 @@ import {
   Input,
   Textarea,
   IconButton,
-  Spacer
+  Spacer,
+  Center
 } from "@chakra-ui/react"
 import { EditIcon } from '@chakra-ui/icons'
 import { mutate } from 'swr'
-import { SliderPicker } from 'react-color';
+import { SwatchesPicker } from 'react-color';
 
 export default function EditAreaModal({ area }) {
   const { isOpen, onOpen, onClose } = useDisclosure(
@@ -98,17 +99,16 @@ export default function EditAreaModal({ area }) {
         <ModalOverlay />
         <ModalContent>
           <form onSubmit={submitHandler}>
-            <ModalHeader>Edit Area {area.name}</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
-              <FormControl mb="1.5rem">
+              <FormControl my="1.15rem">
                 <FormLabel>Name</FormLabel>
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </FormControl>
-              <FormControl mb="1.25rem">
+              <FormControl mb="1.15rem">
                 <FormLabel>Description</FormLabel>
                 <Textarea
                   value={description}
@@ -117,14 +117,13 @@ export default function EditAreaModal({ area }) {
               </FormControl>
               <FormControl>
                 <FormLabel>Color</FormLabel>
-                <Input
-                  mb="1rem"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                />
-                <SliderPicker
+                <Center>
+                <SwatchesPicker
+                  width="422px"
+                  height="200px"
                   color={color}
                   onChangeComplete={handleChangeComplete} />
+                </Center>
               </FormControl>
             </ModalBody>
 

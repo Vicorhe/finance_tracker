@@ -12,10 +12,11 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Textarea
+  Textarea,
+  Center
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
-import { SliderPicker } from 'react-color';
+import { SwatchesPicker } from 'react-color';
 
 export default function AddAreaModal() {
   const { isOpen, onOpen, onClose } = useDisclosure(
@@ -96,15 +97,13 @@ export default function AddAreaModal() {
               </FormControl>
               <FormControl>
                 <FormLabel>Color</FormLabel>
-                <Input
-                  mb="1rem"
-                  placeholder="#ffffff"
-                  value={color}
-                  onChange={(e) => setColor(e.target.value)}
-                />
-                <SliderPicker
+                <Center>
+                <SwatchesPicker
+                  width="422px"
+                  height="200px"
                   color={color}
                   onChangeComplete={handleChangeComplete} />
+                </Center>
               </FormControl>
             </ModalBody>
 

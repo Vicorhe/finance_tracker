@@ -1,4 +1,4 @@
-import { Tabs, TabList, TabPanels, Tab, TabPanel, Box } from "@chakra-ui/react"
+import { Tabs, TabList, TabPanels, Tab, TabPanel, Box, Text } from "@chakra-ui/react"
 import TransactionsPanel from '../../components/TransactionsPanel'
 import Nav from '../../components/Nav'
 import { useContext } from 'react'
@@ -9,20 +9,24 @@ export default function Account() {
   return (
     <Box>
       <Nav title={user.name} notHome></Nav>
-      <Tabs>
+      <Tabs size="lg" variant="enclosed-colored">
         <TabList>
-          <Tab>Sources</Tab>
-          <Tab>Transactions</Tab>
+          <Tab>
+            <Text fontSize="2xl">Transactions</Text>
+          </Tab>
           <Tab>Reports</Tab>
+          <Tab>Sources</Tab>
+
         </TabList>
 
         <TabPanels>
           <TabPanel>
-            <p>one!</p>
-          </TabPanel>
-          <TabPanel>
             <TransactionsPanel />
           </TabPanel>
+          <TabPanel>
+            <p>two!</p>
+          </TabPanel>
+
           <TabPanel>
             <p>three!</p>
           </TabPanel>

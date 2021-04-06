@@ -1,12 +1,4 @@
-import {
-  Box,
-  Table,
-  Thead,
-  Tbody,
-  Tr,
-  Th,
-  Td
-} from "@chakra-ui/react"
+import { Box, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react"
 import { useAreas } from '../lib/swr-hooks'
 import Nav from '../components/Nav'
 import LoadingError from '../components/LoadingError'
@@ -17,6 +9,8 @@ import utilStyles from '../styles/utils.module.scss'
 
 export default function Areas() {
   const { areas, isError } = useAreas();
+
+  const breadcrumbs = [{ name: "Areas", path: "/areas" }]
 
   function AreasTable() {
     return (
@@ -53,7 +47,7 @@ export default function Areas() {
 
   return (
     <Box className={utilStyles.page}>
-      <Nav title="Areas" notHome>
+      <Nav breadcrumbs={breadcrumbs}>
         <AddAreaModal />
       </Nav>
       {

@@ -28,7 +28,7 @@ export default function Nav({ breadcrumbs = [{ name: 'Choose Account', path: '/'
             return (
               <BreadcrumbItem key={idx}>
                 <BreadcrumbLink as={Link} href={bc.path}>
-                  <Heading>
+                  <Heading mx="2">
                     {bc.name}
                   </Heading>
                 </BreadcrumbLink>

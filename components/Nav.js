@@ -1,23 +1,45 @@
-import { Flex, Spacer, Heading, Divider} from "@chakra-ui/react"
-import { ChevronLeftIcon } from '@chakra-ui/icons'
+import { forwardRef } from 'react'
 import Link from 'next/link'
+import {
+  Flex, Spacer, Heading, Divider, Icon,
+  Breadcrumb, BreadcrumbItem, BreadcrumbLink
+} from "@chakra-ui/react"
+import { FaHome } from 'react-icons/fa'
 
-export default function Nav({ title = 'Choose Account', notHome = false, backLink = '/' ,children }) {
+const HomeNavIcon = forwardRef(({ onClick, href }, ref) => {
+  return (
+    <a href={href} onClick={onClick} ref={ref}>
+      <Icon w={10} h={10} mr="1rem" as={FaHome} _hover={{
+        color: "teal"
+      }} />
+    </a>
+  )
+})
+
+export default function Nav({ breadcrumbs = [{ name: 'Choose Account', path: '/' }], children }) {
   return (
     <nav>
       <Flex pb="1rem">
-        {notHome &&
-          <Link href={backLink}>
-            <ChevronLeftIcon w={12} h={12} mr="1rem" _hover={{
-              color: "teal"
-            }} />
-          </Link>
-        }
-        <Heading>{title}</Heading>
+        <Link href="/">
+          <HomeNavIcon />
+        </Link>
+        <Breadcrumb>
+          {breadcrumbs.map((bc, idx) => {
+            return (
+              <BreadcrumbItem key={idx} href={`/${bc.path}`}>
+                <BreadcrumbLink as={Link} href="/">
+                  <Heading>
+                    {bc.name}
+                  </Heading>
+                </BreadcrumbLink>
+              </BreadcrumbItem>
+            )
+          })}
+        </Breadcrumb>
         <Spacer />
         {children}
       </Flex>
-      <Divider/>
+      <Divider />
     </nav>
   )
 }

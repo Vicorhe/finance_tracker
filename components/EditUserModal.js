@@ -13,11 +13,17 @@ import {
   FormLabel,
   Input,
   IconButton,
-  Spacer
+  Spacer,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
 
-export default function EditUserModal({user}) {
+export default function EditUserModal({ user }) {
   const { isOpen, onOpen, onClose } = useDisclosure(
     {
       onOpen: () => {
@@ -26,6 +32,9 @@ export default function EditUserModal({user}) {
     })
   const [name, setName] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [isAlertOpen, setIsAlertOpen] = React.useState(false)
+  const onAlertClose = () => setIsAlertOpen(false)
+  const cancelRef = React.useRef()
   const [deleting, setDeleting] = useState(false)
 
   async function submitHandler(e) {
@@ -60,6 +69,7 @@ export default function EditUserModal({user}) {
         method: 'POST'
       })
       setDeleting(false)
+      onAlertClose()
       onClose()
       mutate('/api/user/get-all')
       const json = await res.json()
@@ -77,6 +87,7 @@ export default function EditUserModal({user}) {
         variant="outline"
         onClick={onOpen}
       />
+
       <Modal
         isOpen={isOpen}
         onClose={onClose}
@@ -87,7 +98,7 @@ export default function EditUserModal({user}) {
           <form onSubmit={submitHandler}>
             <ModalCloseButton />
             <ModalBody pb={6}>
-              <FormControl>
+              <FormControl my="1.15rem">
                 <FormLabel>User name</FormLabel>
                 <Input
                   placeholder="User name"
@@ -98,7 +109,11 @@ export default function EditUserModal({user}) {
             </ModalBody>
 
             <ModalFooter>
-              <Button disabled={submitting || deleting} colorScheme="red" mr={3} onClick={handleDelete}>Delete</Button>
+              <Button disabled={submitting || deleting}
+                colorScheme="red" mr={3}
+                onClick={() => setIsAlertOpen(true)}>
+                Delete
+              </Button>
               <Spacer />
               <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Saving ...' : 'Save'}
@@ -108,6 +123,35 @@ export default function EditUserModal({user}) {
           </form>
         </ModalContent>
       </Modal>
+
+      <AlertDialog
+        isOpen={isAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onAlertClose}
+        size="sm"
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete User
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You can't undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onAlertClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   )
 }

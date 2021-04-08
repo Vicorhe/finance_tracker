@@ -14,7 +14,13 @@ import {
   Textarea,
   IconButton,
   Spacer,
-  Center
+  Center,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
 } from "@chakra-ui/react"
 import { EditIcon } from '@chakra-ui/icons'
 import { mutate } from 'swr'
@@ -33,6 +39,9 @@ export default function EditAreaModal({ area }) {
   const [description, setDescription] = useState('')
   const [color, setColor] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [isAlertOpen, setIsAlertOpen] = React.useState(false)
+  const onAlertClose = () => setIsAlertOpen(false)
+  const cancelRef = React.useRef()
   const [deleting, setDeleting] = useState(false)
 
   function handleChangeComplete(color) {
@@ -73,6 +82,7 @@ export default function EditAreaModal({ area }) {
         method: 'POST'
       })
       setDeleting(false)
+      onAlertClose()
       onClose()
       mutate('/api/area/get-all')
       const json = await res.json()
@@ -90,6 +100,7 @@ export default function EditAreaModal({ area }) {
         variant="outline"
         onClick={onOpen}
       />
+
       <Modal
         isOpen={isOpen}
         onClose={onClose}
@@ -117,18 +128,21 @@ export default function EditAreaModal({ area }) {
               <FormControl>
                 <FormLabel>Color</FormLabel>
                 <Center>
-                <SwatchesPicker
-                  width="422px"
-                  height="200px"
-                  color={color}
-                  onChangeComplete={handleChangeComplete} />
+                  <SwatchesPicker
+                    width="422px"
+                    height="200px"
+                    color={color}
+                    onChangeComplete={handleChangeComplete} />
                 </Center>
               </FormControl>
             </ModalBody>
 
             <ModalFooter>
-              <Button disabled={submitting || deleting} colorScheme="red" mr={3} onClick={handleDelete}>Delete</Button>
-              <Spacer />
+              <Button disabled={submitting || deleting}
+                colorScheme="red" mr={3}
+                onClick={() => setIsAlertOpen(true)}>
+                Delete
+              </Button>              <Spacer />
               <Button disabled={submitting || deleting} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Saving ...' : 'Save'}
               </Button>
@@ -137,6 +151,35 @@ export default function EditAreaModal({ area }) {
           </form>
         </ModalContent>
       </Modal>
+
+      <AlertDialog
+        isOpen={isAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onAlertClose}
+        size="sm"
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Area
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You can't undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onAlertClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   )
 }

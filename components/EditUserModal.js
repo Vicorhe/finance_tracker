@@ -1,9 +1,8 @@
-import { useState } from 'react'
+import { useState, useContext } from 'react'
 import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalFooter,
   ModalBody,
   ModalCloseButton,
@@ -11,20 +10,30 @@ import {
   Button,
   FormControl,
   FormLabel,
-  Input
+  Input,
+  Spacer
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
+import { UserContext } from '../context'
 
 export default function EditUserModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure()
+  const { user } = useContext(UserContext)
+
+  const { isOpen, onOpen, onClose } = useDisclosure(
+    {
+      onOpen: () => {
+        setName(user.name)
+      }
+    })
   const [name, setName] = useState('')
   const [submitting, setSubmitting] = useState(false)
+  const [deleting, setDeleting] = useState(false)
 
   async function submitHandler(e) {
     setSubmitting(true)
     e.preventDefault()
     try {
-      const res = await fetch('/api/user/create', {
+      const res = await fetch('/api/user/update', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -36,7 +45,6 @@ export default function EditUserModal() {
       setSubmitting(false)
       onClose()
       mutate('/api/user/get-all')
-      setName('')
       const json = await res.json()
       if (!res.ok) throw Error(json.message)
     } catch (e) {
@@ -44,13 +52,27 @@ export default function EditUserModal() {
     }
   }
 
-  const initialRef = React.useRef()
+  async function handleDelete(e) {
+    setDeleting(true)
+    e.preventDefault()
+    try {
+      const res = await fetch(`/api/user/delete?id=${user.id}`, {
+        method: 'POST'
+      })
+      setDeleting(false)
+      onClose()
+      mutate('/api/user/get-all')
+      const json = await res.json()
+      if (!res.ok) throw Error(json.message)
+    } catch (e) {
+      throw Error(e.message)
+    }
+  }
 
   return (
     <>
-      <Button onClick={onOpen} size="lg">Add</Button>
+      <Button onClick={onOpen} size="lg">Edit</Button>
       <Modal
-        initialFocusRef={initialRef}
         isOpen={isOpen}
         onClose={onClose}
         size="md"
@@ -58,13 +80,11 @@ export default function EditUserModal() {
         <ModalOverlay />
         <ModalContent>
           <form onSubmit={submitHandler}>
-            <ModalHeader>Create your account</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
               <FormControl>
                 <FormLabel>User name</FormLabel>
                 <Input
-                  ref={initialRef}
                   placeholder="User name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -73,8 +93,10 @@ export default function EditUserModal() {
             </ModalBody>
 
             <ModalFooter>
+              <Button disabled={submitting || deleting} colorScheme="red" mr={3} onClick={handleDelete}>Delete</Button>
+              <Spacer />
               <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
-                {submitting ? 'Creating ...' : 'Create'}
+                {submitting ? 'Saving ...' : 'Save'}
               </Button>
               <Button onClick={onClose}>Cancel</Button>
             </ModalFooter>

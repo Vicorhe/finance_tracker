@@ -1,5 +1,6 @@
 import { Box } from "@chakra-ui/react"
 import Nav from '../../components/Nav'
+import EditUserModal from '../../components/EditUserModal'
 import { useContext } from 'react'
 import { UserContext } from '../../context'
 
@@ -15,6 +16,7 @@ export default function Account() {
   return (
     <Box>
       <Nav breadcrumbs={breadcrumbs}>
+        <EditUserModal/>
       </Nav>
     </Box>
   )

@@ -3,10 +3,11 @@ import { UserContext } from '../context'
 import { useUsers } from '../lib/swr-hooks'
 import Nav from '../components/Nav'
 import AddUserModal from '../components/AddUserModal'
+import EditUserModal from '../components/EditUserModal'
 import LoadingError from '../components/LoadingError'
 import LoadingList from '../components/LoadingList'
 import AreasLink from '../components/AreasLink'
-import { Box, Text } from "@chakra-ui/react"
+import { Box, Flex, Spacer, Text } from "@chakra-ui/react"
 import Link from 'next/link'
 import utilStyles from '../styles/utils.module.scss'
 
@@ -19,13 +20,15 @@ export default function Home() {
       <Box overflowY="scroll" flex="1" my="1rem" className="example">
         {users.map((u) => {
           return (
-            <Link key={u.id} href={`/${u.name}`}>
-              <Box mb="1rem"
-                onClick={() => setUser(u)}
-              >
+            <Flex key={u.id} p="2"
+              onClick={() => setUser(u)}
+            >
+              <Link href={`/${u.name}`}>
                 <Text className={utilStyles.hover_underline_animation} fontSize="4xl">{u.name}</Text>
-              </Box>
-            </Link>
+
+              </Link><Spacer />
+              <EditUserModal user={u} />
+            </Flex>
           )
         })}
       </Box>

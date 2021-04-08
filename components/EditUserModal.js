@@ -1,4 +1,5 @@
-import { useState, useContext } from 'react'
+import { useState } from 'react'
+import { EditIcon } from '@chakra-ui/icons'
 import {
   Modal,
   ModalOverlay,
@@ -11,14 +12,12 @@ import {
   FormControl,
   FormLabel,
   Input,
+  IconButton,
   Spacer
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
-import { UserContext } from '../context'
 
-export default function EditUserModal() {
-  const { user } = useContext(UserContext)
-
+export default function EditUserModal({user}) {
   const { isOpen, onOpen, onClose } = useDisclosure(
     {
       onOpen: () => {
@@ -39,6 +38,7 @@ export default function EditUserModal() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          id: user.id,
           name
         }),
       })
@@ -71,7 +71,12 @@ export default function EditUserModal() {
 
   return (
     <>
-      <Button onClick={onOpen} size="lg">Edit</Button>
+      <IconButton
+        icon={<EditIcon />}
+        size="sm"
+        variant="outline"
+        onClick={onOpen}
+      />
       <Modal
         isOpen={isOpen}
         onClose={onClose}

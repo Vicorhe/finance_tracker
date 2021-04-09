@@ -19,7 +19,7 @@ export default function PlaidLinkButton({userId}) {
 
   async function getAccessToken(publicToken) {
     console.log("client side public token", publicToken)
-    const res = await axios.post('http://localhost:3000/api/item/get-access-token', { publicToken: publicToken, user_id: userId });
+    const res = await axios.post('http://localhost:3000/api/item/create', { publicToken: publicToken, user_id: userId });
     const data = res.data.access_token;
     setAccessToken(data)
   }

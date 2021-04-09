@@ -2,6 +2,7 @@ import { Box } from "@chakra-ui/react"
 import Nav from '../../components/Nav'
 import { useContext } from 'react'
 import { UserContext } from '../../context'
+import PlaidLinkButton from '../../components/PlaidLinkButton'
 
 export default function Account() {
   const { user } = useContext(UserContext)
@@ -16,6 +17,7 @@ export default function Account() {
     <Box>
       <Nav breadcrumbs={breadcrumbs}>
       </Nav>
+      <PlaidLinkButton userId={user.id}/>
     </Box>
   )
 }

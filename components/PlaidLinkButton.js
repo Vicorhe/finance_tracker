@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react'
 import Link from './Link'
 import axios from 'axios'
 
-export default function HelloWorld() {
+export default function PlaidLinkButton({userId}) {
   const [token, setToken] = useState(null)
   const [access_token, setAccessToken] = useState(null)
 
@@ -19,7 +19,7 @@ export default function HelloWorld() {
 
   async function getAccessToken(publicToken) {
     console.log("client side public token", publicToken)
-    const res = await axios.post('http://localhost:3000/api/item/get-access-token', { publicToken: publicToken, user_id: 1 });
+    const res = await axios.post('http://localhost:3000/api/item/get-access-token', { publicToken: publicToken, user_id: userId });
     const data = res.data.access_token;
     setAccessToken(data)
   }

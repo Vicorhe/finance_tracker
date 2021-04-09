@@ -26,7 +26,6 @@ export default function HelloWorld() {
 
   return (
     <div className={styles.hello}>
-      Hello World, I am being styled using SCSS Modules!
       <p>Token: {token}</p>
       <p>Access Token: {access_token}</p>
       <Link 

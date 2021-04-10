@@ -8,7 +8,7 @@ import EditAreaModal from '../components/EditAreaModal'
 import utilStyles from '../styles/utils.module.scss'
 
 export default function Areas() {
-  const { areas, isError } = useAreas();
+  const { areas, isAreasError } = useAreas();
 
   const breadcrumbs = [{ name: "Areas", path: "/areas" }]
 
@@ -51,7 +51,7 @@ export default function Areas() {
         <AddAreaModal />
       </Nav>
       {
-        isError
+        isAreasError
           ? LoadingError()
           : !areas
             ? LoadingList()

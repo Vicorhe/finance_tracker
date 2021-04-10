@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { UserContext } from '../../context'
+import { useAccounts, useItems } from '../../lib/swr-hooks'
 import { Box } from "@chakra-ui/react"
 import Nav from '../../components/Nav'
 import PlaidLink from "../../components/PlaidLink"

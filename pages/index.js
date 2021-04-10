@@ -12,7 +12,7 @@ import Link from 'next/link'
 import utilStyles from '../styles/utils.module.scss'
 
 export default function Home() {
-  const { users, isError } = useUsers();
+  const { users, isUsersError } = useUsers();
   const { setUser } = useContext(UserContext)
 
   function UsersList(users) {
@@ -41,7 +41,7 @@ export default function Home() {
         <AddUserModal />
       </Nav>
       {
-        isError
+        isUsersError
           ? LoadingError()
           : !users
             ? LoadingList()

@@ -1,6 +1,5 @@
-import styles from './hello-world.module.scss'
 import { useState, useEffect } from 'react'
-import Link from './Link'
+import PlaidLink from './PlaidLink'
 import axios from 'axios'
 
 export default function PlaidLinkButton({userId}) {
@@ -17,7 +16,7 @@ export default function PlaidLinkButton({userId}) {
     setToken(data)
   }
 
-  async function getAccessToken(publicToken) {
+  async function createItem(publicToken) {
     console.log("client side public token", publicToken)
     const res = await axios.post('http://localhost:3000/api/item/create', { publicToken: publicToken, user_id: userId });
     const data = res.data.access_token;
@@ -25,13 +24,13 @@ export default function PlaidLinkButton({userId}) {
   }
 
   return (
-    <div className={styles.hello}>
+    <div>
       <p>Token: {token}</p>
       <p>Access Token: {access_token}</p>
-      <Link 
+      <PlaidLink 
         token={token} 
         accessToken={access_token} 
-        getAccessToken={getAccessToken} 
+        createItem={createItem} 
         />
     </div>
   )

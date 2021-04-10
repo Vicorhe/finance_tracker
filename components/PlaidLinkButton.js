@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import PlaidLink from './PlaidLink'
 import axios from 'axios'
 
-export default function PlaidLinkButton({userId}) {
+export default function PlaidLinkButton({ userId }) {
   const [token, setToken] = useState(null)
   const [access_token, setAccessToken] = useState(null)
 
@@ -27,11 +27,12 @@ export default function PlaidLinkButton({userId}) {
     <div>
       <p>Token: {token}</p>
       <p>Access Token: {access_token}</p>
-      <PlaidLink 
-        token={token} 
-        accessToken={access_token} 
-        createItem={createItem} 
-        />
+      {token &&
+        <PlaidLink
+          token={token}
+          accessToken={access_token}
+          createItem={createItem}
+        />}
     </div>
   )
 }

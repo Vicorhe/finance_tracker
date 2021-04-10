@@ -1,5 +1,6 @@
 import React, { useCallback } from 'react';
 import { usePlaidLink } from "react-plaid-link";
+import { Button } from "@chakra-ui/react"
 
 const PlaidLink = props => {
   const onSuccess = useCallback(
@@ -31,14 +32,13 @@ const PlaidLink = props => {
 
   return (
     <>
-      <button
-        type="button"
-        className="button"
+      <Button
         onClick={() => open()}
         disabled={!ready || error}
+        size="lg"
       >
         Add Source
-      </button>
+      </Button>
     </>
   );
 };

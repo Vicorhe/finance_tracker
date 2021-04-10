@@ -6,7 +6,7 @@ import { useAccounts, useItems } from '../../lib/swr-hooks'
 import {
   Box, Accordion, AccordionItem,
   AccordionButton, AccordionPanel, AccordionIcon,
-  Button
+  Button, Text, Flex
 } from "@chakra-ui/react"
 import Nav from '../../components/Nav'
 import PlaidLink from "../../components/PlaidLink"
@@ -50,17 +50,17 @@ export default function Account() {
       <Accordion allowMultiple>
         {items.filter(i => i.user_id == user.id).map(i => (
           <AccordionItem key={i.id}>
-            <h2>
-              <AccordionButton>
-                <Box flex="1" textAlign="left">{i.institution_name}</Box>
-                <AccordionIcon />
-              </AccordionButton>
-            </h2>
-            <AccordionPanel flex flexDirection="column" pb={4}>
+            <AccordionButton py="4" px="5">
+              <Text flex="1" textAlign="left" fontSize="3xl">{i.institution_name}</Text>
+              <AccordionIcon w="7" h="7" />
+            </AccordionButton>
+            <AccordionPanel pb={4}>
               {accounts.filter(a => a.item_id == i.id).map(a => (
-                <p key={a.id}>{a.name}</p>
+                <Text key={a.id} fontSize="xl" pl="9" pb="1">{a.name}</Text>
               ))}
-              <Button ml="auto" colorScheme="red">Delete</Button>
+              <Flex>
+                <Button ml="auto" size="lg" colorScheme="red">Delete</Button>
+              </Flex>
             </AccordionPanel>
           </AccordionItem>
         ))}

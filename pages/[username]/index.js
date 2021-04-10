@@ -16,6 +16,7 @@ export default function Account() {
     <Box className={utilStyles.page}>
       <Nav breadcrumbs={breadcrumbs}>
       </Nav>
+      <Box my="1"/>
       <BoxLink title="Sources" path={`/${user.name}/sources`} />
       <BoxLink title="Transactions" path={`/${user.name}/transactions`} />
       <BoxLink title="Reports" path={`/${user.name}/reports`} />

@@ -4,6 +4,7 @@ import { UserContext } from '../../context'
 import { Box } from "@chakra-ui/react"
 import Nav from '../../components/Nav'
 import PlaidLink from "../../components/PlaidLink"
+import utilStyles from '../../styles/utils.module.scss'
 
 export default function Account() {
   const [token, setToken] = useState(null)
@@ -11,9 +12,7 @@ export default function Account() {
   const { user } = useContext(UserContext)
   const breadcrumbs = [
     { name: user.name, path: `/${user.name}` },
-    { name: "sources", path: `/${user.name}/sources` },
-    // Reference this for account sub pages
-    // { name: 'Sources', path: `/${user.name}/sources` }
+    { name: "sources", path: `/${user.name}/sources` }
   ]
 
   useEffect(() => {
@@ -34,7 +33,7 @@ export default function Account() {
   }
 
   return (
-    <Box>
+    <Box className={utilStyles.page}>
       <Nav breadcrumbs={breadcrumbs}>
       </Nav>
       <h1>Sources Page </h1>

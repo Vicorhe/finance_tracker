@@ -11,7 +11,7 @@ export default async function handler(req, res) {
       }
       console.log(err)
     });
-  const { access_token, item_id } = response
+  const { access_token, item_id: plaid_item_id } = response
 
   response = await client
     .getItem(access_token)
@@ -33,12 +33,65 @@ export default async function handler(req, res) {
     });
   const { institution } = response
 
-  const results = await query(
+  response = await query(
     `
     INSERT INTO items_table (plaid_item_id, access_token, user_id, institution_name)
-    VALUES (?, ?, ?, ?)
+    VALUES (?, ?, ?, ?);
     `,
-    [item_id, access_token, user_id, institution.name]
+    [plaid_item_id, access_token, user_id, institution.name]
   )
-  return res.send({ access_token: response.access_token });
+
+  const { insertId: item_id } = response
+
+  response = await client
+    .getAccounts(access_token)
+    .catch((err) => {
+      console.log(err)
+    });
+
+  const { accounts } = response
+  if (accounts && accounts.length && accounts.length > 0) {
+    const pendingQueries = accounts.map(async a => {
+      const {
+        account_id: plaid_account_id,
+        name,
+        official_name,
+        subtype,
+        type
+      } = a;
+      try {
+        const results = await query(
+          `
+          INSERT INTO accounts_table
+            (
+              plaid_account_id,
+              user_id,
+              item_id,
+              name,
+              official_name,
+              type,
+              subtype
+            )
+          VALUES
+            (?, ?, ?, ?, ?, ?, ?);
+          `,
+          [
+            plaid_account_id,
+            user_id,
+            item_id,
+            name,
+            official_name,
+            type,
+            subtype
+          ]
+        );
+      } catch (err) {
+        console.log(`Error insert following account: ${plaid_account_id}`);
+        console.log(`error obj ${err}`);
+      }
+    });
+    await Promise.all(pendingQueries);
+  }
+
+  return res.send({ access_token: access_token });
 }

@@ -35,17 +35,18 @@ export default function Account() {
   return (
     <Box className={utilStyles.page}>
       <Nav breadcrumbs={breadcrumbs}>
-      </Nav>
-      <h1>Sources Page </h1>
-      <div>
-        <p>Token: {token}</p>
-        <p>Access Token: {access_token}</p>
         {token &&
           <PlaidLink
             token={token}
             accessToken={access_token}
             createItem={createItem}
           />}
+      </Nav>
+      <h1>Sources Page </h1>
+      <div>
+        <p>Token: {token}</p>
+        <p>Access Token: {access_token}</p>
+
       </div>
     </Box>
   )

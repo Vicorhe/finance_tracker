@@ -11,7 +11,7 @@ export default function Account() {
   const { user } = useContext(UserContext)
   const breadcrumbs = [
     { name: user.name, path: `/${user.name}` },
-    { name: "Source", path: `/${user.name}/sources` },
+    { name: "sources", path: `/${user.name}/sources` },
     // Reference this for account sub pages
     // { name: 'Sources', path: `/${user.name}/sources` }
   ]
@@ -28,11 +28,10 @@ export default function Account() {
 
   async function createItem(publicToken) {
     console.log("client side public token", publicToken)
-    const res = await axios.post('http://localhost:3000/api/item/create', { publicToken: publicToken, user_id: userId });
+    const res = await axios.post('http://localhost:3000/api/item/create', { publicToken: publicToken, user_id: user.id });
     const data = res.data.access_token;
     setAccessToken(data)
   }
-
 
   return (
     <Box>

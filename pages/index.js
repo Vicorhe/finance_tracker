@@ -6,7 +6,7 @@ import AddUserModal from '../components/AddUserModal'
 import EditUserModal from '../components/EditUserModal'
 import LoadingError from '../components/LoadingError'
 import LoadingList from '../components/LoadingList'
-import AreasLink from '../components/AreasLink'
+import BoxLink from '../components/BoxLink'
 import { Box, Flex, Spacer, Text } from "@chakra-ui/react"
 import Link from 'next/link'
 import utilStyles from '../styles/utils.module.scss'
@@ -47,7 +47,7 @@ export default function Home() {
             ? LoadingList()
             : UsersList(users)
       }
-      <AreasLink />
+      <BoxLink title="Areas" path="/areas" />
     </Box>
   );
 }

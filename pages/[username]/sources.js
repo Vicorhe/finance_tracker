@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState, useRef } from 'react'
 import axios from 'axios'
 import { UserContext } from '../../context'
 import { mutate } from 'swr'
@@ -6,7 +6,13 @@ import { useAccounts, useItems } from '../../lib/swr-hooks'
 import {
   Box, Accordion, AccordionItem,
   AccordionButton, AccordionPanel, AccordionIcon,
-  Button, Text, Flex
+  Button, Text, Flex, AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  useDisclosure
 } from "@chakra-ui/react"
 import Nav from '../../components/Nav'
 import PlaidLink from "../../components/PlaidLink"
@@ -17,9 +23,13 @@ import LoadingList from '../../components/LoadingList'
 export default function Account() {
   const { accounts, isAccountsError } = useAccounts();
   const { items, isItemsError } = useItems();
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const cancelRef = useRef()
+  const [deleting, setDeleting] = useState(false)
   const [token, setToken] = useState(null)
   const [access_token, setAccessToken] = useState(null)
+  const [selectedItem, setSelectedItem] = useState(null)
+
   const { user } = useContext(UserContext)
   const breadcrumbs = [
     { name: user.name, path: `/${user.name}` },
@@ -29,6 +39,11 @@ export default function Account() {
   useEffect(() => {
     createLinkToken()
   }, []);
+
+  function selectItem(itemId) {
+    setSelectedItem(itemId)
+    onOpen()
+  }
 
   async function createLinkToken() {
     const res = await axios.post('http://localhost:3000/api/item/create-link-token');
@@ -45,6 +60,24 @@ export default function Account() {
     mutate('/api/account/get-all')
   }
 
+  async function handleDelete(e) {
+    setDeleting(true)
+    e.preventDefault()
+    try {
+      const res = await fetch(`/api/item/delete?id=${selectedItem}`, {
+        method: 'POST'
+      })
+      setDeleting(false)
+      onClose()
+      mutate('/api/item/get-all')
+      mutate('/api/account/get-all')
+      const json = await res.json()
+      if (!res.ok) throw Error(json.message)
+    } catch (e) {
+      throw Error(e.message)
+    }
+  }
+
   function SourcesTable() {
     return (
       <Accordion allowMultiple>
@@ -59,7 +92,7 @@ export default function Account() {
                 <Text key={a.id} fontSize="xl" pl="9" pb="1">{a.name}</Text>
               ))}
               <Flex>
-                <Button ml="auto" size="lg" colorScheme="red">Delete</Button>
+                <Button ml="auto" size="lg" colorScheme="red" onClick={() => selectItem(i.id)}>Delete</Button>
               </Flex>
             </AccordionPanel>
           </AccordionItem>
@@ -85,6 +118,34 @@ export default function Account() {
             ? LoadingList()
             : SourcesTable()
       }
+      <AlertDialog
+        isOpen={isOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+        size="sm"
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Delete Institution
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You can't undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDelete} ml={3}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </Box>
   )
 }

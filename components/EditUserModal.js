@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { EditIcon } from '@chakra-ui/icons'
 import {
   Modal,
@@ -34,7 +34,7 @@ export default function EditUserModal({ user }) {
   const [submitting, setSubmitting] = useState(false)
   const [isAlertOpen, setIsAlertOpen] = React.useState(false)
   const onAlertClose = () => setIsAlertOpen(false)
-  const cancelRef = React.useRef()
+  const cancelRef = useRef()
   const [deleting, setDeleting] = useState(false)
 
   async function submitHandler(e) {

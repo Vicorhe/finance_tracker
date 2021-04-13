@@ -1,7 +1,8 @@
 import { query } from '../../../lib/db'
-import client, { resetLogin } from '../../../lib/plaid'
+import client from '../../../lib/plaid'
 const moment = require('moment');
 
+// fetch from plaid
 async function fetchTransactions(accessToken, startDate, endDate) {
   try {
     let offset = 0;
@@ -38,21 +39,8 @@ async function fetchTransactions(accessToken, startDate, endDate) {
   }
 };
 
-async function getTransactionsByItemId(item_id) {
-  try {
-    const results = await query(
-      `
-    SELECT * FROM transactions_table
-    WHERE item_id = ?
-    `,
-      item_id)
-    return results
-  } catch (e) {
-    console.log(e)
-    return []
-  }
-}
-
+// db code
+// TODO move these to separate query files
 async function getItemsByUserId(user_id) {
   try {
     const results = await query(
@@ -67,17 +55,33 @@ async function getItemsByUserId(user_id) {
     return []
   }
 }
-
-async function createTransactions(transactionsToStore, user_id, item_id) {
+async function getTransactionsInDateRange(item_id, startDate, endDate) {
+  try {
+    const results = await query(
+      `
+    SELECT * FROM transactions_table
+    WHERE item_id = ? AND date >= ? AND date <= ?
+    `,
+      item_id, startDate, endDate)
+    return results
+  } catch (e) {
+    console.log(e)
+    return []
+  }
+}
+async function createTransactions(transactionsToStore, accounts, user_id, item_id) {
   const pendingQueries = transactionsToStore.map(async transaction => {
     const {
       transaction_id: plaid_transaction_id,
-      transaction_type,
+      payment_channel,
       name,
       amount,
       date,
       pending,
+      account_id
     } = transaction;
+
+    // TODO may have to invert amount for certain transactions depending on the type of account
 
     try {
       const results = await query(
@@ -108,7 +112,7 @@ async function createTransactions(transactionsToStore, user_id, item_id) {
           amount,
           date,
           'plaid',
-          transaction_type,
+          payment_channel,
           pending,
           false,
           false,
@@ -130,33 +134,34 @@ async function deleteTransactions(transactionsToRemove) {
       transactionId,
     );
   });
-  await Promise.all(pendingQueries); 
+  await Promise.all(pendingQueries);
 }
 
-async function handleTransactionsUpdate(item, user_id) {
-  const { id: item_id, access_token } = item
+async function handleTransactionsUpdate(item) {
+  const { id: item_id, user_id, access_token } = item
   const startDate = moment()
     .subtract(2, 'years')
     .format('YYYY-MM-DD');
   const endDate = moment().format('YYYY-MM-DD');
+  
   // Fetch new transactions from plaid api.
   const {
-    transactions: incomingTransactions,
+    transactions: plaidTransactions,
     accounts,
   } = await fetchTransactions(access_token, startDate, endDate);
 
   // Retrieve existing transactions from our db.
-  const existingTransactions = await getTransactionsByItemId(item_id);
+  const dbTransactions = await getTransactionsInDateRange(item_id, startDate, endDate);
 
   // Compare to find new transactions.
-  const existingTransactionIds = existingTransactions.reduce(
+  const existingTransactionIds = dbTransactions.reduce(
     (idMap, { plaid_transaction_id: transactionId }) => ({
       ...idMap,
       [transactionId]: transactionId,
     }),
     {}
   );
-  const transactionsToStore = incomingTransactions.filter(
+  const transactionsToStore = plaidTransactions.filter(
     ({ transaction_id: transactionId }) => {
       const isExisting = existingTransactionIds[transactionId];
       return !isExisting;
@@ -164,14 +169,14 @@ async function handleTransactionsUpdate(item, user_id) {
   );
 
   // Compare to find removed transactions (pending transactions that have posted or cancelled).
-  const incomingTransactionIds = incomingTransactions.reduce(
+  const incomingTransactionIds = plaidTransactions.reduce(
     (idMap, { transaction_id: transactionId }) => ({
       ...idMap,
       [transactionId]: transactionId,
     }),
     {}
   );
-  const transactionsToRemove = existingTransactions.filter(
+  const transactionsToRemove = dbTransactions.filter(
     ({ plaid_transaction_id: transactionId }) => {
       const isIncoming = incomingTransactionIds[transactionId];
       return !isIncoming;
@@ -179,20 +184,20 @@ async function handleTransactionsUpdate(item, user_id) {
   );
 
   // Update the DB.
-  await createTransactions(transactionsToStore, user_id, item_id);
+  await createTransactions(transactionsToStore, accounts, user_id, item_id);
   await deleteTransactions(transactionsToRemove);
 };
 
 export default async function handler(req, res) {
   const { user_id } = req.body
-  if (!user_id ) {
+  if (!user_id) {
     return res
       .status(400)
       .json({ message: '`user_id`is required' })
   }
   const items = await getItemsByUserId(user_id)
   const pendingUpdates = items.map(async item => {
-    await handleTransactionsUpdate(item, user_id)
+    await handleTransactionsUpdate(item)
   })
   await Promise.all(pendingUpdates);
   res.status(500).json("re")

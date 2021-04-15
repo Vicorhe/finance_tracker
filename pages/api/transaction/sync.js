@@ -45,7 +45,7 @@ async function getItemsByUserId(user_id) {
   try {
     const results = await query(
       `
-    SELECT id, access_token FROM items_table
+    SELECT id, user_id, access_token FROM items_table
     WHERE user_id = ?
     `,
       user_id)
@@ -60,7 +60,7 @@ async function getTransactionsInDateRange(item_id, startDate, endDate) {
     const results = await query(
       `
     SELECT * FROM transactions_table
-    WHERE item_id = ? AND date >= ? AND date <= ?
+    WHERE item_id = ? AND date >= '`+ startDate + `' AND date <= '` + endDate + `' 
     `,
       item_id, startDate, endDate)
     return results
@@ -126,12 +126,13 @@ async function createTransactions(transactionsToStore, accounts, user_id, item_i
   await Promise.all(pendingQueries);
 }
 async function deleteTransactions(transactionsToRemove) {
-  const pendingQueries = transactionsToRemove.map(async transactionId => {
+  const pendingQueries = transactionsToRemove.map(async transaction => {
+    const { plaid_transaction_id } = transaction
     const results = await query(
       `
       DELETE FROM transactions_table WHERE plaid_transaction_id = ?
       `,
-      transactionId,
+      plaid_transaction_id,
     );
   });
   await Promise.all(pendingQueries);
@@ -143,7 +144,7 @@ async function handleTransactionsUpdate(item) {
     .subtract(2, 'years')
     .format('YYYY-MM-DD');
   const endDate = moment().format('YYYY-MM-DD');
-  
+
   // Fetch new transactions from plaid api.
   const {
     transactions: plaidTransactions,
@@ -152,7 +153,6 @@ async function handleTransactionsUpdate(item) {
 
   // Retrieve existing transactions from our db.
   const dbTransactions = await getTransactionsInDateRange(item_id, startDate, endDate);
-
   // Compare to find new transactions.
   const existingTransactionIds = dbTransactions.reduce(
     (idMap, { plaid_transaction_id: transactionId }) => ({
@@ -193,14 +193,14 @@ export default async function handler(req, res) {
   if (!user_id) {
     return res
       .status(400)
-      .json({ message: '`user_id`is required' })
+      .json({ message: '`user_id` is required' })
   }
   const items = await getItemsByUserId(user_id)
   const pendingUpdates = items.map(async item => {
     await handleTransactionsUpdate(item)
   })
   await Promise.all(pendingUpdates);
-  res.status(500).json("re")
+  res.status(200).json("good stuff")
 }
 
 

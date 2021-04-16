@@ -4,7 +4,7 @@ import { UserContext } from "../../context"
 import { mutate } from 'swr'
 import { useAreas, useTransactions } from "../../lib/swr-hooks"
 import Nav from '../../components/Nav'
-import { Box, Button, Text } from "@chakra-ui/react"
+import { Box, Button, Heading, Text, Flex, Select } from "@chakra-ui/react"
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
 import utilStyles from '../../styles/utils.module.scss'
@@ -21,7 +21,7 @@ export default function Transactions() {
   ]
 
   useEffect(() => {
-    syncTransactions()
+    //syncTransactions() // commented out during development
   }, []);
 
   async function syncTransactions() {
@@ -33,14 +33,22 @@ export default function Transactions() {
 
   function TransactionsTable() {
     return (
-      <Box allowMultiple>
-        Count{transactions.length} -- {areas.length}
-        {transactions.map(t => (
+      <Box>
+        <Flex alignItems="center" p="3">
+          <Heading fontSize="lg" mr="3" fontWeight="extrabold">SHOWING</Heading>
+          <Select size="md" maxWidth="225px">
+            <option value="option1">Unassigned</option>
+            <option value="option2">Hidden</option>
+            <option value="option3">Cash Transactions</option>
+            <option value="option4">Splits</option>
+          </Select>
+        </Flex>
+
+        {/* {transactions.map(t => (
           <Box key={t.id}>
             <Text flex="1" textAlign="left" fontSize="3xl">{`uid:${t.user_id}-${t.name}`}</Text>
-
           </Box>
-        ))}
+        ))} */}
       </Box>
     )
   }

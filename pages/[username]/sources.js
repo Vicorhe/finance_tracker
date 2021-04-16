@@ -20,7 +20,7 @@ import utilStyles from '../../styles/utils.module.scss'
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
 
-export default function Account() {
+export default function Sources() {
   const { accounts, isAccountsError } = useAccounts();
   const { items, isItemsError } = useItems();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -58,6 +58,7 @@ export default function Account() {
     setAccessToken(data)
     mutate('/api/item/get-all')
     mutate('/api/account/get-all')
+    await axios.post('http://localhost:3000/api/transaction/sync', { user_id: user.id });
   }
 
   async function handleDelete(e) {

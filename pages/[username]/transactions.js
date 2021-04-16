@@ -4,7 +4,7 @@ import { UserContext } from "../../context"
 import { mutate } from 'swr'
 import { useAreas, useTransactions } from "../../lib/swr-hooks"
 import Nav from '../../components/Nav'
-import { Box, Text } from "@chakra-ui/react"
+import { Box, Button, Text } from "@chakra-ui/react"
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
 import utilStyles from '../../styles/utils.module.scss'
@@ -48,6 +48,9 @@ export default function Transactions() {
   return (
     <Box className={utilStyles.page}>
       <Nav breadcrumbs={breadcrumbs}>
+        <Button disabled={syncing} size="lg" onClick={syncTransactions}>
+          {syncing ? 'Syncing ...' : 'Sync'}
+        </Button>
       </Nav>
       {
         (isTransactionsError || isAreasError)

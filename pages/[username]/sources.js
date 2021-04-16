@@ -16,9 +16,9 @@ import {
 } from "@chakra-ui/react"
 import Nav from '../../components/Nav'
 import PlaidLink from "../../components/PlaidLink"
-import utilStyles from '../../styles/utils.module.scss'
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
+import utilStyles from '../../styles/utils.module.scss'
 
 export default function Sources() {
   const { accounts, isAccountsError } = useAccounts();

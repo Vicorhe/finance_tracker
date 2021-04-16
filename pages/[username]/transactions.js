@@ -8,6 +8,7 @@ import { Box, Button, Heading, Text, Flex, Select } from "@chakra-ui/react"
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
 import utilStyles from '../../styles/utils.module.scss'
+const moment = require('moment')
 
 export default function Transactions() {
   const { user } = useContext(UserContext)
@@ -43,12 +44,17 @@ export default function Transactions() {
             <option value="option4">Splits</option>
           </Select>
         </Flex>
-
-        {/* {transactions.map(t => (
-          <Box key={t.id}>
+        {transactions.map(t => (
+          <Box key={t.id} borderBottom="2px solid">
+            <Flex>
+              <Text>{moment(t.date).format("MMM DD, YYYY")}</Text>
+              <Text>{t.name}</Text>
+              <Text>{t.area_id}</Text>
+              <Text>{t.amount}</Text>
+            </Flex>
             <Text flex="1" textAlign="left" fontSize="3xl">{`uid:${t.user_id}-${t.name}`}</Text>
           </Box>
-        ))} */}
+        ))}
       </Box>
     )
   }

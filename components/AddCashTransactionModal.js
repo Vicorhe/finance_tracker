@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useAreas } from '../lib/swr-hooks'
 import DatePicker from "../components/DatePicker";
 import {
   Modal,
@@ -13,7 +14,8 @@ import {
   FormControl,
   FormLabel,
   Input,
-  Textarea
+  Textarea,
+  Select
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
 
@@ -28,6 +30,7 @@ export default function AddCashTransactionModal() {
   const [name, setName] = useState('')
   const [date, setDate] = useState(new Date())
   const [submitting, setSubmitting] = useState(false)
+  const { areas, isAreasError } = useAreas();
 
   async function submitHandler(e) {
     setSubmitting(true)
@@ -86,14 +89,23 @@ export default function AddCashTransactionModal() {
                   onChange={(e) => setName(e.target.value)}
                 />
               </FormControl>
-              <FormControl mb="4">
-                <FormLabel>Area</FormLabel>
-                <Input
-                  placeholder="Reef"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </FormControl>
+              {
+                !!areas &&
+                <FormControl mb="4">
+                  <FormLabel>Area</FormLabel>
+                  <Select
+                    placeholder="Reef"
+                    value={name}
+                    onChange={(e) => setName(e.target.value)}
+                  >
+                    {areas.map(a => (
+                      <option key={a.id}
+                      value={a.id}>{a.name}</option>
+                    ))}
+                  </Select>
+                </FormControl>
+
+              }
 
               <FormControl mb="4">
                 <FormLabel htmlFor="date">Date</FormLabel>

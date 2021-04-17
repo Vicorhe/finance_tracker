@@ -4,7 +4,9 @@ import { UserContext } from "../../context"
 import { mutate } from 'swr'
 import { useAreas, useTransactions } from "../../lib/swr-hooks"
 import Nav from '../../components/Nav'
-import { Box, Button, Heading, Text, Flex, Select } from "@chakra-ui/react"
+import { Box, Button, Heading, Text, Flex, Select, IconButton, Badge } from "@chakra-ui/react"
+import { EditIcon } from '@chakra-ui/icons'
+import ColorShard from '../../components/ColorShard'
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
 import utilStyles from '../../styles/utils.module.scss'
@@ -24,6 +26,18 @@ export default function Transactions() {
   useEffect(() => {
     //syncTransactions() // commented out during development
   }, []);
+
+  function getColorShard(area_id) {
+    var color = '#EDEDED'
+    if (area_id)
+      color = areas.filter(a => a.id == area_id)[0].color
+    return <ColorShard color={color} />
+  }
+
+  function areaName(area_id) {
+    if (!area_id) return 'N/A'
+    return areas.filter(a => a.id = area_id)[0]
+  }
 
   async function syncTransactions() {
     setSyncing(true)
@@ -45,17 +59,40 @@ export default function Transactions() {
           </Select>
         </Flex>
         {transactions.map(t => (
-          <Box key={t.id} borderBottom="2px solid">
-            <Flex>
-              <Text>{moment(t.date).format("MMM DD, YYYY")}</Text>
-              <Text>{t.name}</Text>
-              <Text>{t.area_id}</Text>
-              <Text>{t.amount}</Text>
+          <Box key={t.id} pt="4" borderBottom="2px solid">
+            <Flex alignItems="center">
+              <Text fontSize="xl" width="16%">{moment(t.date).format("MMM DD, YYYY")}</Text>
+              <Text fontSize="xl" width="58%">{t.name}</Text>
+              <Flex alignItems="center" width="17%">
+                {getColorShard(t.area_id)}
+                <Text fontSize="lg" pl="3">{areaName(t.area_id)}</Text>
+              </Flex>
+              <Text fontSize="xl" fontWeight="bold" textAlign="right" width="9%">{t.amount}</Text>
             </Flex>
-            <Text flex="1" textAlign="left" fontSize="3xl">{`uid:${t.user_id}-${t.name}`}</Text>
+            <Box py="3" pl="3">
+              <Flex alignItems="center" mb="1">
+                <Heading fontSize="md" fontWeight="extrabold" mr="2">MEMO</Heading>
+                {!!t.split && <Badge variant="subtle" colorScheme="purple" mr="2">Split</Badge>}
+                {!!t.hidden && <Badge variant="subtle" colorScheme="gray" mr="2">Hidden</Badge>}
+                {!!t.cash && <Badge variant="subtle" colorScheme="green">Cash</Badge>}
+              </Flex>
+              <Flex alignItems="center">
+                <Box flex="1">
+                  {
+                    !!t.memo 
+                      ? <Text fontSize="xl"> {t.memo}</Text>
+                      : <Text fontSize="xl" color="#D3D3D3">Edit to add memo...</Text>
+                      }
+                </Box>
+                <IconButton icon={<EditIcon />}
+                  size="sm"
+                  variant="outline" />
+              </Flex>
+            </Box>
           </Box>
-        ))}
-      </Box>
+        ))
+        }
+      </Box >
     )
   }
 

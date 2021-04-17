@@ -1,6 +1,7 @@
 import { Box, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react"
 import { useAreas } from '../lib/swr-hooks'
 import Nav from '../components/Nav'
+import ColorShard from '../components/ColorShard'
 import LoadingError from '../components/LoadingError'
 import LoadingList from '../components/LoadingList'
 import AddAreaModal from '../components/AddAreaModal'
@@ -28,12 +29,8 @@ export default function Areas() {
             <Tr key={a.id}>
               <Td>{a.name}</Td>
               <Td>{a.description}</Td>
-              <Td isNumeric>
-                <Box
-                  width="20px"
-                  height="20px"
-                  margin="auto"
-                  backgroundColor={a.color} />
+              <Td>
+                <ColorShard color={a.color} center/>
               </Td>
               <Td>
                 <EditAreaModal area={a} />

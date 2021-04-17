@@ -2,6 +2,7 @@ import '../styles.scss'
 import { useState } from 'react'
 import { ChakraProvider, Container } from '@chakra-ui/react';
 import { UserContext } from '../context'
+import '../styles/date-picker.css'
 
 function MyApp({ Component, pageProps }) {
   const [user, setUserState] = useState({})

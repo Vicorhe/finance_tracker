@@ -6,6 +6,7 @@ import { useAreas, useTransactions } from "../../lib/swr-hooks"
 import Nav from '../../components/Nav'
 import { Box, Button, Heading, Text, Flex, Select, IconButton, Badge } from "@chakra-ui/react"
 import { EditIcon } from '@chakra-ui/icons'
+import AddCashTransactionModal from '../../components/AddCashTransactionModal'
 import ColorShard from '../../components/ColorShard'
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
@@ -99,9 +100,10 @@ export default function Transactions() {
   return (
     <Box className={utilStyles.page}>
       <Nav breadcrumbs={breadcrumbs}>
-        <Button disabled={syncing} size="lg" onClick={syncTransactions}>
+        <Button disabled={syncing} size="lg" mr="3" onClick={syncTransactions}>
           {syncing ? 'Syncing ...' : 'Sync'}
         </Button>
+        <AddCashTransactionModal />
       </Nav>
       {
         (isTransactionsError || isAreasError)

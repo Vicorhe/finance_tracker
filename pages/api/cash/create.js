@@ -1,7 +1,7 @@
 import { query } from '../../../lib/db'
 
 export default async function handler(req, res) {
-  const { user_id, name, area_id, amount, date, description } = req.body
+  const { user_id, name, area_id, amount, date, memo } = req.body
   try {
     if (!user_id || !name || !amount || !date) {
       return res
@@ -11,10 +11,10 @@ export default async function handler(req, res) {
 
     const results = await query(
       `
-      INSERT INTO transactions_table (user_id, area_id, name, amount, date, source, type, description, pending, hidden, cash, split)
+      INSERT INTO transactions_table (user_id, area_id, name, amount, date, source, type, memo, pending, hidden, cash, split)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
-      [user_id, area_id, name, amount, date, 'user inputted', 'cash', description, false, false, true, false]
+      [user_id, area_id, name, amount, date, 'user inputted', 'cash', memo, false, false, true, false]
     )
     return res.json(results)
   } catch (e) {

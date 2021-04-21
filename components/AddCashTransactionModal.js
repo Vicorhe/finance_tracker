@@ -1,5 +1,6 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useAreas } from '../lib/swr-hooks'
+import { UserContext } from '../context'
 import DatePicker from "../components/DatePicker";
 import {
   Modal,
@@ -20,8 +21,10 @@ import {
   Select
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
+import moment from 'moment';
 
 export default function AddCashTransactionModal() {
+  const { user } = useContext(UserContext)
   const { isOpen, onOpen, onClose } = useDisclosure(
     {
       onClose: () => {
@@ -45,18 +48,23 @@ export default function AddCashTransactionModal() {
     setSubmitting(true)
     e.preventDefault()
     try {
-      const res = await fetch('/api/user/create', {
+      const res = await fetch('/api/cash/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name
+          user_id: user.id,
+          name,
+          area_id: area,
+          amount,
+          date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
+          memo
         }),
       })
       setSubmitting(false)
       onClose()
-      mutate('/api/user/get-all')
+      mutate(`/api/transaction/get-all?user_id=${user.id}`)
       const json = await res.json()
       if (!res.ok) throw Error(json.message)
     } catch (e) {

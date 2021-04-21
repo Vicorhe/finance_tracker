@@ -14,6 +14,8 @@ import {
   FormControl,
   FormLabel,
   Input,
+  NumberInput,
+  NumberInputField,
   Textarea,
   Select
 } from "@chakra-ui/react"
@@ -24,11 +26,18 @@ export default function AddCashTransactionModal() {
     {
       onClose: () => {
         setName('')
+        setAmount(null)
+        setArea(null)
+        setDate(new Date())
+        setMemo('')
       }
     }
   )
   const [name, setName] = useState('')
+  const [amount, setAmount] = useState(null)
+  const [area, setArea] = useState(null)
   const [date, setDate] = useState(new Date())
+  const [memo, setMemo] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const { areas, isAreasError } = useAreas();
 
@@ -83,11 +92,13 @@ export default function AddCashTransactionModal() {
               </FormControl>
               <FormControl mb="4">
                 <FormLabel>Amount</FormLabel>
-                <Input
-                  placeholder="6.17"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
+                <NumberInput precision={2}>
+                  <NumberInputField
+                    placeholder="6.17"
+                    value={amount}
+                    onChange={(e) => setAmount(e.target.value)}
+                  />
+                </NumberInput>
               </FormControl>
               {
                 !!areas &&
@@ -95,12 +106,12 @@ export default function AddCashTransactionModal() {
                   <FormLabel>Area</FormLabel>
                   <Select
                     placeholder="Reef"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    value={area}
+                    onChange={(e) => setArea(e.target.value)}
                   >
                     {areas.map(a => (
                       <option key={a.id}
-                      value={a.id}>{a.name}</option>
+                        value={a.id}>{a.name}</option>
                     ))}
                   </Select>
                 </FormControl>
@@ -121,8 +132,8 @@ export default function AddCashTransactionModal() {
                 <FormLabel>Memo</FormLabel>
                 <Textarea
                   placeholder="Rewarding myself"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  value={memo}
+                  onChange={(e) => setMemo(e.target.value)}
                 />
               </FormControl>
             </ModalBody>

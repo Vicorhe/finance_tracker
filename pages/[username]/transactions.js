@@ -37,7 +37,7 @@ export default function Transactions() {
 
   function areaName(area_id) {
     if (!area_id) return 'N/A'
-    return areas.filter(a => a.id = area_id)[0]
+    return areas.filter(a => a.id == area_id)[0].name
   }
 
   async function syncTransactions() {
@@ -66,7 +66,9 @@ export default function Transactions() {
               <Text fontSize="xl" width="58%">{t.name}</Text>
               <Flex alignItems="center" width="17%">
                 {getColorShard(t.area_id)}
-                <Text fontSize="lg" pl="3">{areaName(t.area_id)}</Text>
+                <Text fontSize="lg" pl="3">
+                  {areaName(t.area_id)}
+                </Text>
               </Flex>
               <Text fontSize="xl" fontWeight="bold" textAlign="right" width="9%">{t.amount}</Text>
             </Flex>
@@ -80,10 +82,10 @@ export default function Transactions() {
               <Flex alignItems="center">
                 <Box flex="1">
                   {
-                    !!t.memo 
+                    !!t.memo
                       ? <Text fontSize="xl"> {t.memo}</Text>
                       : <Text fontSize="xl" color="#D3D3D3">Edit to add memo...</Text>
-                      }
+                  }
                 </Box>
                 <IconButton icon={<EditIcon />}
                   size="sm"

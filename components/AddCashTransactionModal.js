@@ -30,15 +30,15 @@ export default function AddCashTransactionModal() {
       onClose: () => {
         setName('')
         setAmount(null)
-        setArea(null)
+        setArea('')
         setDate(new Date())
         setMemo('')
       }
     }
   )
   const [name, setName] = useState('')
-  const [amount, setAmount] = useState(null)
-  const [area, setArea] = useState(null)
+  const [amount, setAmount] = useState('')
+  const [area, setArea] = useState('')
   const [date, setDate] = useState(new Date())
   const [memo, setMemo] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -113,17 +113,18 @@ export default function AddCashTransactionModal() {
                 <FormControl mb="4">
                   <FormLabel>Area</FormLabel>
                   <Select
-                    placeholder="Reef"
                     value={area}
                     onChange={(e) => setArea(e.target.value)}
                   >
-                    {areas.map(a => (
-                      <option key={a.id}
-                        value={a.id}>{a.name}</option>
-                    ))}
+                    {
+                      areas.map((a) =>
+                        <option key={a.id}
+                          value={a.id}>{a.name}
+                        </option>
+                      )
+                    }
                   </Select>
                 </FormControl>
-
               }
 
               <FormControl mb="4">

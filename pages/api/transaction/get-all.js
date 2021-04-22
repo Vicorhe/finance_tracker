@@ -12,6 +12,7 @@ export default async function handler(req, res) {
       `
       SELECT * FROM transactions_table 
       WHERE user_id = ?
+      ORDER BY date DESC
       `,
       user_id)
     return res.json(results)

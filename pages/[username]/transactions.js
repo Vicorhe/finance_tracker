@@ -4,7 +4,8 @@ import { UserContext } from "../../context"
 import { mutate } from 'swr'
 import { useAreas, useTransactions } from "../../lib/swr-hooks"
 import Nav from '../../components/Nav'
-import { Box, Button, Heading, Text, Flex, Select, IconButton, Badge } from "@chakra-ui/react"
+import EditTransactionModal from '../../components/EditTransactionModal'
+import { useDisclosure, Box, Button, Heading, Text, Flex, Select, IconButton, Badge } from "@chakra-ui/react"
 import { EditIcon } from '@chakra-ui/icons'
 import AddCashTransactionModal from '../../components/AddCashTransactionModal'
 import ColorShard from '../../components/ColorShard'
@@ -18,6 +19,17 @@ export default function Transactions() {
   const { areas, isAreasError } = useAreas();
   const { transactions, isTransactionsError } = useTransactions(user.id)
   const [syncing, setSyncing] = useState(false)
+  const [transaction, setTransaction] = useState({})
+  const {
+    isOpen: isModalOpen,
+    onOpen: onModalOpen,
+    onClose: onModalClose
+  } = useDisclosure(
+    {
+      // onOpen: () => {
+      //   setName(user.name)
+      // }
+    })
 
   const breadcrumbs = [
     { name: user.name, path: `/${user.name}` },
@@ -28,6 +40,11 @@ export default function Transactions() {
     //syncTransactions() // commented out during development
   }, []);
 
+  function editTransaction(transaction) {
+    setTransaction(transaction)
+    onModalOpen()
+  }
+
   function getColorShard(area_id) {
     var color = '#EDEDED'
     if (area_id)
@@ -36,7 +53,7 @@ export default function Transactions() {
   }
 
   function areaName(area_id) {
-    if (!area_id) return 'N/A'
+    if (!area_id) return 'Unassigned'
     return areas.filter(a => a.id == area_id)[0].name
   }
 
@@ -70,7 +87,7 @@ export default function Transactions() {
                   {areaName(t.area_id)}
                 </Text>
               </Flex>
-              <Text fontSize="xl" fontWeight="bold" textAlign="right" width="9%">{t.amount}</Text>
+              <Text fontSize="xl" fontWeight="bold" textAlign="right" width="9%">${t.amount}</Text>
             </Flex>
             <Box py="3" pl="3">
               <Flex alignItems="center" mb="1">
@@ -87,9 +104,11 @@ export default function Transactions() {
                       : <Text fontSize="xl" color="#D3D3D3">Edit to add memo...</Text>
                   }
                 </Box>
-                <IconButton icon={<EditIcon />}
+                <IconButton
+                  icon={<EditIcon />}
                   size="sm"
-                  variant="outline" />
+                  variant="outline"
+                  onClick={() => editTransaction(t)} />
               </Flex>
             </Box>
           </Box>
@@ -114,6 +133,7 @@ export default function Transactions() {
             ? LoadingList()
             : TransactionsTable()
       }
+      <EditTransactionModal transaction={transaction} isModalOpen={isModalOpen} onModalClose={onModalClose} />
     </Box>
   )
 }

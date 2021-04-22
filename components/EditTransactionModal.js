@@ -1,5 +1,4 @@
 import { useState, useRef } from 'react'
-import { EditIcon } from '@chakra-ui/icons'
 import {
   useDisclosure,
   Modal,
@@ -23,17 +22,13 @@ import {
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
 
-export default function EditUserModal({ user }) {
-  const { isOpen, onOpen, onClose } = useDisclosure(
+export default function EditTransactionModal({ transaction, isModalOpen, onModalClose }) {
+  const { isOpen: isAlertOpen, onOpen: onAlertOpen, onClose: onAlertClose } = useDisclosure(
     {
-      onOpen: () => {
-        setName(user.name)
-      }
+      
     })
   const [name, setName] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [isAlertOpen, setIsAlertOpen] = React.useState(false)
-  const onAlertClose = () => setIsAlertOpen(false)
   const cancelRef = useRef()
   const [deleting, setDeleting] = useState(false)
 
@@ -41,21 +36,21 @@ export default function EditUserModal({ user }) {
     setSubmitting(true)
     e.preventDefault()
     try {
-      const res = await fetch('/api/user/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: user.id,
-          name
-        }),
-      })
+      // const res = await fetch('/api/user/update', {
+      //   method: 'POST',
+      //   headers: {
+      //     'Content-Type': 'application/json',
+      //   },
+      //   body: JSON.stringify({
+      //     id: user.id,
+      //     name
+      //   }),
+      // })
       setSubmitting(false)
-      onClose()
-      mutate('/api/user/get-all')
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
+      onModalClose()
+      // mutate('/api/user/get-all')
+      // const json = await res.json()
+      // if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }
@@ -65,15 +60,15 @@ export default function EditUserModal({ user }) {
     setDeleting(true)
     e.preventDefault()
     try {
-      const res = await fetch(`/api/user/delete?id=${user.id}`, {
-        method: 'POST'
-      })
+      // const res = await fetch(`/api/user/delete?id=${user.id}`, {
+      //   method: 'POST'
+      // })
       setDeleting(false)
       onAlertClose()
-      onClose()
-      mutate('/api/user/get-all')
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
+      onModalClose()
+      // mutate('/api/user/get-all')
+      // const json = await res.json()
+      // if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }
@@ -81,16 +76,9 @@ export default function EditUserModal({ user }) {
 
   return (
     <>
-      <IconButton
-        icon={<EditIcon />}
-        size="sm"
-        variant="outline"
-        onClick={onOpen}
-      />
-
       <Modal
-        isOpen={isOpen}
-        onClose={onClose}
+        isOpen={isModalOpen}
+        onClose={onModalClose}
         size="md"
       >
         <ModalOverlay />
@@ -99,10 +87,10 @@ export default function EditUserModal({ user }) {
             <ModalCloseButton />
             <ModalBody pb={6}>
               <FormControl my="1.15rem">
-                <FormLabel>User name</FormLabel>
+                <FormLabel>Transaction name</FormLabel>
                 <Input
-                  placeholder="User name"
-                  value={name}
+                  placeholder="Transaction name"
+                  value={transaction.name}
                   onChange={(e) => setName(e.target.value)}
                 />
               </FormControl>
@@ -111,14 +99,14 @@ export default function EditUserModal({ user }) {
             <ModalFooter>
               <Button disabled={submitting || deleting}
                 colorScheme="red" mr={3}
-                onClick={() => setIsAlertOpen(true)}>
+                onClick={onAlertOpen}>
                 Delete
               </Button>
               <Spacer />
               <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Saving ...' : 'Save'}
               </Button>
-              <Button onClick={onClose}>Cancel</Button>
+              <Button onClick={onModalClose}>Cancel</Button>
             </ModalFooter>
           </form>
         </ModalContent>

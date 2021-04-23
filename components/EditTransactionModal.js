@@ -26,7 +26,6 @@ import {
 } from "@chakra-ui/react"
 import { useAreas } from '../lib/swr-hooks'
 import { mutate } from 'swr'
-import moment from 'moment';
 
 export default function EditTransactionModal({ transaction, isModalOpen, onModalClose }) {
   const {
@@ -34,6 +33,10 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
     onOpen: onAlertOpen,
     onClose: onAlertClose
   } = useDisclosure()
+  const [isHidden, setIsHidden] = useState(false)
+  const [isNotCash, setIsNotCash] = useState(false)
+  const [isSplitParent, setIsSplitParent] = useState(false)
+  const [isSplitChild, setIsSplitChild] = useState(false)
   const [name, setName] = useState('')
   const [amount, setAmount] = useState('')
   const [area, setArea] = useState('')
@@ -45,6 +48,10 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
+    setIsHidden(!!transaction.hidden)
+    setIsNotCash(!transaction.cash)
+    setIsSplitParent(!!transaction.split && !transaction.parent_id)
+    setIsSplitChild(!!transaction.split && !!transaction.parent_id)
     setName(transaction.name)
     setAmount(transaction.amount)
     const assignedArea = transaction.area_id ? transaction.area_id : ''
@@ -110,6 +117,7 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
               <FormControl mb="4">
                 <FormLabel>Name</FormLabel>
                 <Input
+                  isDisabled={isNotCash && !isSplitChild}
                   placeholder="Paradise Zoanthids"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -118,7 +126,7 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
               <FormControl mb="4">
                 <FormLabel>Amount</FormLabel>
                 <NumberInput
-                  isDisabled={true}
+                  isDisabled={isNotCash && !isSplitChild}
                   precision={2}
                   defaultValue={amount}>
                   <NumberInputField
@@ -155,13 +163,14 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
                   selectedDate={date}
                   onChange={d => setDate(d)}
                   showPopperArrow={true}
+                  disabled={isNotCash}
                 />
               </FormControl>
 
               <FormControl mb="4">
                 <FormLabel>Memo</FormLabel>
                 <Textarea
-                  placeholder="Rewarding myself"
+                  placeholder="Click to enter memo"
                   value={memo}
                   onChange={(e) => setMemo(e.target.value)}
                 />
@@ -169,11 +178,51 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
             </ModalBody>
 
             <ModalFooter>
-              <Button disabled={submitting || deleting}
-                colorScheme="red" mr={3}
-                onClick={onAlertOpen}>
-                Delete
-              </Button>
+              {
+                (!isNotCash || isSplitChild) &&
+                <Button disabled={submitting || deleting}
+                  colorScheme="red" 
+                  mr={3}
+                  onClick={onAlertOpen}>
+                  Delete
+                </Button>
+              }
+              {
+                (isNotCash && !isSplitParent && !isSplitChild) &&
+                <Button disabled={submitting || deleting}
+                  colorScheme="purple"
+                  mr={3}
+                >
+                  Split
+                </Button>
+              }
+              {
+                (!isHidden && isNotCash && !isSplitParent && !isSplitChild) && 
+                <Button disabled={submitting || deleting}
+                  colorScheme="yellow"
+                  mr={3}
+                >
+                  Hide
+                </Button>
+              }
+              {
+                isHidden && 
+                <Button disabled={submitting || deleting}
+                  colorScheme="yellow"
+                  mr={3}
+                >
+                  Show
+                </Button>
+              }
+              {
+                (isSplitParent || isSplitChild) &&
+                <Button disabled={submitting || deleting}
+                  colorScheme="purple"
+                  mr={3}
+                >
+                  Undo Split
+                </Button>
+              }
               <Spacer />
               <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Saving ...' : 'Save'}
@@ -194,7 +243,7 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
         <AlertDialogOverlay>
           <AlertDialogContent>
             <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete User
+              Delete Transaction
             </AlertDialogHeader>
 
             <AlertDialogBody>

@@ -37,6 +37,11 @@
   outline: 0;
 }
 
+.react-datepicker__input-container > input:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 .react-datepicker__navigation--next--with-time:not(.react-datepicker__navigation--next--with-today-button) {
   right: 90px;
 }

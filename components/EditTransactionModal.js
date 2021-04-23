@@ -46,9 +46,9 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
 
   useEffect(() => {
     setName(transaction.name)
-    setAmount(69)//transaction.amount)
-    console.log(typeof(transaction.amount))
-    setArea(transaction.area)
+    setAmount(transaction.amount)
+    const assignedArea = transaction.area_id ? transaction.area_id : ''
+    setArea(assignedArea)
     setDate(new Date(transaction.date))
     setMemo(transaction.memo ? transaction.memo : '')
   }, [transaction])
@@ -106,7 +106,7 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
         <ModalContent>
           <form onSubmit={submitHandler}>
             <ModalCloseButton />
-            <ModalBody pb={6}>
+            <ModalBody py={6}>
               <FormControl mb="4">
                 <FormLabel>Name</FormLabel>
                 <Input
@@ -117,7 +117,10 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
               </FormControl>
               <FormControl mb="4">
                 <FormLabel>Amount</FormLabel>
-                <NumberInput precision={2}>
+                <NumberInput
+                  isDisabled={true}
+                  precision={2}
+                  defaultValue={amount}>
                   <NumberInputField
                     placeholder="6.17"
                     value={amount}
@@ -130,6 +133,7 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
                 <FormControl mb="4">
                   <FormLabel>Area</FormLabel>
                   <Select
+                    placeholder='Unassigned'
                     value={area}
                     onChange={(e) => setArea(e.target.value)}
                   >

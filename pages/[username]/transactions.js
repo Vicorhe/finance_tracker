@@ -4,13 +4,14 @@ import { UserContext } from "../../context"
 import { mutate } from 'swr'
 import { useAreas, useTransactions } from "../../lib/swr-hooks"
 import Nav from '../../components/Nav'
-import EditTransactionModal from '../../components/EditTransactionModal'
-import { useDisclosure, Box, Button, Heading, Text, Flex, Select, IconButton, Badge } from "@chakra-ui/react"
-import { EditIcon } from '@chakra-ui/icons'
 import AddCashTransactionModal from '../../components/AddCashTransactionModal'
+import EditTransactionModal from '../../components/EditTransactionModal'
+import AddSplitTransactionsModal from '../../components/AddSplitTransactionsModal'
 import ColorShard from '../../components/ColorShard'
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
+import { useDisclosure, Box, Button, Heading, Text, Flex, Select, IconButton, Badge } from "@chakra-ui/react"
+import { EditIcon } from '@chakra-ui/icons'
 import utilStyles from '../../styles/utils.module.scss'
 const moment = require('moment')
 
@@ -21,15 +22,15 @@ export default function Transactions() {
   const [syncing, setSyncing] = useState(false)
   const [transaction, setTransaction] = useState({})
   const {
-    isOpen: isModalOpen,
-    onOpen: onModalOpen,
-    onClose: onModalClose
-  } = useDisclosure(
-    {
-      // onOpen: () => {
-      //   setName(user.name)
-      // }
-    })
+    isOpen: isEditModalOpen,
+    onOpen: onEditModalOpen,
+    onClose: onEditModalClose
+  } = useDisclosure()
+  const {
+    isOpen: isAddSplitsModalOpen,
+    onOpen: onAddSplitsModalOpen,
+    onClose: onAddSplitsModalClose
+  } = useDisclosure()
 
   const breadcrumbs = [
     { name: user.name, path: `/${user.name}` },
@@ -42,7 +43,16 @@ export default function Transactions() {
 
   function editTransaction(transaction) {
     setTransaction(transaction)
-    onModalOpen()
+    onEditModalOpen()
+  }
+
+  function handleCreateSplit() {
+    onEditModalClose()
+    onAddSplitsModalOpen()
+  }
+
+  function handleUndoSplit() {
+
   }
 
   function getColorShard(area_id) {
@@ -134,7 +144,15 @@ export default function Transactions() {
             ? LoadingList()
             : TransactionsTable()
       }
-      <EditTransactionModal transaction={transaction} isModalOpen={isModalOpen} onModalClose={onModalClose} />
+      <AddSplitTransactionsModal
+        parent={transaction}
+        isModalOpen={isAddSplitsModalOpen}
+        onModalClose={onAddSplitsModalClose} />
+      <EditTransactionModal
+        transaction={transaction}
+        isModalOpen={isEditModalOpen}
+        onModalClose={onEditModalClose}
+        handleSplit={handleCreateSplit} />
     </Box>
   )
 }

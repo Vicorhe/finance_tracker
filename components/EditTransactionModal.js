@@ -29,7 +29,7 @@ import { useAreas } from '../lib/swr-hooks'
 import { mutate } from 'swr'
 import moment from 'moment'
 
-export default function EditTransactionModal({ transaction, isModalOpen, onModalClose }) {
+export default function EditTransactionModal({ transaction, isModalOpen, onModalClose, handleSplit }) {
   const { user } = useContext(UserContext)
   const {
     isOpen: isAlertOpen,
@@ -219,7 +219,7 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
                 <Button disabled={submitting || deleting}
                   colorScheme="purple"
                   mr={3}
-                >
+                  onClick={handleSplit}>
                   Split
                 </Button>
               }

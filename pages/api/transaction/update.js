@@ -1,21 +1,21 @@
 import { query } from '../../../lib/db'
 
 export default async function handler(req, res) {
-  const { id, area_id, description } = req.body
+  const { id, name, area_id, amount, date, description } = req.body
   try {
-    if (!id) {
+    if (!id || !name || !amount || !date ) {
       return res
         .status(400)
-        .json({ message: '`id` is required' })
+        .json({ message: '`name`, `amount`, and `date` are required' })
     }
 
     const results = await query(
       `
       UPDATE transactions_table
-      SET area_id = ?, description = ?
+      SET name = ?, area_id = ?, amount = ?, date = ?, description = ?
       WHERE id = ?
       `,
-      [area_id, description, id]
+      [name, area_id, amount, date, description, id]
     )
     return res.json(results)
   } catch (e) {

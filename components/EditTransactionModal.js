@@ -109,6 +109,21 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
     }
   }
 
+  async function handleToggleVisibility(e) {
+    e.preventDefault()
+    try {
+      const res = await fetch(`/api/transaction/toggle-visibility?id=${transaction.id}`, {
+        method: 'POST'
+      })
+      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      const json = await res.json()
+      if (!res.ok) throw Error(json.message)
+      setIsHidden(!isHidden)
+    } catch (e) {
+      throw Error(e.message)
+    }
+  }
+
   return (
     <>
       <Modal
@@ -182,13 +197,18 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
                   onChange={(e) => setMemo(e.target.value)}
                 />
               </FormControl>
+
+              {
+                isHidden &&
+                <FormLabel>Status: Hidden</FormLabel>
+              }
             </ModalBody>
 
             <ModalFooter>
               {
                 (!isNotCash || isSplitChild) &&
                 <Button disabled={submitting || deleting}
-                  colorScheme="red" 
+                  colorScheme="red"
                   mr={3}
                   onClick={onAlertOpen}>
                   Delete
@@ -204,20 +224,20 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
                 </Button>
               }
               {
-                (!isHidden && isNotCash && !isSplitParent && !isSplitChild) && 
+                (!isHidden && isNotCash && !isSplitParent && !isSplitChild) &&
                 <Button disabled={submitting || deleting}
                   colorScheme="yellow"
                   mr={3}
-                >
+                  onClick={handleToggleVisibility}>
                   Hide
                 </Button>
               }
               {
-                isHidden && 
+                isHidden &&
                 <Button disabled={submitting || deleting}
                   colorScheme="yellow"
                   mr={3}
-                >
+                  onClick={handleToggleVisibility}>
                   Show
                 </Button>
               }

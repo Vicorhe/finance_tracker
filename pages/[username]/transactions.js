@@ -70,10 +70,11 @@ export default function Transactions() {
         <Flex alignItems="center" p="3">
           <Heading fontSize="lg" mr="3" fontWeight="extrabold">SHOWING</Heading>
           <Select size="md" maxWidth="225px">
-            <option value="option1">Unassigned</option>
-            <option value="option2">Hidden</option>
-            <option value="option3">Cash Transactions</option>
-            <option value="option4">Splits</option>
+            <option value="option1">All</option>
+            <option value="option2">Unassigned</option>
+            <option value="option3">Hidden</option>
+            <option value="option4">Cash Transactions</option>
+            <option value="option5">Splits</option>
           </Select>
         </Flex>
         {transactions.map(t => (

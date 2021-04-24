@@ -113,6 +113,7 @@ export default function AddCashTransactionModal() {
                 <FormControl mb="4">
                   <FormLabel>Area</FormLabel>
                   <Select
+                    placeholder='Unassigned'
                     value={area}
                     onChange={(e) => setArea(e.target.value)}
                   >

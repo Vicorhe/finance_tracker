@@ -27,6 +27,7 @@ import {
 } from "@chakra-ui/react"
 import { useAreas } from '../lib/swr-hooks'
 import { mutate } from 'swr'
+import moment from 'moment'
 
 export default function EditTransactionModal({ transaction, isModalOpen, onModalClose }) {
   const { user } = useContext(UserContext)
@@ -66,21 +67,25 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
     setSubmitting(true)
     e.preventDefault()
     try {
-      // const res = await fetch('/api/user/update', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     id: user.id,
-      //     name
-      //   }),
-      // })
+      const res = await fetch('/api/transaction/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: transaction.id,
+          name,
+          area_id: area,
+          amount,
+          date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
+          memo
+        }),
+      })
       setSubmitting(false)
       onModalClose()
-      // mutate(`/api/transaction/get-all?user_id=${user.id}`)
-      // const json = await res.json()
-      // if (!res.ok) throw Error(json.message)
+      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      const json = await res.json()
+      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

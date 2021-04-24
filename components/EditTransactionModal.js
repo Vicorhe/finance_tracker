@@ -1,4 +1,5 @@
-import { useState, useEffect, useRef } from 'react'
+import { useContext, useEffect, useState, useRef } from 'react'
+import { UserContext } from '../context'
 import DatePicker from "../components/DatePicker";
 import {
   useDisclosure,
@@ -28,6 +29,7 @@ import { useAreas } from '../lib/swr-hooks'
 import { mutate } from 'swr'
 
 export default function EditTransactionModal({ transaction, isModalOpen, onModalClose }) {
+  const { user } = useContext(UserContext)
   const {
     isOpen: isAlertOpen,
     onOpen: onAlertOpen,
@@ -76,7 +78,7 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
       // })
       setSubmitting(false)
       onModalClose()
-      // mutate('/api/user/get-all')
+      // mutate(`/api/transaction/get-all?user_id=${user.id}`)
       // const json = await res.json()
       // if (!res.ok) throw Error(json.message)
     } catch (e) {
@@ -88,15 +90,15 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
     setDeleting(true)
     e.preventDefault()
     try {
-      // const res = await fetch(`/api/user/delete?id=${user.id}`, {
-      //   method: 'POST'
-      // })
+      const res = await fetch(`/api/transaction/delete?id=${transaction.id}`, {
+        method: 'POST'
+      })
       setDeleting(false)
       onAlertClose()
       onModalClose()
-      // mutate('/api/user/get-all')
-      // const json = await res.json()
-      // if (!res.ok) throw Error(json.message)
+      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      const json = await res.json()
+      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

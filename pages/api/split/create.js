@@ -57,13 +57,13 @@ export default async function handler(req, res) {
     })
 
     await Promise.all(pendingQueries)
-      .then(_ => {
-        await updateParentSplitStatus(parent_id)
-      })
+    updateParentSplitStatus(parent_id)
+
     res.status(200).json("good split")
   } catch (e) {
-    await deleteSplits(parent_id)
-    await resetParent(parent_id)
-    res.status(500).json({ message: `error in creating split: ${err.message}` })
+    deleteSplits(parent_id)
+    resetParent(parent_id)
+    
+    res.status(500).json({ message: `error in creating split: ${e.message}` })
   }
 }

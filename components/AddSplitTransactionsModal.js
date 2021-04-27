@@ -30,10 +30,6 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
   const { user } = useContext(UserContext)
   const [remainingAmount, setRemainingAmount] = useState('')
   const [splits, setSplits] = useState([])
-  const [name, setName] = useState('')
-  const [amount, setAmount] = useState('')
-  const [area, setArea] = useState('')
-  const [memo, setMemo] = useState('')
   const [submitting, setSubmitting] = useState(false)
   const { areas, isAreasError } = useAreas();
 
@@ -52,20 +48,26 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
   }
 
   function addSplit() {
-    setSplits([...splits, getBlankSplit()])
+    setSplits(splits.concat([
+      getBlankSplit()
+    ]))
+  }
+
+  function removeSplit(index) {
+    setSplits(splits.filter((_, idx) => index !== idx))
   }
 
   const updateFieldChanged = index => e => {
+    const newSplits = splits.map((split, idx) => {
+      if (idx !== index) return split;
+      return { ...split, [e.target.name]: e.target.value };
+    });
 
-    console.log('index: ' + index);
-    console.log('property name: '+ e.target.name);
-    let newSplits = [...splits]; // copying the old datas array
-    newSplits[index] = e.target.value; // replace e.target.value with whatever you want to change it to
-
-    setSplits(newSplits); // ??
-}
+    setSplits(newSplits);
+  }
 
   async function submitHandler(e) {
+    console.log(splits)
     setSubmitting(true)
     e.preventDefault()
     try {
@@ -84,7 +86,7 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
       //   }),
       // })
       setSubmitting(false)
-      onClose()
+      onModalClose()
       // mutate(`/api/transaction/get-all?user_id=${user.id}`)
       // const json = await res.json()
       // if (!res.ok) throw Error(json.message)
@@ -139,7 +141,7 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                           <FormLabel>Name</FormLabel>
                           <Input
                             ref={initialRef}
-                            placeholder="Paradise Zoanthids"
+                            placeholder={`Split #${idx + 1} Name`}
                             value={s.name}
                             name="name"
                             onChange={updateFieldChanged(idx)}
@@ -149,8 +151,8 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                           <FormLabel>Amount</FormLabel>
                           <NumberInput precision={2}>
                             <NumberInputField
-                              placeholder="6.17"
-                              value={amount}
+                              placeholder={`Split #${idx + 1} Amount`}
+                              value={s.amount}
                               name="amount"
                               onChange={updateFieldChanged(idx)}
                             />
@@ -161,9 +163,9 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                           <FormControl mb="4">
                             <FormLabel>Area</FormLabel>
                             <Select
-                              placeholder='Unassigned'
-                              value={area}
-                              name="area"
+                              placeholder={`Split #${idx + 1} Area`}
+                              value={s.area_id}
+                              name="area_id"
                               onChange={updateFieldChanged(idx)}
                             >
                               {
@@ -180,8 +182,8 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                         <FormControl mb="4">
                           <FormLabel>Memo</FormLabel>
                           <Textarea
-                            placeholder="Rewarding myself"
-                            value={memo}
+                            placeholder={`Split #${idx + 1} Memo`}
+                            value={s.memo}
                             name="memo"
                             onChange={updateFieldChanged(idx)}
                           />

@@ -5,7 +5,6 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalFooter,
   ModalBody,
   ModalCloseButton,
@@ -29,6 +28,7 @@ import moment from 'moment';
 export default function AddSplitTransactionsModal({ parent, isModalOpen, onModalClose }) {
   const { user } = useContext(UserContext)
   const [remainingAmount, setRemainingAmount] = useState('')
+  const [tabIndex, setTabIndex] = useState(1)
   const [splits, setSplits] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const { areas, isAreasError } = useAreas();
@@ -36,7 +36,8 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
   useEffect(() => {
     setRemainingAmount(parent.amount)
     setSplits([getBlankSplit()])
-  }, [parent])
+    setTabIndex(0)
+  }, [parent, isModalOpen])
 
   function getBlankSplit() {
     return {
@@ -47,14 +48,21 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
     }
   }
 
+  const handleTabsChange = (index) => {
+    setTabIndex(index)
+  }
+
   function addSplit() {
     setSplits(splits.concat([
       getBlankSplit()
     ]))
+    setTabIndex(splits.length)
   }
 
   function removeSplit(index) {
     setSplits(splits.filter((_, idx) => index !== idx))
+    if (index >= splits.length - 1) 
+      setTabIndex(index - 1)
   }
 
   const updateFieldChanged = index => e => {
@@ -109,8 +117,11 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
         <ModalContent>
           <form onSubmit={submitHandler}>
             <ModalCloseButton />
-            <ModalBody py={6}>
-              <Tabs>
+            <ModalBody pt={6}>
+              <Tabs
+                index={tabIndex}
+                onChange={handleTabsChange}
+              >
                 <Box>
                   <Heading fontSize="2xl">{parent.name}</Heading>
                   <Flex alignItems="center" m={1}>
@@ -136,7 +147,7 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                 <TabPanels>
                   {
                     splits.map((s, idx) => (
-                      <TabPanel key={idx}>
+                      <TabPanel key={idx} pb="0">
                         <FormControl mb="4">
                           <FormLabel>Name</FormLabel>
                           <Input
@@ -178,7 +189,6 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                             </Select>
                           </FormControl>
                         }
-
                         <FormControl mb="4">
                           <FormLabel>Memo</FormLabel>
                           <Textarea
@@ -188,6 +198,13 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                             onChange={updateFieldChanged(idx)}
                           />
                         </FormControl>
+                        <Button
+                          isDisabled={splits.length < 2}
+                          colorScheme="red"
+                          onClick={() => removeSplit(idx)}
+                        >
+                          Remove Split
+                          </Button>
                       </TabPanel>
                     ))
                   }

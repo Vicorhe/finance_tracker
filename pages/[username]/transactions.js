@@ -103,7 +103,8 @@ export default function Transactions() {
             <Box py="3" pl="3">
               <Flex alignItems="center" mb="1">
                 <Heading fontSize="md" fontWeight="extrabold" mr="2">MEMO</Heading>
-                {!!t.split && <Badge variant="subtle" colorScheme="purple" mr="2">Split</Badge>}
+                {(!!t.split && !!t.parent_id) && <Badge variant="subtle" colorScheme="purple" mr="2">Split Child</Badge>}
+                {(!!t.split && !t.parent_id) && <Badge variant="subtle" colorScheme="purple" mr="2">Split Parent</Badge>}
                 {!!t.hidden && <Badge variant="subtle" colorScheme="gray" mr="2">Hidden</Badge>}
                 {!!t.cash && <Badge variant="subtle" colorScheme="green">Cash</Badge>}
               </Flex>

@@ -27,14 +27,14 @@ import moment from 'moment';
 
 export default function AddSplitTransactionsModal({ parent, isModalOpen, onModalClose }) {
   const { user } = useContext(UserContext)
-  const [remainingAmount, setRemainingAmount] = useState('')
+  const [parentAmount, setParentAmount] = useState('')
   const [tabIndex, setTabIndex] = useState(1)
   const [splits, setSplits] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const { areas, isAreasError } = useAreas();
 
   useEffect(() => {
-    setRemainingAmount(parent.amount)
+    setParentAmount(parent.amount)
     setSplits([getBlankSplit()])
     setTabIndex(0)
   }, [parent, isModalOpen])
@@ -46,6 +46,18 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
       area_id: '',
       memo: ''
     }
+  }
+
+  function sumSplits() {
+    let sum = 0
+    for (var i = 0; i < splits.length; i++) {
+      let parsed = parseFloat(splits[i].amount)
+      if (!isNaN(parsed)) {
+        sum += parsed
+      }
+    }
+
+    return sum
   }
 
   const handleTabsChange = (index) => {
@@ -61,7 +73,7 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
 
   function removeSplit(index) {
     setSplits(splits.filter((_, idx) => index !== idx))
-    if (index >= splits.length - 1) 
+    if (index >= splits.length - 1)
       setTabIndex(index - 1)
   }
 
@@ -126,7 +138,12 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                   <Heading fontSize="2xl">{parent.name}</Heading>
                   <Flex alignItems="center" m={1}>
                     <Text fontWeight="semibold">REMAINING: </Text>
-                    <Heading fontSize="2xl" pl={1}>${remainingAmount}</Heading>
+                    <Heading
+                      fontSize="2xl"
+                      color={(parentAmount - sumSplits()) === 0 ? "black" : "red"}
+                      pl={1}>
+                      ${parentAmount - sumSplits()}
+                    </Heading>
                   </Flex>
 
                 </Box>
@@ -160,14 +177,13 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                         </FormControl>
                         <FormControl mb="4">
                           <FormLabel>Amount</FormLabel>
-                          <NumberInput precision={2}>
-                            <NumberInputField
-                              placeholder={`Split #${idx + 1} Amount`}
-                              value={s.amount}
-                              name="amount"
-                              onChange={updateFieldChanged(idx)}
-                            />
-                          </NumberInput>
+                          <Input
+                            placeholder={`Split #${idx + 1} Amount`}
+                            value={s.amount}
+                            type="number"
+                            name="amount"
+                            onChange={updateFieldChanged(idx)}
+                          />
                         </FormControl>
                         {
                           !!areas &&
@@ -214,7 +230,7 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
             </ModalBody>
 
             <ModalFooter>
-              <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
+              <Button disabled={submitting || ((parentAmount - sumSplits()) !== 0)} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Creating ...' : 'Create Splits'}
               </Button>
               <Button onClick={onModalClose}>Cancel</Button>

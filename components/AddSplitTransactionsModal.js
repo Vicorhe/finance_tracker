@@ -56,7 +56,6 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
         sum += parsed
       }
     }
-
     return sum
   }
 
@@ -91,25 +90,23 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
     setSubmitting(true)
     e.preventDefault()
     try {
-      // const res = await fetch('/api/cash/create', {
-      //   method: 'POST',
-      //   headers: {
-      //     'Content-Type': 'application/json',
-      //   },
-      //   body: JSON.stringify({
-      //     user_id: user.id,
-      //     name,
-      //     area_id: area,
-      //     amount,
-      //     date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
-      //     memo
-      //   }),
-      // })
+      const res = await fetch('/api/split/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          parent_id: parent.id,
+          date: moment(parent.date).format('YYYY-MM-DD HH:mm:ss'),
+          splits
+        }),
+      })
       setSubmitting(false)
       onModalClose()
-      // mutate(`/api/transaction/get-all?user_id=${user.id}`)
-      // const json = await res.json()
-      // if (!res.ok) throw Error(json.message)
+      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      const json = await res.json()
+      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

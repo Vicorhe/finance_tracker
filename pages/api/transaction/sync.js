@@ -200,7 +200,7 @@ export default async function handler(req, res) {
     await handleTransactionsUpdate(item)
   })
   await Promise.all(pendingUpdates);
-  res.status(200).json("good stuff")
+  res.status(200).json({ message: "good stuff" })
 }
 
 

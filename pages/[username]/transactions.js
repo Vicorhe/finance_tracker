@@ -21,6 +21,7 @@ export default function Transactions() {
   const { transactions, isTransactionsError } = useTransactions(user.id)
   const [syncing, setSyncing] = useState(false)
   const [transaction, setTransaction] = useState({})
+  const [activeSplits, setActiveSplits] = useState({})
   const {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,
@@ -43,7 +44,28 @@ export default function Transactions() {
 
   function editTransaction(transaction) {
     setTransaction(transaction)
-    onEditModalOpen()
+    if (transaction.split) {
+      if (!transaction.parent_id) {
+        getSplits(transaction.id)
+      } else {
+        getTransaction(transaction.parent_id)
+        getSplits(transaction.parent_id)
+      }
+      // open edit split modal
+    }
+    else {
+      onEditModalOpen()
+    }
+  }
+
+  async function getTransaction(id) {
+    const res = await axios.get(`http://localhost:3000/api/transaction/get?id=${id}`);
+    setTransaction(res.data[0])
+  }
+
+  async function getSplits(parent_id) {
+    const res = await axios.get(`http://localhost:3000/api/split/get-all?parent_id=${parent_id}`);
+    setActiveSplits(res.data)
   }
 
   function handleCreateSplit() {

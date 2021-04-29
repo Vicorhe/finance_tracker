@@ -28,6 +28,7 @@ import moment from 'moment';
 export default function AddSplitTransactionsModal({ parent, isModalOpen, onModalClose }) {
   const { user } = useContext(UserContext)
   const [parentAmount, setParentAmount] = useState('')
+  const [errMessage, setErrMessage] = useState('')
   const [tabIndex, setTabIndex] = useState(1)
   const [splits, setSplits] = useState([])
   const [submitting, setSubmitting] = useState(false)
@@ -35,6 +36,7 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
 
   useEffect(() => {
     setParentAmount(parent.amount)
+    setErrMessage('')
     setSplits([getBlankSplit()])
     setTabIndex(0)
   }, [parent, isModalOpen])
@@ -60,10 +62,12 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
   }
 
   const handleTabsChange = (index) => {
+    setErrMessage('')
     setTabIndex(index)
   }
 
   function addSplit() {
+    setErrMessage('')
     setSplits(splits.concat([
       getBlankSplit()
     ]))
@@ -71,12 +75,14 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
   }
 
   function removeSplit(index) {
+    setErrMessage('')
     setSplits(splits.filter((_, idx) => index !== idx))
     if (index >= splits.length - 1)
       setTabIndex(index - 1)
   }
 
   const updateFieldChanged = index => e => {
+    setErrMessage('')
     const newSplits = splits.map((split, idx) => {
       if (idx !== index) return split;
       return { ...split, [e.target.name]: e.target.value };
@@ -85,10 +91,27 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
     setSplits(newSplits);
   }
 
+  function validForm() {
+    setErrMessage('')
+    for (var i = 0; i < splits.length; i++) {
+      let s = splits[i]
+      if (!s.amount) {
+        setErrMessage('Please make sure all splits have an `amount` set.')
+        return false
+      }
+      if (!s.name) {
+        setErrMessage('Please make sure all splits have a `name` set.')
+        return false
+      }
+    }
+    return true
+  }
+
   async function submitHandler(e) {
-    console.log(splits)
-    setSubmitting(true)
     e.preventDefault()
+    if (!validForm())
+      return
+    setSubmitting(true)
     try {
       const res = await fetch('/api/split/create', {
         method: 'POST',
@@ -124,7 +147,9 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
       >
         <ModalOverlay />
         <ModalContent>
-          <form onSubmit={submitHandler}>
+          <form
+            onSubmit={submitHandler}
+          >
             <ModalCloseButton />
             <ModalBody pt={6}>
               <Tabs
@@ -142,6 +167,12 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                       ${parentAmount - sumSplits()}
                     </Heading>
                   </Flex>
+                  {
+                    !!errMessage &&
+                    <Box p="3" mb="2" border="2px red solid">
+                      <Text color="red">{errMessage}</Text>
+                    </Box>
+                  }
 
                 </Box>
                 <TabList alignItems="center">

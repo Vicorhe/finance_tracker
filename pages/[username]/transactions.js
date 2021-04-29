@@ -22,7 +22,7 @@ export default function Transactions() {
   const { transactions, isTransactionsError } = useTransactions(user.id)
   const [syncing, setSyncing] = useState(false)
   const [transaction, setTransaction] = useState({})
-  const [activeSplits, setActiveSplits] = useState({})
+  const [activeSplits, setActiveSplits] = useState([])
   const {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,

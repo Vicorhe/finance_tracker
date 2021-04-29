@@ -35,9 +35,9 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
   useEffect(() => {
     setParentAmount(parent.amount)
     setErrMessage('')
-    setSplits([getBlankSplit()])
+    setSplits(activeSplits)
     setTabIndex(0)
-  }, [parent, isModalOpen])
+  }, [parent, activeSplits, isModalOpen])
 
   function getBlankSplit() {
     return {
@@ -109,36 +109,33 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
     e.preventDefault()
     if (!validForm())
       return
-    setSubmitting(true)
-    try {
-      const res = await fetch('/api/split/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: user.id,
-          parent_id: parent.id,
-          date: moment(parent.date).format('YYYY-MM-DD HH:mm:ss'),
-          splits
-        }),
-      })
-      setSubmitting(false)
-      onModalClose()
-      mutate(`/api/transaction/get-all?user_id=${user.id}`)
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
-    } catch (e) {
-      throw Error(e.message)
-    }
+    // setSubmitting(true)
+    // try {
+    //   const res = await fetch('/api/split/create', {
+    //     method: 'POST',
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({
+    //       user_id: user.id,
+    //       parent_id: parent.id,
+    //       date: moment(parent.date).format('YYYY-MM-DD HH:mm:ss'),
+    //       splits
+    //     }),
+    //   })
+    //   setSubmitting(false)
+    //   onModalClose()
+    //   mutate(`/api/transaction/get-all?user_id=${user.id}`)
+    //   const json = await res.json()
+    //   if (!res.ok) throw Error(json.message)
+    // } catch (e) {
+    //   throw Error(e.message)
+    // }
   }
-
-  const initialRef = React.useRef()
 
   return (
     <>
       <Modal
-        initialFocusRef={initialRef}
         isOpen={isModalOpen}
         onClose={onModalClose}
         size="3xl"
@@ -194,7 +191,6 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
                         <FormControl mb="4">
                           <FormLabel>Name</FormLabel>
                           <Input
-                            ref={initialRef}
                             placeholder={`Split #${idx + 1} Name`}
                             value={s.name}
                             name="name"
@@ -217,7 +213,7 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
                             <FormLabel>Area</FormLabel>
                             <Select
                               placeholder={`Split #${idx + 1} Area`}
-                              value={s.area_id}
+                              value={!!s.area_id ? s.area_id : ''}
                               name="area_id"
                               onChange={updateFieldChanged(idx)}
                             >
@@ -257,7 +253,7 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
 
             <ModalFooter>
               <Button disabled={submitting || ((parentAmount - sumSplits()) !== 0)} colorScheme="blue" mr={3} type="submit">
-                {submitting ? 'Creating ...' : 'Create Splits'}
+                {submitting ? 'Saving ...' : 'Save'}
               </Button>
               <Button onClick={onModalClose}>Cancel</Button>
             </ModalFooter>

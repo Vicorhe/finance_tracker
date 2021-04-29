@@ -7,6 +7,7 @@ import Nav from '../../components/Nav'
 import AddCashTransactionModal from '../../components/AddCashTransactionModal'
 import EditTransactionModal from '../../components/EditTransactionModal'
 import AddSplitTransactionsModal from '../../components/AddSplitTransactionsModal'
+import EditSplitTransactionsModal from '../../components/EditSplitTransactionsModal'
 import ColorShard from '../../components/ColorShard'
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
@@ -32,7 +33,11 @@ export default function Transactions() {
     onOpen: onAddSplitsModalOpen,
     onClose: onAddSplitsModalClose
   } = useDisclosure()
-
+  const {
+    isOpen: isEditSplitsModalOpen,
+    onOpen: onEditSplitsModalOpen,
+    onClose: onEditSplitsModalClose
+  } = useDisclosure()
   const breadcrumbs = [
     { name: user.name, path: `/${user.name}` },
     { name: "transactions", path: `/${user.name}/transactions` }
@@ -51,7 +56,7 @@ export default function Transactions() {
         getTransaction(transaction.parent_id)
         getSplits(transaction.parent_id)
       }
-      // open edit split modal
+      onEditSplitsModalOpen()
     }
     else {
       onEditModalOpen()
@@ -171,6 +176,11 @@ export default function Transactions() {
         parent={transaction}
         isModalOpen={isAddSplitsModalOpen}
         onModalClose={onAddSplitsModalClose} />
+      <EditSplitTransactionsModal
+        parent={transaction}
+        activeSplits={activeSplits}
+        isModalOpen={isEditSplitsModalOpen}
+        onModalClose={onEditSplitsModalClose} />
       <EditTransactionModal
         transaction={transaction}
         isModalOpen={isEditModalOpen}

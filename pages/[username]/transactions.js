@@ -20,6 +20,8 @@ export default function Transactions() {
   const { user } = useContext(UserContext)
   const { areas, isAreasError } = useAreas();
   const { transactions, isTransactionsError } = useTransactions(user.id)
+  const [displayedTransactions, setDisplayedTransactions] = useState([])
+  const [filterBy, setFilterBy] = useState('all')
   const [syncing, setSyncing] = useState(false)
   const [transaction, setTransaction] = useState({})
   const [activeSplits, setActiveSplits] = useState([])
@@ -46,6 +48,32 @@ export default function Transactions() {
   useEffect(() => {
     //syncTransactions() // commented out during development
   }, []);
+
+  useEffect(() => {
+    filterTransactions()
+  }, [transactions, filterBy])
+
+  function filterTransactions() {
+    if (!transactions)
+      return
+    switch (filterBy) {
+      case 'unassigned':
+        setDisplayedTransactions(transactions.filter(t => t.area_id === null))
+        break
+      case 'hidden':
+        setDisplayedTransactions(transactions.filter(t => !!t.hidden))
+        break
+      case 'cash':
+        setDisplayedTransactions(transactions.filter(t => !!t.cash))
+        break
+      case 'split':
+        setDisplayedTransactions(transactions.filter(t => !!t.split))
+        break
+      default:
+        setDisplayedTransactions(transactions ? transactions : [])
+        break
+    }
+  }
 
   function editTransaction(transaction) {
     setTransaction(transaction)
@@ -78,10 +106,6 @@ export default function Transactions() {
     onAddSplitsModalOpen()
   }
 
-  function handleUndoSplit() {
-
-  }
-
   function getColorShard(area_id) {
     var color = '#EDEDED'
     if (area_id)
@@ -106,15 +130,21 @@ export default function Transactions() {
       <Box>
         <Flex alignItems="center" p="3">
           <Heading fontSize="lg" mr="3" fontWeight="extrabold">SHOWING</Heading>
-          <Select size="md" maxWidth="225px">
-            <option value="option1">All</option>
-            <option value="option2">Unassigned</option>
-            <option value="option3">Hidden</option>
-            <option value="option4">Cash Transactions</option>
-            <option value="option5">Splits</option>
+          <Select
+            size="md"
+            maxWidth="225px"
+            disabled={!transactions}
+            value={filterBy}
+            onChange={(e) => setFilterBy(e.target.value)}
+          >
+            <option value="all">All</option>
+            <option value="unassigned">Unassigned</option>
+            <option value="hidden">Hidden</option>
+            <option value="cash">Cash Transactions</option>
+            <option value="split">Splits</option>
           </Select>
         </Flex>
-        {transactions.map(t => (
+        {displayedTransactions.map(t => (
           <Box key={t.id} pt="4" borderBottom="2px solid">
             <Flex alignItems="center">
               <Text fontSize="xl" width="16%">{moment(t.date).format("MMM DD, YYYY")}</Text>

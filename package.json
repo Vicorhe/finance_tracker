@@ -21,6 +21,7 @@
     "react-dom": "^16.7.0",
     "react-icons": "^4.2.0",
     "react-plaid-link": "^3.1.0",
+    "react-virtualized": "^9.22.3",
     "sass": "1.26.3",
     "serverless-mysql": "^1.5.4",
     "swr": "^0.4.2"

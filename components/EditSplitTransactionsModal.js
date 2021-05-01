@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useRef, useState } from 'react'
 import { useAreas } from '../lib/swr-hooks'
 import { UserContext } from '../context'
 import {
@@ -17,7 +17,15 @@ import {
   Text,
   Heading, Box, Flex,
   Tabs, TabList, TabPanels, Tab, TabPanel,
-  IconButton
+  IconButton,
+  Spacer,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  useDisclosure
 } from "@chakra-ui/react"
 import { AddIcon } from '@chakra-ui/icons'
 import { mutate } from 'swr'
@@ -31,6 +39,13 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
   const [splits, setSplits] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const { areas, isAreasError } = useAreas();
+  const {
+    isOpen: isAlertOpen,
+    onOpen: onAlertOpen,
+    onClose: onAlertClose
+  } = useDisclosure()
+  const cancelRef = useRef()
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     setParentAmount(parent.amount)
@@ -103,6 +118,24 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
       }
     }
     return true
+  }
+
+  async function handleDeleteSplits(e) {
+    setDeleting(true)
+    e.preventDefault()
+    try {
+      const res = await fetch(`/api/split/delete?parent_id=${parent.id}`, {
+        method: 'POST'
+      })
+      setDeleting(false)
+      onAlertClose()
+      onModalClose()
+      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      const json = await res.json()
+      if (!res.ok) throw Error(json.message)
+    } catch (e) {
+      throw Error(e.message)
+    }
   }
 
   async function submitHandler(e) {
@@ -252,6 +285,13 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
             </ModalBody>
 
             <ModalFooter>
+              <Button disabled={submitting || deleting}
+                colorScheme="red"
+                mr={3}
+                onClick={onAlertOpen}>
+                Undo Split
+              </Button>
+              <Spacer/>
               <Button disabled={submitting || ((parentAmount - sumSplits()) !== 0)} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Saving ...' : 'Save'}
               </Button>
@@ -260,6 +300,34 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
           </form>
         </ModalContent>
       </Modal>
+      <AlertDialog
+        isOpen={isAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onAlertClose}
+        size="sm"
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Undo Split Transaction
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You can't undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onAlertClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDeleteSplits} ml={3}>
+                Delete All Splits
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   )
 }

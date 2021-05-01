@@ -138,32 +138,37 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
     }
   }
 
-  async function submitHandler(e) {
+  async function handleSave(e) {
     e.preventDefault()
     if (!validForm())
       return
-    // setSubmitting(true)
-    // try {
-    //   const res = await fetch('/api/split/create', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       user_id: user.id,
-    //       parent_id: parent.id,
-    //       date: moment(parent.date).format('YYYY-MM-DD HH:mm:ss'),
-    //       splits
-    //     }),
-    //   })
-    //   setSubmitting(false)
-    //   onModalClose()
-    //   mutate(`/api/transaction/get-all?user_id=${user.id}`)
-    //   const json = await res.json()
-    //   if (!res.ok) throw Error(json.message)
-    // } catch (e) {
-    //   throw Error(e.message)
-    // }
+    setSubmitting(true)
+    try {
+      let res = await fetch(`/api/split/delete?parent_id=${parent.id}`, {
+        method: 'POST'
+      })
+      let json = await res.json()
+      if (!res.ok) throw Error(json.message)
+      res = await fetch('/api/split/create', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          user_id: user.id,
+          parent_id: parent.id,
+          date: moment(parent.date).format('YYYY-MM-DD HH:mm:ss'),
+          splits
+        }),
+      })
+      setSubmitting(false)
+      onModalClose()
+      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      json = await res.json()
+      if (!res.ok) throw Error(json.message)
+    } catch (e) {
+      throw Error(e.message)
+    }
   }
 
   return (
@@ -176,7 +181,7 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
         <ModalOverlay />
         <ModalContent>
           <form
-            onSubmit={submitHandler}
+            onSubmit={handleSave}
           >
             <ModalCloseButton />
             <ModalBody pt={6}>
@@ -291,7 +296,7 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
                 onClick={onAlertOpen}>
                 Undo Split
               </Button>
-              <Spacer/>
+              <Spacer />
               <Button disabled={submitting || ((parentAmount - sumSplits()) !== 0)} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Saving ...' : 'Save'}
               </Button>

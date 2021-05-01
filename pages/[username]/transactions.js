@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
+import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
 import { UserContext } from "../../context"
 import { mutate } from 'swr'
 import { useAreas, useTransactions } from "../../lib/swr-hooks"
@@ -21,6 +22,7 @@ export default function Transactions() {
   const { areas, isAreasError } = useAreas();
   const { transactions, isTransactionsError } = useTransactions(user.id)
   const [displayedTransactions, setDisplayedTransactions] = useState([])
+  const [remoteRowCount, setRemoteRowCount] = useState(0)
   const [filterBy, setFilterBy] = useState('all')
   const [syncing, setSyncing] = useState(false)
   const [transaction, setTransaction] = useState({})
@@ -45,13 +47,23 @@ export default function Transactions() {
     { name: "transactions", path: `/${user.name}/transactions` }
   ]
 
+  // useEffect(() => {
+  //   syncTransactions() // commented out during development
+  // }, []);
+
   useEffect(() => {
-    //syncTransactions() // commented out during development
-  }, []);
+    if (transactions) {
+      filterTransactions()
+    }
+  }, [transactions])
+
+  useEffect(() => {
+    setRemoteRowCount(displayedTransactions.length)
+  }, [displayedTransactions])
 
   useEffect(() => {
     filterTransactions()
-  }, [transactions, filterBy])
+  }, [filterBy])
 
   function filterTransactions() {
     if (!transactions)
@@ -125,6 +137,71 @@ export default function Transactions() {
     setSyncing(false)
   }
 
+
+  function isRowLoaded({ index }) {
+    return !!transactions[index];
+  }
+
+  function loadMoreRows({ startIndex, stopIndex }) {
+    // return fetch(`path/to/api?startIndex=${startIndex}&stopIndex=${stopIndex}`)
+    //   .then(response => {
+    //     // Store response data in list...
+    //   })
+  }
+
+  function rowRenderer({ key, index, style }) {
+    const displayedRowCount = displayedTransactions.length
+    if (index >= displayedRowCount)
+      return
+    const t = displayedTransactions[index]
+    return (
+      <Box
+        key={key}
+        pt="2"
+        pr="20px"        
+        style={style}
+      >
+        <Flex alignItems="center" pt="3" borderTop="2px solid">
+          <Text fontSize="xl" width="16%">{moment(t.date).format("MMM DD, YYYY")}</Text>
+          <Text fontSize="xl" width="54%">{t.name}</Text>
+          <Flex alignItems="center" width="21%">
+            {getColorShard(t.area_id)}
+            <Text fontSize="lg" pl="3">
+              {areaName(t.area_id)}
+            </Text>
+          </Flex>
+          <Text fontSize="xl" fontWeight="bold" textAlign="right" width="9%">${t.amount}</Text>
+        </Flex>
+        <Box py="3" pl="3" >
+          <Flex alignItems="center" mb="1">
+            <Heading fontSize="md" fontWeight="extrabold" mr="2">MEMO</Heading>
+            {(!!t.split && !!t.parent_id) && <Badge variant="subtle" colorScheme="purple" mr="2">Split Child</Badge>}
+            {(!!t.split && !t.parent_id) && <Badge variant="subtle" colorScheme="purple" mr="2">Split Parent</Badge>}
+            {!!t.hidden && <Badge variant="subtle" colorScheme="gray" mr="2">Hidden</Badge>}
+            {!!t.cash && <Badge variant="subtle" colorScheme="green">Cash</Badge>}
+          </Flex>
+          <Flex alignItems="center">
+            <Box flex="1">
+              {
+                !!t.memo
+                  ? <Text fontSize="xl"> {t.memo}</Text>
+                  : <Text fontSize="xl" color="#D3D3D3">Edit to add memo...</Text>
+              }
+            </Box>
+            <IconButton
+              icon={<EditIcon />}
+              size="sm"
+              variant="outline"
+              onClick={() => editTransaction(t)} />
+          </Flex>
+        </Box>
+      </Box>
+    )
+  }
+
+
+
+
   function TransactionsTable() {
     return (
       <Box>
@@ -144,45 +221,29 @@ export default function Transactions() {
             <option value="split">Splits</option>
           </Select>
         </Flex>
-        {displayedTransactions.map(t => (
-          <Box key={t.id} pt="4" borderBottom="2px solid">
-            <Flex alignItems="center">
-              <Text fontSize="xl" width="16%">{moment(t.date).format("MMM DD, YYYY")}</Text>
-              <Text fontSize="xl" width="58%">{t.name}</Text>
-              <Flex alignItems="center" width="17%">
-                {getColorShard(t.area_id)}
-                <Text fontSize="lg" pl="3">
-                  {areaName(t.area_id)}
-                </Text>
-              </Flex>
-              <Text fontSize="xl" fontWeight="bold" textAlign="right" width="9%">${t.amount}</Text>
-            </Flex>
-            <Box py="3" pl="3">
-              <Flex alignItems="center" mb="1">
-                <Heading fontSize="md" fontWeight="extrabold" mr="2">MEMO</Heading>
-                {(!!t.split && !!t.parent_id) && <Badge variant="subtle" colorScheme="purple" mr="2">Split Child</Badge>}
-                {(!!t.split && !t.parent_id) && <Badge variant="subtle" colorScheme="purple" mr="2">Split Parent</Badge>}
-                {!!t.hidden && <Badge variant="subtle" colorScheme="gray" mr="2">Hidden</Badge>}
-                {!!t.cash && <Badge variant="subtle" colorScheme="green">Cash</Badge>}
-              </Flex>
-              <Flex alignItems="center">
-                <Box flex="1">
-                  {
-                    !!t.memo
-                      ? <Text fontSize="xl"> {t.memo}</Text>
-                      : <Text fontSize="xl" color="#D3D3D3">Edit to add memo...</Text>
-                  }
-                </Box>
-                <IconButton
-                  icon={<EditIcon />}
-                  size="sm"
-                  variant="outline"
-                  onClick={() => editTransaction(t)} />
-              </Flex>
-            </Box>
-          </Box>
-        ))
-        }
+        <InfiniteLoader
+          isRowLoaded={isRowLoaded}
+          loadMoreRows={loadMoreRows}
+          rowCount={remoteRowCount}
+        >
+          {({ onRowsRendered, registerChild }) => (
+            <AutoSizer disableHeight>
+              {
+                ({ width }) => (
+                  <List
+                    height={800}
+                    width={width + 20}
+                    onRowsRendered={onRowsRendered}
+                    ref={registerChild}
+                    rowCount={remoteRowCount}
+                    rowHeight={130}
+                    rowRenderer={rowRenderer}
+                  />
+                )
+              }
+            </AutoSizer>
+          )}
+        </InfiniteLoader>
       </Box >
     )
   }

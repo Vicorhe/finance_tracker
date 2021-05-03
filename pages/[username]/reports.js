@@ -2,6 +2,7 @@ import { useContext, useState } from 'react'
 import { UserContext } from "../../context"
 import Nav from '../../components/Nav'
 import DatePicker from '../../components/DatePicker'
+import MakeComparisonModal from '../../components/MakeComparisonModal'
 import {
   Box,
   Flex,
@@ -42,12 +43,8 @@ export default function Reports() {
             showPopperArrow={true}
           />
         </Box>
-        <Spacer/>
-        <Button
-        colorScheme="messenger"
-        >
-          Generate Report
-          </Button>
+        <Spacer />
+        <MakeComparisonModal primaryFromDate={fromDate} primaryToDate={toDate} />
       </Flex>
     </Box>
   )

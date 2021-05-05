@@ -59,9 +59,9 @@ async function getTransactionsInDateRange(item_id, startDate, endDate) {
   try {
     const results = await query(
       `
-    SELECT * FROM transactions_table
-    WHERE item_id = ? AND date >= '`+ startDate + `' AND date <= '` + endDate + `' 
-    `,
+      SELECT * FROM transactions_table
+      WHERE item_id = ? AND date >= '`+ startDate + `' AND date <= '` + endDate + `' 
+      `,
       item_id, startDate, endDate)
     return results
   } catch (e) {

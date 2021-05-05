@@ -58,7 +58,7 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
         sum += parsed
       }
     }
-    return sum
+    return sum.toPrecision(4)
   }
 
   const handleTabsChange = (index) => {

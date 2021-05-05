@@ -163,14 +163,14 @@ export default function Transactions() {
       >
         <Flex alignItems="center" pt="3" borderTop="2px solid">
           <Text fontSize="xl" width="16%">{moment(t.date).format("MMM DD, YYYY")}</Text>
-          <Text fontSize="xl" width="54%">{t.name}</Text>
-          <Flex alignItems="center" width="21%">
+          <Text fontSize="xl" width="54%" noOfLines={1}>{t.name}</Text>
+          <Flex alignItems="center" width="19%" pl={1}>
             {getColorShard(t.area_id)}
             <Text fontSize="lg" pl="3">
               {areaName(t.area_id)}
             </Text>
           </Flex>
-          <Text fontSize="xl" fontWeight="bold" textAlign="right" width="9%">${t.amount}</Text>
+          <Text fontSize="xl" fontWeight="bold" textAlign="right" width="11%">${t.amount}</Text>
         </Flex>
         <Box py="3" pl="3" >
           <Flex alignItems="center" mb="1">

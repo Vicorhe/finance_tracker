@@ -143,7 +143,7 @@ export default function Reports() {
               background: '#222222',
             }}
           >
-            <span>See Details</span>
+            <span>See Breakdown</span>
             <br />
             <strong>
               {id}: ${value}

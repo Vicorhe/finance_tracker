@@ -74,9 +74,9 @@ export default function MakeComparisonModal({ primaryFromDate, primaryToDate }) 
               <Flex flexDirection="column" alignItems="center">
                 <Heading fontSize="lg" fontWeight="extrabold">COMPARE</Heading>
                 <Text fontSize="x-large" py="3">
-                  {moment(primaryFromDate).format('YYYY/MM/DD ')}
+                  {moment(primaryFromDate).format('MM/DD/YYYY ')}
                 --
-                {moment(primaryToDate).format(' YYYY/MM/DD')}
+                {moment(primaryToDate).format(' MM/DD/YYYY')}
                 </Text>
                 <Heading fontSize="lg" fontWeight="extrabold">TO</Heading>
 

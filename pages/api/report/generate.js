@@ -22,7 +22,7 @@ export default async function handler(req, res) {
       user_id)
     const areas_aggregate = await query(
       `
-      SELECT A.id id, A.name label, SUM(T.amount) value, COUNT(T.id) count, A.description, A.income 
+      SELECT A.id id, A.name label, SUM(T.amount) value, COUNT(T.id) count, A.description, A.input 
       FROM transactions_table T
         INNER JOIN areas_table A ON T.area_id = A.id 
       WHERE user_id = ? AND date >= '`+ start_date + `' AND date <= '` + end_date + `' 

@@ -15,28 +15,52 @@ export default function Areas() {
 
   function AreasTable() {
     return (
-      <Table variant="simple" size="lg">
-        <Thead>
+      <Table variant="simple" size="md">
+        <Thead backgroundColor="gray.100">
           <Tr>
-            <Th>Name</Th>
+            <Th>Input Name</Th>
             <Th>Description</Th>
             <Th>Color</Th>
             <Th></Th>
           </Tr>
         </Thead>
         <Tbody>
-          {areas.map((a) => (
-            <Tr key={a.id}>
-              <Td>{a.name}</Td>
-              <Td>{a.description}</Td>
-              <Td>
-                <ColorShard color={a.color} center/>
-              </Td>
-              <Td>
-                <EditAreaModal area={a} />
-              </Td>
-            </Tr>
-          ))}
+          {areas.filter((a) => !!a.input)
+            .map((a) => (
+              <Tr key={a.id}>
+                <Td>{a.name}</Td>
+                <Td>{a.description}</Td>
+                <Td>
+                  <ColorShard color={a.color} center />
+                </Td>
+                <Td>
+                  <EditAreaModal area={a} />
+                </Td>
+              </Tr>
+            ))}
+        </Tbody>
+        <Thead backgroundColor="gray.100">
+          <Tr>
+            <Th>Output Name</Th>
+            <Th>Description</Th>
+            <Th>Color</Th>
+            <Th></Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {areas.filter((a) => !a.input)
+            .map((a) => (
+              <Tr key={a.id}>
+                <Td>{a.name}</Td>
+                <Td>{a.description}</Td>
+                <Td>
+                  <ColorShard color={a.color} center />
+                </Td>
+                <Td>
+                  <EditAreaModal area={a} />
+                </Td>
+              </Tr>
+            ))}
         </Tbody>
       </Table>
     )

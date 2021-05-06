@@ -12,6 +12,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Switch,
   Textarea,
   Center
 } from "@chakra-ui/react"
@@ -28,6 +29,7 @@ export default function AddAreaModal() {
       }
     })
   const [name, setName] = useState('')
+  const [input, setInput] = useState(false)
   const [description, setDescription] = useState('')
   const [color, setColor] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -44,7 +46,8 @@ export default function AddAreaModal() {
         body: JSON.stringify({
           name,
           description,
-          color
+          color,
+          input
         }),
       })
       setSubmitting(false)
@@ -87,6 +90,13 @@ export default function AddAreaModal() {
                   onChange={(e) => setName(e.target.value)}
                 />
               </FormControl>
+              <FormControl mb="1.5rem">
+                <FormLabel>Input {input}</FormLabel>
+                <Switch
+                  value={input}
+                  onChange={(e) => setInput(!input)}
+                />
+              </FormControl>
               <FormControl mb="1.25rem">
                 <FormLabel>Description</FormLabel>
                 <Textarea
@@ -98,11 +108,11 @@ export default function AddAreaModal() {
               <FormControl>
                 <FormLabel>Color</FormLabel>
                 <Center>
-                <SwatchesPicker
-                  width="422px"
-                  height="200px"
-                  color={color}
-                  onChangeComplete={handleChangeComplete} />
+                  <SwatchesPicker
+                    width="422px"
+                    height="200px"
+                    color={color}
+                    onChangeComplete={handleChangeComplete} />
                 </Center>
               </FormControl>
             </ModalBody>

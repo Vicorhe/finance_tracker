@@ -1,20 +1,20 @@
 import { query } from '../../../lib/db'
 
 export default async function handler(req, res) {
-  const { name, description, color } = req.body
+  const { name, description, color, input } = req.body
   try {
-    if (!name || !description || !color) {
+    if (!name || !description || !color || !input) {
       return res
         .status(400)
-        .json({ message: '`name`, `description`, and `color` are all required' })
+        .json({ message: '`name`, `description`, `color`, and `input` are all required' })
     }
 
     const results = await query(
       `
-      INSERT INTO areas_table (name, description, color)
-      VALUES (?, ?, ?)
+      INSERT INTO areas_table (name, description, color, input)
+      VALUES (?, ?, ?, ?)
       `,
-      [name, description, color]
+      [name, description, color, input]
     )
     return res.json(results)
   } catch (e) {

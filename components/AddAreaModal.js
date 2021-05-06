@@ -26,6 +26,7 @@ export default function AddAreaModal() {
         setName('')
         setDescription('')
         setColor('')
+        setInput(false)
       }
     })
   const [name, setName] = useState('')
@@ -91,9 +92,9 @@ export default function AddAreaModal() {
                 />
               </FormControl>
               <FormControl mb="1.5rem">
-                <FormLabel>Input {input}</FormLabel>
+                <FormLabel>Input</FormLabel>
                 <Switch
-                  value={input}
+                  isChecked={input}
                   onChange={(e) => setInput(!input)}
                 />
               </FormControl>

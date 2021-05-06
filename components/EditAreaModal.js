@@ -11,6 +11,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Switch,
   Textarea,
   IconButton,
   Spacer,
@@ -33,9 +34,11 @@ export default function EditAreaModal({ area }) {
         setName(area.name)
         setDescription(area.description)
         setColor(!!area.color ? area.color : '#ffffff')
+        setInput(!!area.input)
       }
     })
   const [name, setName] = useState('')
+  const [input, setInput] = useState(false)
   const [description, setDescription] = useState('')
   const [color, setColor] = useState('')
   const [submitting, setSubmitting] = useState(false)
@@ -61,7 +64,8 @@ export default function EditAreaModal({ area }) {
           id: area.id,
           name,
           description,
-          color
+          color,
+          input
         }),
       })
       setSubmitting(false)
@@ -116,6 +120,13 @@ export default function EditAreaModal({ area }) {
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
+                />
+              </FormControl>
+              <FormControl mb="1.5rem">
+                <FormLabel>Input</FormLabel>
+                <Switch
+                  isChecked={input}
+                  onChange={(e) => setInput(!input)}
                 />
               </FormControl>
               <FormControl mb="1.15rem">

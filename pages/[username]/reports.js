@@ -11,13 +11,19 @@ import {
   Flex,
   Spacer,
   Heading,
-  Button
+  Button,
+  Tabs,
+  TabList,
+  Tab,
+  TabPanels,
+  TabPanel
 } from "@chakra-ui/react"
 import utilStyles from '../../styles/utils.module.scss'
 
 export default function Reports() {
-  const [data, setData] = useState([])
+  const [areasAggregate, setAreasAggregate] = useState([])
   const [pieChartData, setPieChartData] = useState([])
+  const [transactions, setTransactions] = useState([])
   const [fromDate, setFromDate] = useState(new Date())
   const [toDate, setToDate] = useState(new Date())
   const { user } = useContext(UserContext)
@@ -30,12 +36,15 @@ export default function Reports() {
     const formattedFromDate = moment(fromDate).format('YYYY-MM-DD')
     const formattedToDate = moment(toDate).format('YYYY-MM-DD')
     console.log(formattedFromDate, formattedToDate)
-    const res = await axios.post(`http://localhost:3000/api/report/generate`, { user_id: user.id, 
-    start_date: formattedFromDate, 
-    end_date: formattedToDate  });
-    const {areas_aggregate, transactions} = res.data
+    const res = await axios.post(`http://localhost:3000/api/report/generate`, {
+      user_id: user.id,
+      start_date: formattedFromDate,
+      end_date: formattedToDate
+    });
+    const { areas_aggregate, transactions } = res.data
     setPieChartData(areas_aggregate.filter(a => !a.input))
-    //setData(data)
+    setAreasAggregate(areas_aggregate)
+    setTransactions(transactions)
   }
 
   return (
@@ -63,6 +72,7 @@ export default function Reports() {
         </Box>
         <Spacer />
         <Button
+          ml={3}
           onClick={generateReport}
         >
           Generate Report
@@ -70,12 +80,23 @@ export default function Reports() {
       </Flex>
       {
         pieChartData.length > 0 &&
-        <Box flex={1}>
-          <PieChart data={pieChartData} />
-        </Box>
+        <Tabs size="md" variant="line" align="center" flex={1} pt={4}>
+          <TabList>
+            <Tab>Overview</Tab>
+            <Tab>Details</Tab>
+          </TabList>
+          <TabPanels>
+            <TabPanel height="67vh">
+              <PieChart data={pieChartData} />
+            </TabPanel>
+            <TabPanel>
+              <p>two!</p>
+            </TabPanel>
+          </TabPanels>
+        </Tabs>
       }
       {
-        data.length > 0 &&
+        areasAggregate.length > 0 &&
         <MakeComparisonModal primaryFromDate={fromDate} primaryToDate={toDate} />
       }
 

@@ -64,6 +64,7 @@ export default function MakeComparisonModal({ primaryFromDate, primaryToDate }) 
         isOpen={isOpen}
         onClose={onClose}
         size="md"
+        isCentered
       >
         <ModalOverlay />
         <ModalContent>
@@ -97,7 +98,6 @@ export default function MakeComparisonModal({ primaryFromDate, primaryToDate }) 
                       showPopperArrow={true}
                     />
                   </Box>
-
                 </Flex>
               </Flex>
             </ModalBody>

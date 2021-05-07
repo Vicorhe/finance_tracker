@@ -25,8 +25,8 @@ export default function Home() {
             >
               <Link href={`/${u.name}`}>
                 <Text className={utilStyles.hover_underline_animation} fontSize="4xl">{u.name}</Text>
-
-              </Link><Spacer />
+              </Link>
+              <Spacer />
               <EditUserModal user={u} />
             </Flex>
           )

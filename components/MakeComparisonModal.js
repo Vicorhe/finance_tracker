@@ -5,7 +5,6 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalFooter,
   ModalBody,
   ModalCloseButton,
@@ -59,7 +58,7 @@ export default function MakeComparisonModal({ primaryFromDate, primaryToDate }) 
         onClick={onOpen}
         colorScheme="messenger"
       >
-        Generate Report
+        Make a Comparison
       </Button>
       <Modal
         isOpen={isOpen}

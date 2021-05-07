@@ -23,19 +23,21 @@ export default function PieChart({ data }) {
         textAnchor="middle"
         dominantBaseline="central"
         style={{
-          fontSize: '27px',
+          fontSize: '21px',
           fontWeight: '400',
         }}
       >
-        ${total}
+        ${total.toPrecision(6)}
       </text>
     )
   }
 
   return <ResponsivePie
-    width={611}
+    width={960}
     data={data}
-    margin={{ top: 40, right: 80, bottom: 80, left: 70 }}
+    margin={{ top: 20, right: 200, bottom: 30, left: 200 }}
+    startAngle={11}
+    endAngle={371}
     innerRadius={0.3}
     padAngle={1}
     cornerRadius={3}
@@ -43,7 +45,7 @@ export default function PieChart({ data }) {
     activeOuterRadiusOffset={7}
     borderWidth={2}
     borderColor={{ from: 'color', modifiers: [['darker', 0.5]] }}
-    arcLinkLabelsSkipAngle={1}
+    arcLinkLabelsSkipAngle={6}
     arcLinkLabelsTextColor="#333333"
     arcLinkLabelsThickness={2}
     arcLinkLabelsDiagonalLength={16}
@@ -55,15 +57,15 @@ export default function PieChart({ data }) {
     theme={theme}
     layers={['arcs', 'arcLabels', 'arcLinkLabels', CenteredMetric]}
     onClick={(n, e) => { console.log(n) }}
-    tooltip={({ datum: { id, value, color } }) => (
+    tooltip={({ datum: { id, value } }) => (
       <div
         style={{
           padding: 12,
-          color,
+          color: '#FFFFFF',
           background: '#222222',
         }}
       >
-        <span>See Breakdown</span>
+        <span>Click for Breakdown</span>
         <br />
         <strong>
           {id}: ${value}

@@ -1,4 +1,6 @@
 import { useContext, useState } from 'react'
+import axios from 'axios'
+import moment from 'moment'
 import { UserContext } from "../../context"
 import Nav from '../../components/Nav'
 import DatePicker from '../../components/DatePicker'
@@ -8,14 +10,14 @@ import {
   Box,
   Flex,
   Spacer,
-  Heading
+  Heading,
+  Button
 } from "@chakra-ui/react"
 import utilStyles from '../../styles/utils.module.scss'
 
 export default function Reports() {
-  const [data, setData] = useState(
-    []
-  )
+  const [data, setData] = useState([])
+  const [pieChartData, setPieChartData] = useState([])
   const [fromDate, setFromDate] = useState(new Date())
   const [toDate, setToDate] = useState(new Date())
   const { user } = useContext(UserContext)
@@ -23,6 +25,19 @@ export default function Reports() {
     { name: user.name, path: `/${user.name}` },
     { name: "reports", path: `/${user.name}/reports` }
   ]
+
+  async function generateReport() {
+    const formattedFromDate = moment(fromDate).format('YYYY-MM-DD')
+    const formattedToDate = moment(toDate).format('YYYY-MM-DD')
+    console.log(formattedFromDate, formattedToDate)
+    const res = await axios.post(`http://localhost:3000/api/report/generate`, { user_id: user.id, 
+    start_date: formattedFromDate, 
+    end_date: formattedToDate  });
+    const {areas_aggregate, transactions} = res.data
+    setPieChartData(areas_aggregate.filter(a => !a.input))
+    //setData(data)
+  }
+
   return (
     <Box className={utilStyles.page}>
       <Nav breadcrumbs={breadcrumbs}>
@@ -47,12 +62,23 @@ export default function Reports() {
           />
         </Box>
         <Spacer />
-        <MakeComparisonModal primaryFromDate={fromDate} primaryToDate={toDate} />
+        <Button
+          onClick={generateReport}
+        >
+          Generate Report
+        </Button>
       </Flex>
       {
-        data.length > 0 &&
-        <PieChart data={data} />
+        pieChartData.length > 0 &&
+        <Box flex={1}>
+          <PieChart data={pieChartData} />
+        </Box>
       }
+      {
+        data.length > 0 &&
+        <MakeComparisonModal primaryFromDate={fromDate} primaryToDate={toDate} />
+      }
+
     </Box>
   )
 }

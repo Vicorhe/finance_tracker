@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import axios from 'axios'
 import moment from 'moment'
-import { UserContext, AreaContext } from "../../../context"
+import { UserContext, PrimaryChartContext } from "../../../context"
 import Nav from '../../../components/Nav'
 import DatePicker from '../../../components/DatePicker'
 import PieChart from '../../../components/PieChart'
@@ -32,7 +32,7 @@ export default function Reports() {
   const [fromDate, setFromDate] = useState(new Date())
   const [toDate, setToDate] = useState(new Date())
   const { user } = useContext(UserContext)
-  const { setArea } = useContext(AreaContext)
+  const { setPrimaryChart } = useContext(PrimaryChartContext)
   const breadcrumbs = [
     { name: user.name, path: `/${user.name}` },
     { name: "reports", path: `/${user.name}/reports` }
@@ -58,6 +58,14 @@ export default function Reports() {
     setTotalInput(sumInput)
   }
 
+  function handleClick(a) {
+    setPrimaryChart({
+      area: a,
+      from: moment(fromDate).format('YYYY-MM-DD'),
+      to: moment(toDate).format('YYYY-MM-DD')
+    })
+  }
+
   function SpendingReportTable() {
     return (
       <Table variant="simple" size="md">
@@ -74,7 +82,7 @@ export default function Reports() {
             .map((a) => (
               <Tr
                 key={a.label}
-                onClick={() => setArea(a.label)}
+                onClick={() => handleClick(a.label)}
               >
                 <Td alignItems="center">
                   <Icon
@@ -113,10 +121,10 @@ export default function Reports() {
             .map((a) => (
               <Tr
                 key={a.label}
-                onClick={() => setArea(a.label)}
+                onClick={() => handleClick(a.label)}
               >
                 <Td>
-                  <Link href={`/${user.name}/reports/details`}>
+                  <Link href={`/${user.name}/reports/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -127,7 +135,7 @@ export default function Reports() {
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={`/${user.name}/reports/details`}>
+                  <Link href={`/${user.name}/reports/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -202,7 +210,11 @@ export default function Reports() {
             overflow="scroll"
           >
             <TabPanel height="67vh">
-              <PieChart data={pieChartData} />
+              <PieChart
+                data={pieChartData}
+                fromDate={moment(fromDate).format('YYYY-MM-DD')}
+                toDate={moment(toDate).format('YYYY-MM-DD')}
+              />
             </TabPanel>
             <TabPanel>
               <SpendingReportTable />

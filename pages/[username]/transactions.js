@@ -199,9 +199,6 @@ export default function Transactions() {
     )
   }
 
-
-
-
   function TransactionsTable() {
     return (
       <Box>

@@ -4,7 +4,12 @@ export const UserContext = createContext({
   setUser: () => {},
 });
 
-export const AreaContext = createContext({
-  area: {},
-  setArea: () => {},
+export const PrimaryChartContext = createContext({
+  primaryChart: {},
+  setPrimaryChart: () => {},
+});
+
+export const SecondaryChartContext = createContext({
+  secondaryChart: {},
+  setSecondaryChart: () => {},
 });

@@ -1,4 +1,6 @@
-import { Box, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react"
+import { useContext } from 'react'
+import { Box, Table, Thead, Tbody, Tr, Th, Td, useConst } from "@chakra-ui/react"
+import { UserContext, AreaContext } from '../../../context'
 import { useAreas } from '../../../lib/swr-hooks'
 import Nav from '../../../components/Nav'
 import ColorShard from '../../../components/ColorShard'
@@ -10,7 +12,7 @@ import utilStyles from '../../../styles/utils.module.scss'
 
 export default function SpendingReportBreakdown() {
   const { areas, isAreasError } = useAreas();
-
+  const { area } = useContext(AreaContext)
   const breadcrumbs = [{ name: "Areas", path: "/areas" }]
 
   function AreasTable() {
@@ -18,7 +20,7 @@ export default function SpendingReportBreakdown() {
       <Table variant="simple" size="md">
         <Thead backgroundColor="gray.100">
           <Tr>
-            <Th>Input Name</Th>
+            <Th>Input Name {area}</Th>
             <Th>Description</Th>
             <Th>Color</Th>
             <Th></Th>

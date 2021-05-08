@@ -1,12 +1,13 @@
 import { useContext } from 'react'
 import { ResponsivePie } from '@nivo/pie'
 import { useRouter } from 'next/router'
-import { UserContext } from "../context"
+import { UserContext, AreaContext } from "../context"
 import { Box, Text } from '@chakra-ui/react'
 
 export default function PieChart({ data }) {
   const router = useRouter()
   const { user } = useContext(UserContext)
+  const { setArea } = useContext(AreaContext)
 
   const theme = {
     "fontSize": 17,
@@ -40,7 +41,7 @@ export default function PieChart({ data }) {
   }
 
   function handleClick(e) {
-    console.log(e.label)
+    setArea(e.label)
     router.push(`/${user.name}/reports/breakdown`)
   }
 

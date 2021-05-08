@@ -2,7 +2,7 @@ import { useContext, useState } from 'react'
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import axios from 'axios'
 import moment from 'moment'
-import { UserContext } from "../../../context"
+import { UserContext, AreaContext } from "../../../context"
 import Nav from '../../../components/Nav'
 import DatePicker from '../../../components/DatePicker'
 import PieChart from '../../../components/PieChart'
@@ -32,6 +32,7 @@ export default function Reports() {
   const [fromDate, setFromDate] = useState(new Date())
   const [toDate, setToDate] = useState(new Date())
   const { user } = useContext(UserContext)
+  const { setArea } = useContext(AreaContext)
   const breadcrumbs = [
     { name: user.name, path: `/${user.name}` },
     { name: "reports", path: `/${user.name}/reports` }
@@ -71,7 +72,10 @@ export default function Reports() {
         <Tbody>
           {areasAggregate.filter((a) => !!a.input)
             .map((a) => (
-              <Tr key={a.label}>
+              <Tr
+                key={a.label}
+                onClick={() => setArea(a.label)}
+              >
                 <Td alignItems="center">
                   <Icon
                     as={FaRegMoneyBillAlt}
@@ -107,7 +111,10 @@ export default function Reports() {
             ))}
           {areasAggregate.filter((a) => !a.input)
             .map((a) => (
-              <Tr key={a.label}>
+              <Tr
+                key={a.label}
+                onClick={() => setArea(a.label)}
+              >
                 <Td>
                   <Link href={`/${user.name}/reports/details`}>
                     <Text className={utilStyles.hover_underline_animation}

@@ -12,14 +12,6 @@ export default async function handler(req, res) {
         .status(400)
         .json({ message: '`user_id`, `start_date`, and `end_date` are required' })
     }
-    const transactions = await query(
-      `
-      SELECT * FROM transactions_table
-      WHERE user_id = ? AND date >= '`+ start_date + `' AND date <= '` + end_date + `' 
-        AND hidden = false AND area_id IS NOT NULL 
-        AND (split = false OR (split = true AND parent_id IS NOT NULL))
-      `,
-      user_id)
     const areas_aggregate = await query(
       `
       SELECT A.id label, A.name id, A.color color, SUM(T.amount) value, COUNT(T.id) count, A.description, A.input 
@@ -28,9 +20,10 @@ export default async function handler(req, res) {
       WHERE user_id = ? AND date >= '`+ start_date + `' AND date <= '` + end_date + `' 
         AND hidden = false AND (split = false OR (split = true AND parent_id IS NOT NULL))
       GROUP BY A.id
+      ORDER BY A.id
       `,
       user_id)
-    return res.json({ transactions, areas_aggregate })
+    return res.json(areas_aggregate)
   } catch (e) {
     res.status(500).json({ message: e.message })
   }

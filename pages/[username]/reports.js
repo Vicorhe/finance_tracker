@@ -23,7 +23,6 @@ import utilStyles from '../../styles/utils.module.scss'
 export default function Reports() {
   const [areasAggregate, setAreasAggregate] = useState([])
   const [pieChartData, setPieChartData] = useState([])
-  const [transactions, setTransactions] = useState([])
   const [fromDate, setFromDate] = useState(new Date())
   const [toDate, setToDate] = useState(new Date())
   const { user } = useContext(UserContext)
@@ -36,12 +35,12 @@ export default function Reports() {
     const formattedFromDate = moment(fromDate).format('YYYY-MM-DD')
     const formattedToDate = moment(toDate).format('YYYY-MM-DD')
     console.log(formattedFromDate, formattedToDate)
-    const res = await axios.post(`http://localhost:3000/api/report/generate`, {
+    const res = await axios.post(`http://localhost:3000/api/report/areas`, {
       user_id: user.id,
       start_date: formattedFromDate,
       end_date: formattedToDate
     });
-    const { areas_aggregate, transactions } = res.data
+    const areas_aggregate = res.data
     setPieChartData(areas_aggregate.filter(a => !a.input))
     setAreasAggregate(areas_aggregate)
     setTransactions(transactions)

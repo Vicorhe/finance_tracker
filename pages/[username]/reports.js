@@ -1,4 +1,5 @@
 import { useContext, useState } from 'react'
+import { FaRegMoneyBillAlt } from "react-icons/fa";
 import axios from 'axios'
 import moment from 'moment'
 import { UserContext } from "../../context"
@@ -16,7 +17,9 @@ import {
   TabList,
   Tab,
   TabPanels,
-  TabPanel
+  TabPanel,
+  Table, Thead, Tbody, Tr, Th, Td,
+  Icon
 } from "@chakra-ui/react"
 import utilStyles from '../../styles/utils.module.scss'
 
@@ -43,7 +46,49 @@ export default function Reports() {
     const areas_aggregate = res.data
     setPieChartData(areas_aggregate.filter(a => !a.input))
     setAreasAggregate(areas_aggregate)
-    setTransactions(transactions)
+  }
+
+  function SpendingReportTable() {
+    return (
+      <Table variant="simple" size="md">
+        <Thead>
+          <Tr>
+            <Th>Area</Th>
+            <Th isNumeric>Amount</Th>
+            <Th isNumeric># Transactions</Th>
+            <Th isNumeric>%</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {areasAggregate.filter((a) => !!a.input)
+            .map((a) => (
+              <Tr key={a.label}>
+                <Td alignItems="center">
+                  <Icon 
+                  as={FaRegMoneyBillAlt} 
+                  color="#FFC527" 
+                  mr={1} 
+                  width={17}
+                  />
+                  {a.id}
+                </Td>
+                <Td isNumeric>${-a.value}</Td>
+                <Td isNumeric>{a.count}</Td>
+                <Td isNumeric>%</Td>
+              </Tr>
+            ))}
+          {areasAggregate.filter((a) => !a.input)
+            .map((a) => (
+              <Tr key={a.label}>
+                <Td>{a.id}</Td>
+                <Td isNumeric>${a.value}</Td>
+                <Td isNumeric>{a.count}</Td>
+                <Td isNumeric>%</Td>
+              </Tr>
+            ))}
+        </Tbody>
+      </Table>
+    )
   }
 
   return (
@@ -89,7 +134,7 @@ export default function Reports() {
               <PieChart data={pieChartData} />
             </TabPanel>
             <TabPanel>
-              <p>two!</p>
+              <SpendingReportTable />
             </TabPanel>
           </TabPanels>
         </Tabs>

@@ -49,7 +49,7 @@ export default function PieChart({ data }) {
     arcLinkLabelsTextColor="#333333"
     arcLinkLabelsThickness={2}
     arcLinkLabelsDiagonalLength={16}
-    arcLabelsSkipAngle={15}
+    arcLabelsSkipAngle={30}
     arcLinkLabelsColor={{ from: 'color' }}
     colors={{ datum: 'data.color' }}
     arcLabel={function (e) { return "$" + e.value }}

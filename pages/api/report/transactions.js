@@ -18,6 +18,7 @@ export default async function handler(req, res) {
       WHERE user_id = ? AND date >= '`+ start_date + `' AND date <= '` + end_date + `' 
         AND hidden = false AND area_id IS NOT NULL 
         AND (split = false OR (split = true AND parent_id IS NOT NULL))
+      ORDER BY date DESC
       `,
       user_id)
     return res.json(transactions)

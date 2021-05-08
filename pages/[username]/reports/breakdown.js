@@ -92,7 +92,7 @@ export default function SpendingReportBreakdown() {
               {areaName(t.area_id)}
             </Text>
           </Flex>
-          <Text fontSize="xl" fontWeight="bold" textAlign="right" width="11%">${t.amount}</Text>
+          <Text fontSize="xl" fontWeight="bold" textAlign="right" width="11%">${Math.abs(t.amount)}</Text>
         </Flex>
         <Box py="3" pl="3" >
           <Flex alignItems="center" mb="1">

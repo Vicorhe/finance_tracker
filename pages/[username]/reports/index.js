@@ -2,11 +2,11 @@ import { useContext, useState } from 'react'
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import axios from 'axios'
 import moment from 'moment'
-import { UserContext } from "../../context"
-import Nav from '../../components/Nav'
-import DatePicker from '../../components/DatePicker'
-import PieChart from '../../components/PieChart'
-import MakeComparisonModal from '../../components/MakeComparisonModal'
+import { UserContext } from "../../../context"
+import Nav from '../../../components/Nav'
+import DatePicker from '../../../components/DatePicker'
+import PieChart from '../../../components/PieChart'
+import MakeComparisonModal from '../../../components/MakeComparisonModal'
 import {
   Box,
   Flex,
@@ -23,7 +23,7 @@ import {
   Text
 } from "@chakra-ui/react"
 import Link from 'next/link'
-import utilStyles from '../../styles/utils.module.scss'
+import utilStyles from '../../../styles/utils.module.scss'
 
 export default function Reports() {
   const [areasAggregate, setAreasAggregate] = useState([])
@@ -79,7 +79,7 @@ export default function Reports() {
                     mr={1}
                     width={17}
                   />
-                  <Link href={`/${user.name}/reports/details`}>
+                  <Link href={`/${user.name}/reports/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -90,7 +90,7 @@ export default function Reports() {
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={`/${user.name}/reports/details`}>
+                  <Link href={`/${user.name}/reports/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"

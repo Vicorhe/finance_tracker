@@ -41,7 +41,7 @@ export default function PieChart({ data }) {
 
   function handleClick(e) {
     console.log(e.label)
-    router.push(`/${user.name}/reports/details`)
+    router.push(`/${user.name}/reports/breakdown`)
   }
 
   function ToolTip({ datum: { id, value } }) {

@@ -1,6 +1,13 @@
+import { useContext } from 'react'
 import { ResponsivePie } from '@nivo/pie'
+import { useRouter } from 'next/router'
+import { UserContext } from "../context"
+import { Box, Text } from '@chakra-ui/react'
 
 export default function PieChart({ data }) {
+  const router = useRouter()
+  const { user } = useContext(UserContext)
+
   const theme = {
     "fontSize": 17,
     "tooltip": {
@@ -32,6 +39,27 @@ export default function PieChart({ data }) {
     )
   }
 
+  function handleClick(e) {
+    console.log(e.label)
+    router.push(`/${user.name}/reports/details`)
+  }
+
+  function ToolTip({ datum: { id, value } }) {
+    return (
+      <Box p={3}
+        color="#FFFFFF"
+        backgroundColor="#222222"
+      >
+        <Text fontSize="xl">
+          {id}: ${value}
+        </Text>
+        <Text fontSize="xs">
+          Click for Breakdown
+        </Text>
+      </Box>
+    );
+  }
+
   return <ResponsivePie
     width={960}
     data={data}
@@ -45,7 +73,7 @@ export default function PieChart({ data }) {
     activeOuterRadiusOffset={7}
     borderWidth={2}
     borderColor={{ from: 'color', modifiers: [['darker', 0.5]] }}
-    arcLinkLabelsSkipAngle={6}
+    arcLinkLabelsSkipAngle={15}
     arcLinkLabelsTextColor="#333333"
     arcLinkLabelsThickness={2}
     arcLinkLabelsDiagonalLength={16}
@@ -56,21 +84,7 @@ export default function PieChart({ data }) {
     arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
     theme={theme}
     layers={['arcs', 'arcLabels', 'arcLinkLabels', CenteredMetric]}
-    onClick={(n, e) => { console.log(n) }}
-    tooltip={({ datum: { id, value } }) => (
-      <div
-        style={{
-          padding: 12,
-          color: '#FFFFFF',
-          background: '#222222',
-        }}
-      >
-        <span>Click for Breakdown</span>
-        <br />
-        <strong>
-          {id}: ${value}
-        </strong>
-      </div>
-    )}
+    onClick={handleClick}
+    tooltip={ToolTip}
   />
 }

@@ -35,7 +35,7 @@ export default function PieChart({ data }) {
   return <ResponsivePie
     width={960}
     data={data}
-    margin={{ top: 20, right: 200, bottom: 30, left: 200 }}
+    margin={{ top: 60, right: 200, bottom: 30, left: 200 }}
     startAngle={11}
     endAngle={371}
     innerRadius={0.3}

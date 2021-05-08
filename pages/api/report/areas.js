@@ -20,7 +20,7 @@ export default async function handler(req, res) {
       WHERE user_id = ? AND date >= '`+ start_date + `' AND date <= '` + end_date + `' 
         AND hidden = false AND (split = false OR (split = true AND parent_id IS NOT NULL))
       GROUP BY A.id
-      ORDER BY count desc
+      ORDER BY ABS(SUM(T.amount)) desc
       `,
       user_id)
     return res.json(areas_aggregate)

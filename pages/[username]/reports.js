@@ -25,6 +25,7 @@ import utilStyles from '../../styles/utils.module.scss'
 
 export default function Reports() {
   const [areasAggregate, setAreasAggregate] = useState([])
+  const [totalInput, setTotalInput] = useState(0)
   const [pieChartData, setPieChartData] = useState([])
   const [fromDate, setFromDate] = useState(new Date())
   const [toDate, setToDate] = useState(new Date())
@@ -37,7 +38,6 @@ export default function Reports() {
   async function generateReport() {
     const formattedFromDate = moment(fromDate).format('YYYY-MM-DD')
     const formattedToDate = moment(toDate).format('YYYY-MM-DD')
-    console.log(formattedFromDate, formattedToDate)
     const res = await axios.post(`http://localhost:3000/api/report/areas`, {
       user_id: user.id,
       start_date: formattedFromDate,
@@ -46,6 +46,13 @@ export default function Reports() {
     const areas_aggregate = res.data
     setPieChartData(areas_aggregate.filter(a => !a.input))
     setAreasAggregate(areas_aggregate)
+    var sumInput = areas_aggregate.reduce(
+      (a, c) => {
+        if (!!c.input)
+          return a + parseFloat(c.value)
+        return a
+      }, 0)
+    setTotalInput(sumInput)
   }
 
   function SpendingReportTable() {
@@ -64,31 +71,37 @@ export default function Reports() {
             .map((a) => (
               <Tr key={a.label}>
                 <Td alignItems="center">
-                  <Icon 
-                  as={FaRegMoneyBillAlt} 
-                  color="#FFC527" 
-                  mr={1} 
-                  width={17}
+                  <Icon
+                    as={FaRegMoneyBillAlt}
+                    color="#FFC527"
+                    mr={1}
+                    width={17}
                   />
                   {a.id}
                 </Td>
-                <Td isNumeric>${-a.value}</Td>
-                <Td isNumeric>{a.count}</Td>
-                <Td isNumeric>%</Td>
+                <Td isNumeric textColor="#2d6a4f" fontWeight="bold">${-a.value}</Td>
+                <Td isNumeric fontWeight="bold">{a.count}</Td>
+                <Td isNumeric textColor="#2d6a4f" fontWeight="extrabold">{getPercentage(a.value)}</Td>
               </Tr>
             ))}
           {areasAggregate.filter((a) => !a.input)
             .map((a) => (
               <Tr key={a.label}>
                 <Td>{a.id}</Td>
-                <Td isNumeric>${a.value}</Td>
-                <Td isNumeric>{a.count}</Td>
-                <Td isNumeric>%</Td>
+                <Td isNumeric textColor="#9d0208" fontWeight="bold">${a.value}</Td>
+                <Td isNumeric fontWeight="bold">{a.count}</Td>
+                <Td isNumeric textColor="#9d0208" fontWeight="extrabold">{getPercentage(-a.value)}</Td>
               </Tr>
             ))}
         </Tbody>
       </Table>
     )
+  }
+
+  function getPercentage(partial) {
+    if (totalInput === 0 || isNaN(totalInput))
+      return 'N/A'
+    return ((partial / totalInput) * 100).toFixed(1) + '%'
   }
 
   return (
@@ -122,14 +135,23 @@ export default function Reports() {
           Generate Report
         </Button>
       </Flex>
+
       {
-        pieChartData.length > 0 &&
-        <Tabs size="md" variant="line" align="center" flex={1} pt={4}>
+        areasAggregate.length > 0 &&
+        <Tabs
+          size="md"
+          variant="line"
+          align="center"
+          py={4}
+        >
           <TabList>
             <Tab>Overview</Tab>
             <Tab>Details</Tab>
           </TabList>
-          <TabPanels>
+          <TabPanels
+            height="67vh"
+            overflow="scroll"
+          >
             <TabPanel height="67vh">
               <PieChart data={pieChartData} />
             </TabPanel>
@@ -139,6 +161,7 @@ export default function Reports() {
           </TabPanels>
         </Tabs>
       }
+
       {
         areasAggregate.length > 0 &&
         <MakeComparisonModal primaryFromDate={fromDate} primaryToDate={toDate} />

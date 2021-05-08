@@ -19,8 +19,10 @@ import {
   TabPanels,
   TabPanel,
   Table, Thead, Tbody, Tr, Th, Td,
-  Icon
+  Icon,
+  Text
 } from "@chakra-ui/react"
+import Link from 'next/link'
 import utilStyles from '../../styles/utils.module.scss'
 
 export default function Reports() {
@@ -61,9 +63,9 @@ export default function Reports() {
         <Thead>
           <Tr>
             <Th>Area</Th>
-            <Th isNumeric>Amount</Th>
             <Th isNumeric># Transactions</Th>
-            <Th isNumeric>%</Th>
+            <Th isNumeric>Amount</Th>
+            <Th isNumeric>Percentage</Th>
           </Tr>
         </Thead>
         <Tbody>
@@ -77,19 +79,59 @@ export default function Reports() {
                     mr={1}
                     width={17}
                   />
-                  {a.id}
+                  <Link href={`/${user.name}/reports/details`}>
+                    <Text className={utilStyles.hover_underline_animation}
+                      lineHeight={1.5}
+                      fontWeight="bold"
+                    >
+                      {a.id}
+                    </Text>
+                  </Link>
                 </Td>
+
+                <Td isNumeric >
+                  <Link href={`/${user.name}/reports/details`}>
+                    <Text className={utilStyles.hover_underline_animation}
+                      lineHeight={1.5}
+                      fontWeight="bold"
+                    >
+                      {a.count}
+                    </Text>
+                  </Link>
+                </Td>
+
                 <Td isNumeric textColor="#2d6a4f" fontWeight="bold">${-a.value}</Td>
-                <Td isNumeric fontWeight="bold">{a.count}</Td>
+
                 <Td isNumeric textColor="#2d6a4f" fontWeight="extrabold">{getPercentage(a.value)}</Td>
               </Tr>
             ))}
           {areasAggregate.filter((a) => !a.input)
             .map((a) => (
               <Tr key={a.label}>
-                <Td>{a.id}</Td>
+                <Td>
+                  <Link href={`/${user.name}/reports/details`}>
+                    <Text className={utilStyles.hover_underline_animation}
+                      lineHeight={1.5}
+                      fontWeight="bold"
+                    >
+                      {a.id}
+                    </Text>
+                  </Link>
+                </Td>
+
+                <Td isNumeric >
+                  <Link href={`/${user.name}/reports/details`}>
+                    <Text className={utilStyles.hover_underline_animation}
+                      lineHeight={1.5}
+                      fontWeight="bold"
+                    >
+                      {a.count}
+                    </Text>
+                  </Link>
+                </Td>
+
                 <Td isNumeric textColor="#9d0208" fontWeight="bold">${a.value}</Td>
-                <Td isNumeric fontWeight="bold">{a.count}</Td>
+
                 <Td isNumeric textColor="#9d0208" fontWeight="extrabold">{getPercentage(-a.value)}</Td>
               </Tr>
             ))}

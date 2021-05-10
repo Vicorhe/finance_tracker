@@ -5,7 +5,7 @@ import moment from 'moment'
 import { UserContext, PrimaryChartContext } from "../../../context"
 import Nav from '../../../components/Nav'
 import DatePicker from '../../../components/DatePicker'
-import PieChart from '../../../components/PieChart'
+import BarChart from '../../../components/BarChart'
 import MakeComparisonModal from '../../../components/MakeComparisonModal'
 import {
   Box,
@@ -155,6 +155,164 @@ export default function Comparison() {
     // )
   }
 
+  const datatmp = [
+    {
+      "country": "1",
+      "hot dog": 63,
+      "hot dogColor": "hsl(343, 70%, 50%)",
+      "burger": 87,
+      "burgerColor": "hsl(158, 70%, 50%)",
+    },
+    {
+      "country": "2",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "3",
+      "hot dog": 63,
+      "hot dogColor": "hsl(343, 70%, 50%)",
+      "burger": 87,
+      "burgerColor": "hsl(158, 70%, 50%)",
+    },
+    {
+      "country": "4",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "5",
+      "hot dog": 63,
+      "hot dogColor": "hsl(343, 70%, 50%)",
+      "burger": 87,
+      "burgerColor": "hsl(158, 70%, 50%)",
+    },
+    {
+      "country": "6",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "7",
+      "hot dog": 63,
+      "hot dogColor": "hsl(343, 70%, 50%)",
+      "burger": 87,
+      "burgerColor": "hsl(158, 70%, 50%)",
+    },
+    {
+      "country": "8",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "9",
+      "hot dog": 63,
+      "hot dogColor": "hsl(343, 70%, 50%)",
+      "burger": 87,
+      "burgerColor": "hsl(158, 70%, 50%)",
+    },
+    {
+      "country": "10",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "11",
+      "hot dog": 63,
+      "hot dogColor": "hsl(343, 70%, 50%)",
+      "burger": 87,
+      "burgerColor": "hsl(158, 70%, 50%)",
+    },
+    {
+      "country": "12",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "13",
+      "hot dog": 63,
+      "hot dogColor": "hsl(343, 70%, 50%)",
+      "burger": 87,
+      "burgerColor": "hsl(158, 70%, 50%)",
+    },
+    {
+      "country": "14",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "15",
+      "hot dog": 63,
+      "hot dogColor": "hsl(343, 70%, 50%)",
+      "burger": 87,
+      "burgerColor": "hsl(158, 70%, 50%)",
+    },
+    {
+      "country": "16",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "17",
+      "hot dog": 63,
+      "hot dogColor": "hsl(343, 70%, 50%)",
+      "burger": 87,
+      "burgerColor": "hsl(158, 70%, 50%)",
+    },
+    {
+      "country": "18",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    }
+    ,
+    {
+      "country": "19",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "20",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "self development",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    },
+    {
+      "country": "business expense",
+      "hot dog": 94,
+      "hot dogColor": "hsl(337, 70%, 50%)",
+      "burger": 54,
+      "burgerColor": "hsl(296, 70%, 50%)",     
+    }
+  ]
+
   return (
     <Box className={utilStyles.page}>
       <Nav breadcrumbs={breadcrumbs}>
@@ -203,7 +361,9 @@ export default function Comparison() {
           Compare
         </Button>
       </Flex>
-
+      <BarChart
+      data={datatmp}
+      />
       {/* {
         areasAggregate.length > 0 &&
         <Tabs

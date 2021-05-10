@@ -1,4 +1,6 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
+import { useRouter } from 'next/router'
+import { UserContext } from "../context"
 import moment from 'moment';
 import DatePicker from './DatePicker'
 import {
@@ -16,7 +18,10 @@ import {
   Box
 } from "@chakra-ui/react"
 
+
 export default function MakeComparisonModal({ primaryFromDate, primaryToDate }) {
+  const router = useRouter()
+  const { user } = useContext(UserContext)
   const { isOpen, onOpen, onClose } = useDisclosure(
     {
       onClose: () => {
@@ -46,6 +51,7 @@ export default function MakeComparisonModal({ primaryFromDate, primaryToDate }) 
       onClose()
       // const json = await res.json()
       // if (!res.ok) throw Error(json.message)
+      router.push(`/${user.name}/reports/comparison`)
     } catch (e) {
       throw Error(e.message)
     }

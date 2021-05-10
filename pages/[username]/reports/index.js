@@ -167,7 +167,7 @@ export default function Reports() {
       </Nav>
       <Flex alignItems="center" pt="3">
         <Heading fontSize="lg" pr="3" fontWeight="extrabold">FROM</Heading>
-        <Box width="167px">
+        <Box width="117px">
           <DatePicker
             id="fromDate"
             selectedDate={fromDate}
@@ -176,7 +176,7 @@ export default function Reports() {
           />
         </Box>
         <Heading fontSize="lg" px="3" fontWeight="extrabold">TO</Heading>
-        <Box width="167px">
+        <Box width="117px">
           <DatePicker
             id="toDate"
             selectedDate={toDate}
@@ -189,7 +189,7 @@ export default function Reports() {
           ml={3}
           onClick={generateReport}
         >
-          Generate Report
+          Generate Spending Report
         </Button>
       </Flex>
 

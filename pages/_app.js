@@ -26,7 +26,7 @@ function MyApp({ Component, pageProps }) {
       <UserContext.Provider value={{ user, setUser }}>
         <PrimaryChartContext.Provider value={{ primaryChart, setPrimaryChart }}>
           <SecondaryChartContext.Provider value={{ secondaryChart, setSecondaryChart }}>
-            <Container maxW="container.lg" p="2rem">
+            <Container maxW={{base: "container.lg", "2xl": "96rem"}} p="2rem">
               <Component {...pageProps} />
             </Container>
           </SecondaryChartContext.Provider>

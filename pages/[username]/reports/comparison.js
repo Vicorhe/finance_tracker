@@ -13,14 +13,10 @@ import {
   Spacer,
   Heading,
   Button,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
   Table, Thead, Tbody, Tr, Th, Td,
   Icon,
-  Text
+  Text,
+  StatArrow
 } from "@chakra-ui/react"
 import Link from 'next/link'
 import utilStyles from '../../../styles/utils.module.scss'
@@ -66,93 +62,79 @@ export default function Comparison() {
     // })
   }
 
+  function formatDate(d) {
+    return moment(d).format("MMM DD, YYYY")
+  }
+
+  function getDelta(a, b) {
+    let percentage = ((a - b) * 100 / b)
+    let color = (percentage < 0) ? '#9d0208' : '#2d6a4f'
+    let type = (percentage < 0) ? 'decrease' : 'increase'
+    return <Text color={color} fontWeight="extrabold">
+      <StatArrow type={type} mr={1} />
+      {percentage.toFixed(2)}%
+    </Text>
+  }
+
   function ComparisonReportTable() {
-    // return (
-    //   <Table variant="simple" size="md">
-    //     <Thead>
-    //       <Tr>
-    //         <Th>Area</Th>
-    //         <Th isNumeric># Transactions</Th>
-    //         <Th isNumeric>Amount</Th>
-    //         <Th isNumeric>Percentage</Th>
-    //       </Tr>
-    //     </Thead>
-    //     <Tbody>
-    //       {areasAggregate.filter((a) => !!a.input)
-    //         .map((a) => (
-    //           <Tr
-    //             key={a.label}
-    //             onClick={() => handleClick(a.label)}
-    //           >
-    //             <Td alignItems="center">
-    //               <Icon
-    //                 as={FaRegMoneyBillAlt}
-    //                 color="#FFC527"
-    //                 mr={1}
-    //                 width={17}
-    //               />
-    //               <Link href={`/${user.name}/reports/breakdown`}>
-    //                 <Text className={utilStyles.hover_underline_animation}
-    //                   lineHeight={1.5}
-    //                   fontWeight="bold"
-    //                 >
-    //                   {a.id}
-    //                 </Text>
-    //               </Link>
-    //             </Td>
+    return (
+      <Table variant="simple" size="md">
+        <Thead>
+          <Tr>
+            <Th>Area</Th>
+            <Th isNumeric>Period 1 Total</Th>
+            <Th isNumeric>Period 2 Total</Th>
+            <Th isNumeric>Absolute Difference</Th>
+            <Th isNumeric>Relative Difference</Th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {datatmp.filter((a) => !a.input)
+            .map((a) => (
+              <Tr
+                key={a.area}
+                onClick={() => handleClick(a.area)}
+              >
+                <Td alignItems="center">
+                  <Icon
+                    as={FaRegMoneyBillAlt}
+                    color="#FFC527"
+                    mr={1}
+                    width={17}
+                  />
+                  {a.area}
+                </Td>
 
-    //             <Td isNumeric >
-    //               <Link href={`/${user.name}/reports/breakdown`}>
-    //                 <Text className={utilStyles.hover_underline_animation}
-    //                   lineHeight={1.5}
-    //                   fontWeight="bold"
-    //                 >
-    //                   {a.count}
-    //                 </Text>
-    //               </Link>
-    //             </Td>
+                <Td isNumeric >
+                  <Link href={`/${user.name}/reports/breakdown`}>
+                    <Text className={utilStyles.hover_underline_animation}
+                      lineHeight={1.5}
+                      fontWeight="bold"
+                    >
+                      ${a.primary}
+                    </Text>
+                  </Link>
+                </Td>
 
-    //             <Td isNumeric textColor="#2d6a4f" fontWeight="bold">${-a.value}</Td>
+                <Td isNumeric >
+                  <Link href={`/${user.name}/reports/breakdown`}>
+                    <Text className={utilStyles.hover_underline_animation}
+                      lineHeight={1.5}
+                      fontWeight="bold"
+                    >
+                      ${a.secondary}
+                    </Text>
+                  </Link>
+                </Td>
 
-    //             <Td isNumeric textColor="#2d6a4f" fontWeight="extrabold">{getPercentage(a.value)}</Td>
-    //           </Tr>
-    //         ))}
-    //       {areasAggregate.filter((a) => !a.input)
-    //         .map((a) => (
-    //           <Tr
-    //             key={a.label}
-    //             onClick={() => handleClick(a.label)}
-    //           >
-    //             <Td>
-    //               <Link href={`/${user.name}/reports/breakdown`}>
-    //                 <Text className={utilStyles.hover_underline_animation}
-    //                   lineHeight={1.5}
-    //                   fontWeight="bold"
-    //                 >
-    //                   {a.id}
-    //                 </Text>
-    //               </Link>
-    //             </Td>
+                <Td isNumeric fontWeight="bold">{a.primary - a.secondary}</Td>
 
-    //             <Td isNumeric >
-    //               <Link href={`/${user.name}/reports/breakdown`}>
-    //                 <Text className={utilStyles.hover_underline_animation}
-    //                   lineHeight={1.5}
-    //                   fontWeight="bold"
-    //                 >
-    //                   {a.count}
-    //                 </Text>
-    //               </Link>
-    //             </Td>
-
-    //             <Td isNumeric textColor="#9d0208" fontWeight="bold">${a.value}</Td>
-
-    //             <Td isNumeric textColor="#9d0208" fontWeight="extrabold">{getPercentage(-a.value)}</Td>
-    //           </Tr>
-    //         ))}
-    //     </Tbody>
-    //   </Table>
-    // )
+                <Td isNumeric>{getDelta(a.primary, a.secondary)}</Td>
+              </Tr>
+            ))}
+        </Tbody>
+      </Table>
+    )
   }
 
   const datatmp = [
@@ -162,41 +144,22 @@ export default function Comparison() {
       "primaryColor": "hsl(343, 70%, 50%)",
       "secondary": 87,
       "secondaryColor": "hsl(158, 70%, 50%)",
+      "input": 1
     },
     {
       "area": "2",
       "primary": 94,
       "primaryColor": "hsl(337, 70%, 50%)",
       "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
-    },
-    {
-      "area": "3",
-      "primary": 63,
-      "primaryColor": "hsl(343, 70%, 50%)",
-      "secondary": 87,
-      "secondaryColor": "hsl(158, 70%, 50%)",
-    },
-    {
-      "area": "4",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
-    },
-    {
-      "area": "5",
-      "primary": 63,
-      "primaryColor": "hsl(343, 70%, 50%)",
-      "secondary": 87,
-      "secondaryColor": "hsl(158, 70%, 50%)",
+      "secondaryColor": "hsl(296, 70%, 50%)",
+      "input": 1
     },
     {
       "area": "6",
       "primary": 94,
       "primaryColor": "hsl(337, 70%, 50%)",
       "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
+      "secondaryColor": "hsl(296, 70%, 50%)",
     },
     {
       "area": "7",
@@ -205,111 +168,20 @@ export default function Comparison() {
       "secondary": 87,
       "secondaryColor": "hsl(158, 70%, 50%)",
     },
-    {
-      "area": "8",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
-    },
-    {
-      "area": "9",
-      "primary": 63,
-      "primaryColor": "hsl(343, 70%, 50%)",
-      "secondary": 87,
-      "secondaryColor": "hsl(158, 70%, 50%)",
-    },
-    {
-      "area": "10",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
-    },
-    {
-      "area": "11",
-      "primary": 63,
-      "primaryColor": "hsl(343, 70%, 50%)",
-      "secondary": 87,
-      "secondaryColor": "hsl(158, 70%, 50%)",
-    },
-    {
-      "area": "12",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
-    },
-    {
-      "area": "13",
-      "primary": 63,
-      "primaryColor": "hsl(343, 70%, 50%)",
-      "secondary": 87,
-      "secondaryColor": "hsl(158, 70%, 50%)",
-    },
-    {
-      "area": "14",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
-    },
-    {
-      "area": "15",
-      "primary": 63,
-      "primaryColor": "hsl(343, 70%, 50%)",
-      "secondary": 87,
-      "secondaryColor": "hsl(158, 70%, 50%)",
-    },
-    {
-      "area": "16",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
-    },
-    {
-      "area": "17",
-      "primary": 63,
-      "primaryColor": "hsl(343, 70%, 50%)",
-      "secondary": 87,
-      "secondaryColor": "hsl(158, 70%, 50%)",
-    },
-    {
-      "area": "18",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
-    }
-    ,
-    {
-      "area": "19",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
-    },
-    {
-      "area": "20",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
-    },
+    
     {
       "area": "self development",
       "primary": 94,
       "primaryColor": "hsl(337, 70%, 50%)",
       "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
+      "secondaryColor": "hsl(296, 70%, 50%)",
     },
     {
       "area": "business expense",
       "primary": 94,
       "primaryColor": "hsl(337, 70%, 50%)",
       "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",     
+      "secondaryColor": "hsl(296, 70%, 50%)",
     }
   ]
 
@@ -361,39 +233,16 @@ export default function Comparison() {
           Compare
         </Button>
       </Flex>
-      <BarChart
-      data={datatmp}
-      />
-      {/* {
-        areasAggregate.length > 0 &&
-        <Tabs
-          size="md"
-          variant="line"
-          align="center"
-          py={4}
-        >
-          <TabList>
-            <Tab>Overview</Tab>
-            <Tab>Details</Tab>
-          </TabList>
-          <TabPanels
-            height="67vh"
-            overflow="scroll"
-          >
-            <TabPanel height="67vh">
-              <PieChart
-                data={pieChartData}
-                fromDate={moment(fromDate).format('YYYY-MM-DD')}
-                toDate={moment(toDate).format('YYYY-MM-DD')}
-              />
-            </TabPanel>
-            <TabPanel>
-              <SpendingReportTable />
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
-      } */}
-
+      <Box height="76vh">
+        <Box height="80%">
+          <BarChart
+            data={datatmp}
+          />
+        </Box>
+        <Box height="20%">
+          <ComparisonReportTable />
+        </Box>
+      </Box>
     </Box>
   )
 }

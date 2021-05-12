@@ -44,7 +44,7 @@ export default function BarChart({ data, fromDate, toDate }) {
     data={data}
     keys={['primary', 'secondary']}
     indexBy="area"
-    margin={{ top: 56, right: 30, bottom: 150, left: 30 }}
+    margin={{ top: 56, right: 30, bottom: 130, left: 30 }}
     innerPadding={1}
     padding={0.3}
     groupMode="grouped"

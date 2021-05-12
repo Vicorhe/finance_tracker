@@ -13,11 +13,6 @@ import {
   Spacer,
   Heading,
   Button,
-  Tabs,
-  TabList,
-  Tab,
-  TabPanels,
-  TabPanel,
   Table, Thead, Tbody, Tr, Th, Td,
   Icon,
   Text
@@ -185,49 +180,29 @@ export default function Reports() {
           />
         </Box>
         <Spacer />
+        <MakeComparisonModal primaryFromDate={fromDate} primaryToDate={toDate} />
         <Button
-          ml={3}
+          ml={4}
           onClick={generateReport}
         >
           Generate Spending Report
         </Button>
       </Flex>
-
       {
         areasAggregate.length > 0 &&
-        <Tabs
-          size="md"
-          variant="line"
-          align="center"
-          py={4}
-        >
-          <TabList>
-            <Tab>Overview</Tab>
-            <Tab>Details</Tab>
-          </TabList>
-          <TabPanels
-            height="67vh"
-            overflow="scroll"
-          >
-            <TabPanel height="67vh">
-              <PieChart
-                data={pieChartData}
-                fromDate={moment(fromDate).format('YYYY-MM-DD')}
-                toDate={moment(toDate).format('YYYY-MM-DD')}
-              />
-            </TabPanel>
-            <TabPanel>
-              <SpendingReportTable />
-            </TabPanel>
-          </TabPanels>
-        </Tabs>
+        <Box height="76vh">
+          <Box height="95%">
+            <PieChart
+              data={pieChartData}
+              fromDate={moment(fromDate).format('YYYY-MM-DD')}
+              toDate={moment(toDate).format('YYYY-MM-DD')}
+            />
+          </Box>
+          <Box height="5%" mt={3}>
+            <SpendingReportTable />
+          </Box>
+        </Box>
       }
-
-      {
-        areasAggregate.length > 0 &&
-        <MakeComparisonModal primaryFromDate={fromDate} primaryToDate={toDate} />
-      }
-
     </Box>
   )
 }

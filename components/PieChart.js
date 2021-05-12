@@ -66,7 +66,6 @@ export default function PieChart({ data, fromDate, toDate }) {
   }
 
   return <ResponsivePie
-    width={960}
     data={data}
     margin={{ top: 60, right: 200, bottom: 30, left: 200 }}
     startAngle={11}

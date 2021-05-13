@@ -16,8 +16,8 @@ export default async function handler(req, res) {
       `
       SELECT * FROM transactions_table
       WHERE user_id = ? AND date >= '`+ start_date + `' AND date <= '` + end_date + `' 
-        AND hidden = false AND area_id IS NOT NULL 
-        AND (split = false OR (split = true AND parent_id IS NOT NULL))
+        AND hidden = FALSE AND area_id IS NOT NULL AND pending = FALSE
+        AND (split = FALSE OR (split = TRUE AND parent_id IS NOT NULL))
       ORDER BY date DESC
       `,
       user_id)

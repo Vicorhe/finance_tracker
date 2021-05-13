@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     const results = await query(
       `
       SELECT * FROM transactions_table 
-      WHERE user_id = ?
+      WHERE user_id = ? AND pending = FALSE
       ORDER BY date DESC
       `,
       user_id)

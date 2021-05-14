@@ -23,8 +23,8 @@ export default function Reports() {
   const [areasAggregate, setAreasAggregate] = useState([])
   const [totalInput, setTotalInput] = useState(0)
   const [pieChartData, setPieChartData] = useState([])
-  const [fromDate, setFromDate] = useState(moment().subtract(1, "M").toDate())
-  const [toDate, setToDate] = useState(new Date())
+  const [startDate, setStartDate] = useState(moment().subtract(1, "M").toDate())
+  const [endDate, setEndDate] = useState(new Date())
   const { user } = useContext(UserContext)
   const { setPrimaryChart } = useContext(PrimaryChartContext)
   const breadcrumbs = [
@@ -33,8 +33,8 @@ export default function Reports() {
   ]
 
   async function generateReport() {
-    const formattedFromDate = moment(fromDate).format('YYYY-MM-DD')
-    const formattedToDate = moment(toDate).format('YYYY-MM-DD')
+    const formattedFromDate = moment(startDate).format('YYYY-MM-DD')
+    const formattedToDate = moment(endDate).format('YYYY-MM-DD')
     const res = await axios.post(`http://localhost:3000/api/report/areas`, {
       user_id: user.id,
       start_date: formattedFromDate,
@@ -55,8 +55,8 @@ export default function Reports() {
   function handleClick(a) {
     setPrimaryChart({
       area: a,
-      from: moment(fromDate).format('YYYY-MM-DD'),
-      to: moment(toDate).format('YYYY-MM-DD')
+      start: moment(startDate).format('YYYY-MM-DD'),
+      end: moment(endDate).format('YYYY-MM-DD')
     })
   }
 
@@ -164,8 +164,8 @@ export default function Reports() {
         <Box width="117px">
           <DatePicker
             id="fromDate"
-            selectedDate={fromDate}
-            onChange={d => setFromDate(d)}
+            selectedDate={startDate}
+            onChange={d => setStartDate(d)}
             showPopperArrow={true}
           />
         </Box>
@@ -173,8 +173,8 @@ export default function Reports() {
         <Box width="117px">
           <DatePicker
             id="toDate"
-            selectedDate={toDate}
-            onChange={d => setToDate(d)}
+            selectedDate={endDate}
+            onChange={d => setEndDate(d)}
             showPopperArrow={true}
           />
         </Box>
@@ -198,8 +198,8 @@ export default function Reports() {
           <Box height="95%">
             <PieChart
               data={pieChartData}
-              fromDate={moment(fromDate).format('YYYY-MM-DD')}
-              toDate={moment(toDate).format('YYYY-MM-DD')}
+              startDate={moment(startDate).format('YYYY-MM-DD')}
+              endDate={moment(endDate).format('YYYY-MM-DD')}
             />
           </Box>
           <Box height="5%" mt={3}>

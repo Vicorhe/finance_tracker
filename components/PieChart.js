@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { UserContext, PrimaryChartContext } from "../context"
 import { Box, Text } from '@chakra-ui/react'
 
-export default function PieChart({ data, fromDate, toDate }) {
+export default function PieChart({ data, startDate, endDate }) {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const { setPrimaryChart } = useContext(PrimaryChartContext)
@@ -43,8 +43,8 @@ export default function PieChart({ data, fromDate, toDate }) {
   function handleClick(e) {
     setPrimaryChart({ 
       area: e.label,
-      from: fromDate,
-      to: toDate
+      start: startDate,
+      end: endDate
     })
     router.push(`/${user.name}/reports/breakdown`)
   }

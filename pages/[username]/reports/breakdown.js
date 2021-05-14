@@ -41,8 +41,8 @@ export default function SpendingReportBreakdown() {
   async function getTransactions() {
     const res = await axios.post(`http://localhost:3000/api/report/transactions`, {
       user_id: user.id,
-      start_date: primaryChart.from,
-      end_date: primaryChart.to
+      start_date: primaryChart.start,
+      end_date: primaryChart.end
     });
     setTransactions(res.data)
     setFilterBy(primaryChart.area)

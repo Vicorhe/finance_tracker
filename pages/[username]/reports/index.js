@@ -6,7 +6,6 @@ import { UserContext, PrimaryChartContext } from "../../../context"
 import Nav from '../../../components/Nav'
 import DatePicker from '../../../components/DatePicker'
 import PieChart from '../../../components/PieChart'
-import MakeComparisonModal from '../../../components/MakeComparisonModal'
 import {
   Box,
   Flex,
@@ -24,7 +23,7 @@ export default function Reports() {
   const [areasAggregate, setAreasAggregate] = useState([])
   const [totalInput, setTotalInput] = useState(0)
   const [pieChartData, setPieChartData] = useState([])
-  const [fromDate, setFromDate] = useState(new Date())
+  const [fromDate, setFromDate] = useState(moment().subtract(1, "M").toDate())
   const [toDate, setToDate] = useState(new Date())
   const { user } = useContext(UserContext)
   const { setPrimaryChart } = useContext(PrimaryChartContext)
@@ -180,10 +179,15 @@ export default function Reports() {
           />
         </Box>
         <Spacer />
-        <MakeComparisonModal primaryFromDate={fromDate} primaryToDate={toDate} />
+        <Link href={`/${user.name}/reports/comparison`}>
+          <Button>
+            Make a Comparison
+          </Button>
+        </Link>
         <Button
           ml={4}
           onClick={generateReport}
+          colorScheme="messenger"
         >
           Generate Spending Report
         </Button>

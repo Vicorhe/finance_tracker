@@ -6,7 +6,6 @@ import { UserContext, PrimaryChartContext } from "../../../context"
 import Nav from '../../../components/Nav'
 import DatePicker from '../../../components/DatePicker'
 import BarChart from '../../../components/BarChart'
-import MakeComparisonModal from '../../../components/MakeComparisonModal'
 import {
   Box,
   Flex,

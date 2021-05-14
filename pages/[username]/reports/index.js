@@ -106,7 +106,7 @@ export default function Reports() {
                   </Link>
                 </Td>
 
-                <Td isNumeric textColor="#2d6a4f" fontWeight="bold">${-a.value}</Td>
+                <Td isNumeric textColor="#2d6a4f" fontWeight="bold">${a.value}</Td>
 
                 <Td isNumeric textColor="#2d6a4f" fontWeight="extrabold">{getPercentage(a.value)}</Td>
               </Tr>
@@ -141,7 +141,7 @@ export default function Reports() {
 
                 <Td isNumeric textColor="#9d0208" fontWeight="bold">${a.value}</Td>
 
-                <Td isNumeric textColor="#9d0208" fontWeight="extrabold">{getPercentage(-a.value)}</Td>
+                <Td isNumeric textColor="#9d0208" fontWeight="extrabold">{getPercentage(a.value)}</Td>
               </Tr>
             ))}
         </Tbody>

@@ -70,7 +70,7 @@ export default function Transactions() {
       return
     switch (filterBy) {
       case 'unassigned':
-        setDisplayedTransactions(transactions.filter(t => t.area_id === null))
+        setDisplayedTransactions(transactions.filter(t => (t.area_id === null) && !t.hidden))
         break
       case 'hidden':
         setDisplayedTransactions(transactions.filter(t => !!t.hidden))

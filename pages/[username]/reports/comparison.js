@@ -17,6 +17,7 @@ import {
   Text,
   StatArrow
 } from "@chakra-ui/react"
+import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 import utilStyles from '../../../styles/utils.module.scss'
 
@@ -26,10 +27,10 @@ export default function Comparison() {
   )
   const [periodOneEndDate, setPeriodOneEndDate] = useState(new Date())
   const [periodTwoStartDate, setPeriodTwoStartDate] = useState(
-    moment().subtract(3, "M").toDate()
+    moment().subtract(2, "M").toDate()
   )
   const [periodTwoEndDate, setPeriodTwoEndDate] = useState(
-    moment().subtract(2, "M").toDate()
+    moment().subtract(1, "M").subtract(1, "d").toDate()
   )
   const [barChartData, setBarChartData] = useState([])
   const [tableData, setTableData] = useState([])
@@ -74,13 +75,13 @@ export default function Comparison() {
     return moment(d).format("MMM DD, YYYY")
   }
 
-  function getDelta(a, b) {
-    if (b == 0) return 'N/A'
+  function getDelta(a, b, input) {
+    if (b == 0) return <Text fontWeight="extrabold">N/A</Text>
     let percentage = ((a - b) * 100 / b)
-    let color = (percentage < 0) ? '#9d0208' : '#2d6a4f'
-    let type = (percentage < 0) ? 'decrease' : 'increase'
+    let color = (percentage < 0 && !input) ? '#2d6a4f' : '#9d0208'
+    let icon = (percentage < 0) ? <TriangleDownIcon color={color} /> : <TriangleUpIcon color={color} />
     return <Text color={color} fontWeight="extrabold">
-      <StatArrow type={type} mr={1} />
+      {icon}
       {percentage.toFixed(2)}%
     </Text>
   }
@@ -90,15 +91,19 @@ export default function Comparison() {
       <Table variant="simple" size="md">
         <Thead>
           <Tr>
-            <Th>Area</Th>
-            <Th isNumeric>Period 1 Total</Th>
-            <Th isNumeric>Period 2 Total</Th>
-            <Th isNumeric>Absolute Difference</Th>
-            <Th isNumeric>Relative Difference</Th>
+            <Th> <br />Area</Th>
+            <Th isNumeric>
+              {formatDisplayDate(periodOneStartDate)}<br />{formatDisplayDate(periodOneEndDate)}
+            </Th>
+            <Th isNumeric>
+              {formatDisplayDate(periodTwoStartDate)}<br />{formatDisplayDate(periodTwoEndDate)}
+            </Th>
+            <Th isNumeric>Absolute<br />Difference</Th>
+            <Th isNumeric>Relative<br />Difference</Th>
           </Tr>
         </Thead>
         <Tbody>
-          {tableData.filter(t => !t.input)
+          {tableData.filter(t => !!t.input)
             .map((a) => (
               <Tr
                 key={a.area}
@@ -136,7 +141,42 @@ export default function Comparison() {
                   </Link>
                 </Td>
 
-                <Td isNumeric fontWeight="bold">{a.period_one - a.period_two}</Td>
+                <Td isNumeric fontWeight="bold">{(a.period_one - a.period_two).toFixed(2)}</Td>
+
+                <Td isNumeric>{getDelta(a.period_one, a.period_two, true)}</Td>
+              </Tr>
+            ))}
+          {tableData.filter(t => !t.input)
+            .map((a) => (
+              <Tr
+                key={a.area}
+                onClick={() => handleClick(a.area)}
+              >
+                <Td alignItems="center">{a.area}</Td>
+
+                <Td isNumeric >
+                  <Link href={`/${user.name}/reports/breakdown`}>
+                    <Text className={utilStyles.hover_underline_animation}
+                      lineHeight={1.5}
+                      fontWeight="bold"
+                    >
+                      ${a.period_one}
+                    </Text>
+                  </Link>
+                </Td>
+
+                <Td isNumeric >
+                  <Link href={`/${user.name}/reports/breakdown`}>
+                    <Text className={utilStyles.hover_underline_animation}
+                      lineHeight={1.5}
+                      fontWeight="bold"
+                    >
+                      ${a.period_two}
+                    </Text>
+                  </Link>
+                </Td>
+
+                <Td isNumeric fontWeight="bold">{(a.period_one - a.period_two).toFixed(2)}</Td>
 
                 <Td isNumeric>{getDelta(a.period_one, a.period_two)}</Td>
               </Tr>
@@ -198,12 +238,12 @@ export default function Comparison() {
       {
         barChartData.length > 0 &&
         <Box height="76vh">
-          <Box height="80%">
+          <Box height="95%">
             <BarChart
               data={barChartData}
             />
           </Box>
-          <Box height="20%">
+          <Box>
             <ComparisonReportTable />
           </Box>
         </Box>

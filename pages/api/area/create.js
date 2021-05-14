@@ -3,7 +3,7 @@ import { query } from '../../../lib/db'
 export default async function handler(req, res) {
   const { name, description, color, input } = req.body
   try {
-    if (!name || !description || !color || !input) {
+    if (!name || !description || !color || input === null) {
       return res
         .status(400)
         .json({ message: '`name`, `description`, `color`, and `input` are all required' })

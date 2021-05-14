@@ -15,7 +15,6 @@ import {
   Table, Thead, Tbody, Tr, Th, Td,
   Icon,
   Text,
-  StatArrow
 } from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
@@ -59,12 +58,14 @@ export default function Comparison() {
     setTableData(comparison_data)
   }
 
-  function handleClick(a) {
-    // setPrimaryChart({
-    //   area: a,
-    //   from: moment(fromDate).format('YYYY-MM-DD'),
-    //   to: moment(toDate).format('YYYY-MM-DD')
-    // })
+  function handleClick(a, period_one) {
+    let start_date = period_one ? periodOneStartDate : periodTwoStartDate
+    let end_date = period_one ? periodOneEndDate : periodTwoEndDate
+    setPrimaryChart({
+      area: a,
+      start: formatMySQLDate(start_date),
+      end: formatMySQLDate(end_date)
+    })
   }
 
   function formatMySQLDate(d) {
@@ -105,10 +106,7 @@ export default function Comparison() {
         <Tbody>
           {tableData.filter(t => !!t.input)
             .map((a) => (
-              <Tr
-                key={a.area}
-                onClick={() => handleClick(a.area)}
-              >
+              <Tr key={a.area}>
                 <Td alignItems="center">
                   <Icon
                     as={FaRegMoneyBillAlt}
@@ -119,7 +117,10 @@ export default function Comparison() {
                   {a.area}
                 </Td>
 
-                <Td isNumeric >
+                <Td
+                  isNumeric
+                  onClick={() => handleClick(a.id, true)}
+                >
                   <Link href={`/${user.name}/reports/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
@@ -130,7 +131,10 @@ export default function Comparison() {
                   </Link>
                 </Td>
 
-                <Td isNumeric >
+                <Td
+                  isNumeric
+                  onClick={() => handleClick(a.id, false)}
+                >
                   <Link href={`/${user.name}/reports/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
@@ -148,13 +152,13 @@ export default function Comparison() {
             ))}
           {tableData.filter(t => !t.input)
             .map((a) => (
-              <Tr
-                key={a.area}
-                onClick={() => handleClick(a.area)}
-              >
+              <Tr key={a.area} >
                 <Td alignItems="center">{a.area}</Td>
 
-                <Td isNumeric >
+                <Td
+                  isNumeric
+                  onClick={() => handleClick(a.id, true)}
+                >
                   <Link href={`/${user.name}/reports/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
@@ -165,7 +169,10 @@ export default function Comparison() {
                   </Link>
                 </Td>
 
-                <Td isNumeric >
+                <Td
+                  isNumeric
+                  onClick={() => handleClick(a.id, false)}
+                >
                   <Link href={`/${user.name}/reports/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
@@ -241,6 +248,10 @@ export default function Comparison() {
           <Box height="95%">
             <BarChart
               data={barChartData}
+              periodOneStartDate={periodOneStartDate}
+              periodOneEndDate={periodOneEndDate}
+              periodTwoStartDate={periodTwoStartDate}
+              periodTwoEndDate={periodTwoEndDate}
             />
           </Box>
           <Box>

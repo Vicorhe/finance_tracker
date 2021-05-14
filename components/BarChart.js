@@ -3,26 +3,26 @@ import { ResponsiveBar } from '@nivo/bar'
 import { useRouter } from 'next/router'
 import { UserContext, PrimaryChartContext } from "../context"
 import { Box, Text } from '@chakra-ui/react'
+import moment from 'moment'
 
-export default function BarChart({ data, fromDate, toDate }) {
+export default function BarChart({
+  data,
+  periodOneStartDate,
+  periodOneEndDate,
+  periodTwoStartDate,
+  periodTwoEndDate
+}) {
   const router = useRouter()
   const { user } = useContext(UserContext)
   const { setPrimaryChart } = useContext(PrimaryChartContext)
 
-  const theme = {
-    "fontSize": 17,
-    "tooltip": {
-      "container": {
-        "background": '#333',
-      },
-    },
-  };
-
   function handleClick(e) {
+    let start_date = e.id === 'period_one' ? periodOneStartDate : periodTwoStartDate
+    let end_date = e.id === 'period_one' ? periodOneEndDate : periodTwoEndDate
     setPrimaryChart({
-      area: e.label,
-      from: fromDate,
-      to: toDate
+      area: e.data.id,
+      start: moment(start_date).format('YYYY-MM-DD'),
+      end: moment(end_date).format('YYYY-MM-DD')
     })
     router.push(`/${user.name}/reports/breakdown`)
   }
@@ -87,6 +87,7 @@ export default function BarChart({ data, fromDate, toDate }) {
         itemDirection: 'left-to-right'
       }
     ]}
+    onClick={handleClick}
     tooltip={ToolTip}
     animate={true}
     motionStiffness={90}

@@ -18,7 +18,7 @@ export default async function handler(req, res) {
     }
     const comparison = await query(
       `
-      SELECT P1.id, P1.name, P1.amount periodone, P2.amount periodtwo, P1.input 
+      SELECT P1.id, P1.name area, IFNULL(ABS(P1.amount), 0) period_one, IFNULL(ABS(P2.amount), 0) period_two, P1.input 
         FROM
         (
           SELECT A1.id, A1.name, T1.amount, A1.input 

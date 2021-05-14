@@ -42,16 +42,16 @@ export default function BarChart({ data, fromDate, toDate }) {
 
   return <ResponsiveBar
     data={data}
-    keys={['primary', 'secondary']}
+    keys={['period_one', 'period_two']}
     indexBy="area"
-    margin={{ top: 56, right: 30, bottom: 130, left: 30 }}
+    margin={{ top: 56, right: 40, bottom: 130, left: 40 }}
     innerPadding={1}
     padding={0.3}
     groupMode="grouped"
     layout="vertical"
     valueScale={{ type: 'linear' }}
     indexScale={{ type: 'band', round: true }}
-    colors={["#2d2d34", "#949d6a"]}
+    colors={["#6785d0", "#b75fb3"]}
     axisRight={{ tickSize: 5, tickPadding: 5, tickRotation: 0, legend: '', legendOffset: 0 }}
     axisBottom={{
       tickSize: 11,
@@ -70,7 +70,7 @@ export default function BarChart({ data, fromDate, toDate }) {
       legendOffset: -40
     }}
     enableGridY={true}
-    labelSkipWidth={20}
+    labelSkipWidth={40}
     labelTextColor="#f7f7ff"
     legends={[
       {
@@ -78,11 +78,11 @@ export default function BarChart({ data, fromDate, toDate }) {
         anchor: 'top-left',
         direction: 'row',
         justify: false,
-        translateX: -22,
+        translateX: -29,
         translateY: -36,
         itemWidth: 77,
         itemHeight: 16,
-        itemsSpacing: 6,
+        itemsSpacing: 17,
         symbolSize: 21,
         itemDirection: 'left-to-right'
       }

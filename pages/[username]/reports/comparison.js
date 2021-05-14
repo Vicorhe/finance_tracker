@@ -21,10 +21,18 @@ import Link from 'next/link'
 import utilStyles from '../../../styles/utils.module.scss'
 
 export default function Comparison() {
-  const [primaryFromDate, setPrimaryFromDate] = useState(new Date())
-  const [primaryToDate, setPrimaryToDate] = useState(new Date())
-  const [secondaryFromDate, setSecondaryFromDate] = useState(new Date())
-  const [secondaryToDate, setSecondaryToDate] = useState(new Date())
+  const [periodOneStartDate, setPeriodOneStartDate] = useState(
+    moment().subtract(1, "M").toDate()
+  )
+  const [periodOneEndDate, setPeriodOneEndDate] = useState(new Date())
+  const [periodTwoStartDate, setPeriodTwoStartDate] = useState(
+    moment().subtract(3, "M").toDate()
+  )
+  const [periodTwoEndDate, setPeriodTwoEndDate] = useState(
+    moment().subtract(2, "M").toDate()
+  )
+  const [barChartData, setBarChartData] = useState([])
+  const [tableData, setTableData] = useState([])
   const { user } = useContext(UserContext)
   const { setPrimaryChart } = useContext(PrimaryChartContext)
   const breadcrumbs = [
@@ -34,23 +42,20 @@ export default function Comparison() {
   ]
 
   async function generateReport() {
-    // const formattedFromDate = moment(fromDate).format('YYYY-MM-DD')
-    // const formattedToDate = moment(toDate).format('YYYY-MM-DD')
-    // const res = await axios.post(`http://localhost:3000/api/report/areas`, {
-    //   user_id: user.id,
-    //   start_date: formattedFromDate,
-    //   end_date: formattedToDate
-    // });
-    // const areas_aggregate = res.data
-    // setPieChartData(areas_aggregate.filter(a => !a.input))
-    // setAreasAggregate(areas_aggregate)
-    // var sumInput = areas_aggregate.reduce(
-    //   (a, c) => {
-    //     if (!!c.input)
-    //       return a + parseFloat(c.value)
-    //     return a
-    //   }, 0)
-    // setTotalInput(sumInput)
+    const period_one_start_date = formatMySQLDate(periodOneStartDate)
+    const period_one_end_date = formatMySQLDate(periodOneEndDate)
+    const period_two_start_date = formatMySQLDate(periodTwoStartDate)
+    const period_two_end_date = formatMySQLDate(periodTwoEndDate)
+    const res = await axios.post(`http://localhost:3000/api/report/comparison`, {
+      user_id: user.id,
+      period_one_start_date,
+      period_one_end_date,
+      period_two_start_date,
+      period_two_end_date
+    });
+    const comparison_data = res.data
+    setBarChartData(comparison_data.filter(c => !c.input))
+    setTableData(comparison_data)
   }
 
   function handleClick(a) {
@@ -61,11 +66,16 @@ export default function Comparison() {
     // })
   }
 
-  function formatDate(d) {
+  function formatMySQLDate(d) {
+    return moment(d).format('YYYY-MM-DD')
+  }
+
+  function formatDisplayDate(d) {
     return moment(d).format("MMM DD, YYYY")
   }
 
   function getDelta(a, b) {
+    if (b == 0) return 'N/A'
     let percentage = ((a - b) * 100 / b)
     let color = (percentage < 0) ? '#9d0208' : '#2d6a4f'
     let type = (percentage < 0) ? 'decrease' : 'increase'
@@ -88,7 +98,7 @@ export default function Comparison() {
           </Tr>
         </Thead>
         <Tbody>
-          {datatmp.filter((a) => !a.input)
+          {tableData.filter(t => !t.input)
             .map((a) => (
               <Tr
                 key={a.area}
@@ -110,7 +120,7 @@ export default function Comparison() {
                       lineHeight={1.5}
                       fontWeight="bold"
                     >
-                      ${a.primary}
+                      ${a.period_one}
                     </Text>
                   </Link>
                 </Td>
@@ -121,68 +131,20 @@ export default function Comparison() {
                       lineHeight={1.5}
                       fontWeight="bold"
                     >
-                      ${a.secondary}
+                      ${a.period_two}
                     </Text>
                   </Link>
                 </Td>
 
-                <Td isNumeric fontWeight="bold">{a.primary - a.secondary}</Td>
+                <Td isNumeric fontWeight="bold">{a.period_one - a.period_two}</Td>
 
-                <Td isNumeric>{getDelta(a.primary, a.secondary)}</Td>
+                <Td isNumeric>{getDelta(a.period_one, a.period_two)}</Td>
               </Tr>
             ))}
         </Tbody>
       </Table>
     )
   }
-
-  const datatmp = [
-    {
-      "area": "1",
-      "primary": 63,
-      "primaryColor": "hsl(343, 70%, 50%)",
-      "secondary": 87,
-      "secondaryColor": "hsl(158, 70%, 50%)",
-      "input": 1
-    },
-    {
-      "area": "2",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",
-      "input": 1
-    },
-    {
-      "area": "6",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",
-    },
-    {
-      "area": "7",
-      "primary": 63,
-      "primaryColor": "hsl(343, 70%, 50%)",
-      "secondary": 87,
-      "secondaryColor": "hsl(158, 70%, 50%)",
-    },
-    
-    {
-      "area": "self development",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",
-    },
-    {
-      "area": "business expense",
-      "primary": 94,
-      "primaryColor": "hsl(337, 70%, 50%)",
-      "secondary": 54,
-      "secondaryColor": "hsl(296, 70%, 50%)",
-    }
-  ]
 
   return (
     <Box className={utilStyles.page}>
@@ -192,8 +154,8 @@ export default function Comparison() {
         <Box width="117px">
           <DatePicker
             id="primaryFromDate"
-            selectedDate={primaryFromDate}
-            onChange={d => setPrimaryFromDate(d)}
+            selectedDate={periodOneStartDate}
+            onChange={d => setPeriodOneStartDate(d)}
             showPopperArrow={true}
           />
         </Box>
@@ -201,8 +163,8 @@ export default function Comparison() {
         <Box width="117px">
           <DatePicker
             id="primaryToDate"
-            selectedDate={primaryToDate}
-            onChange={d => setPrimaryToDate(d)}
+            selectedDate={periodOneEndDate}
+            onChange={d => setPeriodOneEndDate(d)}
             showPopperArrow={true}
           />
         </Box>
@@ -210,8 +172,8 @@ export default function Comparison() {
         <Box width="117px">
           <DatePicker
             id="secondaryFromDate"
-            selectedDate={secondaryFromDate}
-            onChange={d => setSecondaryFromDate(d)}
+            selectedDate={periodTwoStartDate}
+            onChange={d => setPeriodTwoStartDate(d)}
             showPopperArrow={true}
           />
         </Box>
@@ -219,29 +181,33 @@ export default function Comparison() {
         <Box width="117px">
           <DatePicker
             id="secondaryToDate"
-            selectedDate={secondaryToDate}
-            onChange={d => setSecondaryToDate(d)}
+            selectedDate={periodTwoEndDate}
+            onChange={d => setPeriodTwoEndDate(d)}
             showPopperArrow={true}
           />
         </Box>
         <Spacer />
         <Button
           ml={3}
+          colorScheme="messenger"
           onClick={generateReport}
         >
           Compare
         </Button>
       </Flex>
-      <Box height="76vh">
-        <Box height="80%">
-          <BarChart
-            data={datatmp}
-          />
+      {
+        barChartData.length > 0 &&
+        <Box height="76vh">
+          <Box height="80%">
+            <BarChart
+              data={barChartData}
+            />
+          </Box>
+          <Box height="20%">
+            <ComparisonReportTable />
+          </Box>
         </Box>
-        <Box height="20%">
-          <ComparisonReportTable />
-        </Box>
-      </Box>
+      }
     </Box>
   )
 }

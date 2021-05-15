@@ -1,36 +1,22 @@
 import '../styles.scss'
 import { useState } from 'react'
 import { ChakraProvider, Container } from '@chakra-ui/react';
-import { UserContext, PrimaryChartContext, SecondaryChartContext } from '../context'
+import { UserContext } from '../context'
 import '../styles/date-picker.css'
 
 function MyApp({ Component, pageProps }) {
   const [user, setUserState] = useState({})
-  const [primaryChart, setPrimaryChartState] = useState({})
-  const [secondaryChart, setSecondaryChartState] = useState({})
-
-  function setPrimaryChart(p) {
-    setPrimaryChartState(p);
-  }
 
   function setUser(a) {
     setUserState(a)
   }
 
-  function setSecondaryChart(s) {
-    setSecondaryChartState(s)
-  }
-
   return (
     <ChakraProvider>
       <UserContext.Provider value={{ user, setUser }}>
-        <PrimaryChartContext.Provider value={{ primaryChart, setPrimaryChart }}>
-          <SecondaryChartContext.Provider value={{ secondaryChart, setSecondaryChart }}>
-            <Container maxW={{base: "container.lg", "2xl": "96rem"}} p="2rem">
-              <Component {...pageProps} />
-            </Container>
-          </SecondaryChartContext.Provider>
-        </PrimaryChartContext.Provider>
+        <Container maxW={{ base: "container.lg", "2xl": "96rem" }} p="2rem">
+          <Component {...pageProps} />
+        </Container>
       </UserContext.Provider>
     </ChakraProvider>
   );

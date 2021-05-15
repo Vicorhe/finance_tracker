@@ -143,10 +143,6 @@ export default function Transactions() {
   }
 
   function loadMoreRows({ startIndex, stopIndex }) {
-    // return fetch(`path/to/api?startIndex=${startIndex}&stopIndex=${stopIndex}`)
-    //   .then(response => {
-    //     // Store response data in list...
-    //   })
   }
 
   function rowRenderer({ key, index, style }) {

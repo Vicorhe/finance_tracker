@@ -33,8 +33,8 @@ import moment from 'moment';
 
 export default function EditSplitTransactionsModal({ parent, activeSplits, isModalOpen, onModalClose }) {
   const { user } = useContext(UserContext)
-  const [parentAmount, setParentAmount] = useState('')
   const [errMessage, setErrMessage] = useState('')
+  const [parentAmount, setParentAmount] = useState(0)
   const [tabIndex, setTabIndex] = useState(1)
   const [splits, setSplits] = useState([])
   const [submitting, setSubmitting] = useState(false)
@@ -48,11 +48,15 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
   const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
-    setParentAmount(parent.amount)
     setErrMessage('')
     setSplits(activeSplits)
     setTabIndex(0)
   }, [parent, activeSplits, isModalOpen])
+
+  useEffect(() => {
+    if (parent.amount !== null && parent.amount !== undefined)
+      setParentAmount(parent.amount)
+  }, [parent])
 
   function getBlankSplit() {
     return {
@@ -63,15 +67,14 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
     }
   }
 
-  function sumSplits() {
-    let sum = 0
+  function remainingAmount() {
+    var rem = parentAmount
     for (var i = 0; i < splits.length; i++) {
       let parsed = parseFloat(splits[i].amount)
-      if (!isNaN(parsed)) {
-        sum += parsed
-      }
+      if (!isNaN(parsed))
+        rem -= parsed
     }
-    return sum
+    return Math.abs(rem).toFixed(2)
   }
 
   const handleTabsChange = (index) => {
@@ -106,6 +109,10 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
 
   function validForm() {
     setErrMessage('')
+    if (remainingAmount() !== '0.00') {
+      setErrMessage('Please make sure all the parent transaction amount is accounted for in splits.')
+      return false
+    }
     for (var i = 0; i < splits.length; i++) {
       let s = splits[i]
       if (!s.amount) {
@@ -195,9 +202,9 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
                     <Text fontWeight="semibold">REMAINING: </Text>
                     <Heading
                       fontSize="2xl"
-                      color={(parentAmount - sumSplits()) === 0 ? "black" : "red"}
+                      color={remainingAmount() === '0.00' ? "black" : "red"}
                       pl={1}>
-                      ${parentAmount - sumSplits()}
+                      ${remainingAmount()}
                     </Heading>
                   </Flex>
                   {
@@ -294,10 +301,10 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
                 colorScheme="red"
                 mr={3}
                 onClick={onAlertOpen}>
-                Undo Split
+                Delete Split
               </Button>
               <Spacer />
-              <Button disabled={submitting || ((parentAmount - sumSplits()) !== 0)} colorScheme="blue" mr={3} type="submit">
+              <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Saving ...' : 'Save'}
               </Button>
               <Button onClick={onModalClose}>Cancel</Button>

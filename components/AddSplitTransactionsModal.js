@@ -12,8 +12,6 @@ import {
   FormControl,
   FormLabel,
   Input,
-  NumberInput,
-  NumberInputField,
   Textarea,
   Select,
   Text,
@@ -27,19 +25,23 @@ import moment from 'moment';
 
 export default function AddSplitTransactionsModal({ parent, isModalOpen, onModalClose }) {
   const { user } = useContext(UserContext)
-  const [parentAmount, setParentAmount] = useState('')
   const [errMessage, setErrMessage] = useState('')
+  const [parentAmount, setParentAmount] = useState(0)
   const [tabIndex, setTabIndex] = useState(1)
   const [splits, setSplits] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const { areas, isAreasError } = useAreas();
 
   useEffect(() => {
-    setParentAmount(parent.amount)
     setErrMessage('')
     setSplits([getBlankSplit()])
     setTabIndex(0)
   }, [parent, isModalOpen])
+
+  useEffect(() => {
+    if (parent.amount !== null && parent.amount !== undefined)
+      setParentAmount(parent.amount)
+  }, [parent])
 
   function getBlankSplit() {
     return {
@@ -50,15 +52,14 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
     }
   }
 
-  function sumSplits() {
-    let sum = 0
+  function remainingAmount() {
+    var rem = parentAmount
     for (var i = 0; i < splits.length; i++) {
       let parsed = parseFloat(splits[i].amount)
-      if (!isNaN(parsed)) {
-        sum += parsed
-      }
+      if (!isNaN(parsed))
+        rem -= parsed
     }
-    return sum.toPrecision(4)
+    return Math.abs(rem).toFixed(2)
   }
 
   const handleTabsChange = (index) => {
@@ -93,6 +94,10 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
 
   function validForm() {
     setErrMessage('')
+    if (remainingAmount() !== '0.00') {
+      setErrMessage('Please make sure all the parent transaction amount is accounted for in splits.')
+      return false
+    }
     for (var i = 0; i < splits.length; i++) {
       let s = splits[i]
       if (!s.amount) {
@@ -162,9 +167,9 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                     <Text fontWeight="semibold">REMAINING: </Text>
                     <Heading
                       fontSize="2xl"
-                      color={(parentAmount - sumSplits()) === 0 ? "black" : "red"}
+                      color={remainingAmount() === '0.00' ? "black" : "red"}
                       pl={1}>
-                      ${parentAmount - sumSplits()}
+                      ${remainingAmount()}
                     </Heading>
                   </Flex>
                   {
@@ -258,7 +263,7 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
             </ModalBody>
 
             <ModalFooter>
-              <Button disabled={submitting || ((parentAmount - sumSplits()) !== 0)} colorScheme="blue" mr={3} type="submit">
+              <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Creating ...' : 'Create Splits'}
               </Button>
               <Button onClick={onModalClose}>Cancel</Button>

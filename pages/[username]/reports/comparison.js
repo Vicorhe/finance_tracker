@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { UserContext, PrimaryChartContext } from "../../../context"
+import { UserContext } from "../../../context"
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import moment from 'moment'
 import Nav from '../../../components/Nav'
@@ -37,7 +37,6 @@ export default function Comparison() {
   )
   const [barChartData, setBarChartData] = useState([])
   const [tableData, setTableData] = useState([])
-  const { setPrimaryChart } = useContext(PrimaryChartContext)
   const breadcrumbs = [
     { name: username, path: `/${username}` },
     { name: "reports", path: `/${username}/reports` },
@@ -72,16 +71,6 @@ export default function Comparison() {
     setTableData(comparison_data)
   }
 
-  function handleClick(a, period_one) {
-    let start_date = period_one ? periodOneStartDate : periodTwoStartDate
-    let end_date = period_one ? periodOneEndDate : periodTwoEndDate
-    setPrimaryChart({
-      area: a,
-      start: formatMySQLDate(start_date),
-      end: formatMySQLDate(end_date)
-    })
-  }
-
   function formatMySQLDate(d) {
     return moment(d).format('YYYY-MM-DD')
   }
@@ -99,6 +88,20 @@ export default function Comparison() {
       {icon}
       {percentage.toFixed(2)}%
     </Text>
+  }
+
+  function getBreakdownURLObject(a, period_one) {
+    let start_date = period_one ? periodOneStartDate : periodTwoStartDate
+    let end_date = period_one ? periodOneEndDate : periodTwoEndDate
+    return {
+      pathname: '/[username]/breakdown',
+      query: {
+        username: username,
+        area: a.id,
+        start: formatMySQLDate(start_date),
+        end: formatMySQLDate(end_date)
+      }
+    }
   }
 
   function ComparisonReportTable() {
@@ -131,11 +134,8 @@ export default function Comparison() {
                   {a.area}
                 </Td>
 
-                <Td
-                  isNumeric
-                  onClick={() => handleClick(a.id, true)}
-                >
-                  <Link href={`/${user.name}/breakdown`}>
+                <Td isNumeric>
+                  <Link href={getBreakdownURLObject(a, true)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -145,11 +145,8 @@ export default function Comparison() {
                   </Link>
                 </Td>
 
-                <Td
-                  isNumeric
-                  onClick={() => handleClick(a.id, false)}
-                >
-                  <Link href={`/${user.name}/breakdown`}>
+                <Td isNumeric>
+                  <Link href={getBreakdownURLObject(a, false)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -168,12 +165,8 @@ export default function Comparison() {
             .map((a) => (
               <Tr key={a.area} >
                 <Td alignItems="center">{a.area}</Td>
-
-                <Td
-                  isNumeric
-                  onClick={() => handleClick(a.id, true)}
-                >
-                  <Link href={`/${user.name}/breakdown`}>
+                <Td isNumeric>
+                  <Link href={getBreakdownURLObject(a, true)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -183,11 +176,8 @@ export default function Comparison() {
                   </Link>
                 </Td>
 
-                <Td
-                  isNumeric
-                  onClick={() => handleClick(a.id, false)}
-                >
-                  <Link href={`/${user.name}/breakdown`}>
+                <Td isNumeric>
+                  <Link href={getBreakdownURLObject(a, false)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"

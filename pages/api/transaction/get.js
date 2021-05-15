@@ -14,7 +14,7 @@ export default async function handler(req, res) {
       WHERE id = ?
       `,
       id)
-    return res.json(results)
+    return res.json(results[0])
   } catch (e) {
     res.status(500).json({ message: e.message })
   }

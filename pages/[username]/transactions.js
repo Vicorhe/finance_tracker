@@ -105,7 +105,7 @@ export default function Transactions() {
 
   async function getTransaction(id) {
     const res = await axios.get(`http://localhost:3000/api/transaction/get?id=${id}`);
-    setTransaction(res.data[0])
+    setTransaction(res.data)
   }
 
   async function getSplits(parent_id) {

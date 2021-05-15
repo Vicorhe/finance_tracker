@@ -24,7 +24,7 @@ export default function BarChart({
       start: moment(start_date).format('YYYY-MM-DD'),
       end: moment(end_date).format('YYYY-MM-DD')
     })
-    router.push(`/${user.name}/reports/breakdown`)
+    router.push(`/${user.name}/breakdown`)
   }
 
   function ToolTip({ id, value, color }) {

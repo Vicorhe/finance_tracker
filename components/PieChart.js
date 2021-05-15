@@ -46,7 +46,7 @@ export default function PieChart({ data, startDate, endDate }) {
       start: startDate,
       end: endDate
     })
-    router.push(`/${user.name}/reports/breakdown`)
+    router.push(`/${user.name}/breakdown`)
   }
 
   function ToolTip({ datum: { id, value } }) {

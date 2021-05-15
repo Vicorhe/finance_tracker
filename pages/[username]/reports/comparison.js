@@ -135,7 +135,7 @@ export default function Comparison() {
                   isNumeric
                   onClick={() => handleClick(a.id, true)}
                 >
-                  <Link href={`/${user.name}/reports/breakdown`}>
+                  <Link href={`/${user.name}/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -149,7 +149,7 @@ export default function Comparison() {
                   isNumeric
                   onClick={() => handleClick(a.id, false)}
                 >
-                  <Link href={`/${user.name}/reports/breakdown`}>
+                  <Link href={`/${user.name}/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -173,7 +173,7 @@ export default function Comparison() {
                   isNumeric
                   onClick={() => handleClick(a.id, true)}
                 >
-                  <Link href={`/${user.name}/reports/breakdown`}>
+                  <Link href={`/${user.name}/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -187,7 +187,7 @@ export default function Comparison() {
                   isNumeric
                   onClick={() => handleClick(a.id, false)}
                 >
-                  <Link href={`/${user.name}/reports/breakdown`}>
+                  <Link href={`/${user.name}/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"

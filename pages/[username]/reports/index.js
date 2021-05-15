@@ -99,7 +99,7 @@ export default function Reports() {
                     mr={1}
                     width={17}
                   />
-                  <Link href={`/${user.name}/reports/breakdown`}>
+                  <Link href={`/${user.name}/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -110,7 +110,7 @@ export default function Reports() {
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={`/${user.name}/reports/breakdown`}>
+                  <Link href={`/${user.name}/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -132,7 +132,7 @@ export default function Reports() {
                 onClick={() => handleClick(a.label)}
               >
                 <Td>
-                  <Link href={`/${user.name}/reports/breakdown`}>
+                  <Link href={`/${user.name}/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -143,7 +143,7 @@ export default function Reports() {
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={`/${user.name}/reports/breakdown`}>
+                  <Link href={`/${user.name}/breakdown`}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"

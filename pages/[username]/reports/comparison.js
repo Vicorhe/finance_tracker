@@ -1,8 +1,9 @@
-import { useContext, useState } from 'react'
-import { FaRegMoneyBillAlt } from "react-icons/fa";
+import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
-import moment from 'moment'
+import { useRouter } from 'next/router'
 import { UserContext, PrimaryChartContext } from "../../../context"
+import { FaRegMoneyBillAlt } from "react-icons/fa";
+import moment from 'moment'
 import Nav from '../../../components/Nav'
 import DatePicker from '../../../components/DatePicker'
 import BarChart from '../../../components/BarChart'
@@ -21,6 +22,9 @@ import Link from 'next/link'
 import utilStyles from '../../../styles/utils.module.scss'
 
 export default function Comparison() {
+  const { user, setUser } = useContext(UserContext)
+  const router = useRouter()
+  const { username } = router.query
   const [periodOneStartDate, setPeriodOneStartDate] = useState(
     moment().subtract(1, "M").toDate()
   )
@@ -33,13 +37,23 @@ export default function Comparison() {
   )
   const [barChartData, setBarChartData] = useState([])
   const [tableData, setTableData] = useState([])
-  const { user } = useContext(UserContext)
   const { setPrimaryChart } = useContext(PrimaryChartContext)
   const breadcrumbs = [
-    { name: user.name, path: `/${user.name}` },
-    { name: "reports", path: `/${user.name}/reports` },
-    { name: "comparison", path: `/${user.name}/reports/comparison` }
+    { name: username, path: `/${username}` },
+    { name: "reports", path: `/${username}/reports` },
+    { name: "comparison", path: `/${username}/reports/comparison` }
   ]
+
+  useEffect(() => {
+    pullUser()
+  }, [router])
+
+  async function pullUser() {
+    if (Object.keys(user).length === 0) {
+      const res = await axios.get(`http://localhost:3000/api/user/get?name=${username}`);
+      setUser(res.data)
+    }
+  }
 
   async function generateReport() {
     const period_one_start_date = formatMySQLDate(periodOneStartDate)

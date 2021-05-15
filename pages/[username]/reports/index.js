@@ -1,8 +1,9 @@
-import { useContext, useState } from 'react'
-import { FaRegMoneyBillAlt } from "react-icons/fa";
+import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
-import moment from 'moment'
+import { useRouter } from 'next/router'
 import { UserContext, PrimaryChartContext } from "../../../context"
+import { FaRegMoneyBillAlt } from "react-icons/fa";
+import moment from 'moment'
 import Nav from '../../../components/Nav'
 import DatePicker from '../../../components/DatePicker'
 import PieChart from '../../../components/PieChart'
@@ -20,17 +21,30 @@ import Link from 'next/link'
 import utilStyles from '../../../styles/utils.module.scss'
 
 export default function Reports() {
+  const { user, setUser } = useContext(UserContext)
+  const { setPrimaryChart } = useContext(PrimaryChartContext)
+  const router = useRouter()
+  const { username } = router.query
   const [areasAggregate, setAreasAggregate] = useState([])
   const [totalInput, setTotalInput] = useState(0)
   const [pieChartData, setPieChartData] = useState([])
   const [startDate, setStartDate] = useState(moment().subtract(1, "M").toDate())
   const [endDate, setEndDate] = useState(new Date())
-  const { user } = useContext(UserContext)
-  const { setPrimaryChart } = useContext(PrimaryChartContext)
   const breadcrumbs = [
-    { name: user.name, path: `/${user.name}` },
-    { name: "reports", path: `/${user.name}/reports` }
+    { name: username, path: `/${username}` },
+    { name: "reports", path: `/${username}/reports` }
   ]
+
+  useEffect(() => {
+    pullUser()
+  }, [router])
+
+  async function pullUser() {
+    if (Object.keys(user).length === 0) {
+      const res = await axios.get(`http://localhost:3000/api/user/get?name=${username}`);
+      setUser(res.data)
+    }
+  }
 
   async function generateReport() {
     const formattedFromDate = moment(startDate).format('YYYY-MM-DD')

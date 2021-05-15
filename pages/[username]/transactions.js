@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
 import { UserContext } from "../../context"
 import { mutate } from 'swr'
@@ -18,7 +19,9 @@ import utilStyles from '../../styles/utils.module.scss'
 const moment = require('moment')
 
 export default function Transactions() {
-  const { user } = useContext(UserContext)
+  const { user,setUser } = useContext(UserContext)
+  const router = useRouter()
+  const { username } = router.query
   const { areas, isAreasError } = useAreas();
   const { transactions, isTransactionsError } = useTransactions(user.id)
   const [displayedTransactions, setDisplayedTransactions] = useState([])
@@ -43,9 +46,20 @@ export default function Transactions() {
     onClose: onEditSplitsModalClose
   } = useDisclosure()
   const breadcrumbs = [
-    { name: user.name, path: `/${user.name}` },
-    { name: "transactions", path: `/${user.name}/transactions` }
+    { name: username, path: `/${username}` },
+    { name: "transactions", path: `/${username}/transactions` }
   ]
+
+  useEffect(() => {
+    pullUser()
+  }, [router])
+
+  async function pullUser() {
+    if (Object.keys(user).length === 0) {
+      const res = await axios.get(`http://localhost:3000/api/user/get?name=${username}`);
+      setUser(res.data)
+    }
+  }
 
   // useEffect(() => {
   //   syncTransactions() // commented out during development

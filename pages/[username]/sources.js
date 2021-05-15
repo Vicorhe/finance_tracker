@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState, useRef } from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 import { UserContext } from '../../context'
 import { mutate } from 'swr'
 import { useAccounts, useItems } from '../../lib/swr-hooks'
@@ -21,6 +22,9 @@ import LoadingList from '../../components/LoadingList'
 import utilStyles from '../../styles/utils.module.scss'
 
 export default function Sources() {
+  const { user, setUser } = useContext(UserContext)
+  const router = useRouter()
+  const { username } = router.query
   const { accounts, isAccountsError } = useAccounts();
   const { items, isItemsError } = useItems();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -30,11 +34,21 @@ export default function Sources() {
   const [access_token, setAccessToken] = useState(null)
   const [selectedItem, setSelectedItem] = useState(null)
 
-  const { user } = useContext(UserContext)
   const breadcrumbs = [
-    { name: user.name, path: `/${user.name}` },
-    { name: "sources", path: `/${user.name}/sources` }
+    { name: username, path: `/${username}` },
+    { name: "sources", path: `/${username}/sources` }
   ]
+
+  useEffect(() => {
+    pullUser()
+  }, [router])
+
+  async function pullUser() {
+    if (Object.keys(user).length === 0) {
+      const res = await axios.get(`http://localhost:3000/api/user/get?name=${username}`);
+      setUser(res.data)
+    }
+  }
 
   useEffect(() => {
     createLinkToken()

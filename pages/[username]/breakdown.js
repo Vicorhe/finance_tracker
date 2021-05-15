@@ -1,19 +1,22 @@
 import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
-import { UserContext, PrimaryChartContext } from '../../../context'
+import { UserContext, PrimaryChartContext } from '../../context'
 import { Box, Heading, Text, Flex, Select, Badge } from "@chakra-ui/react"
-import { useAreas } from '../../../lib/swr-hooks'
-import Nav from '../../../components/Nav'
-import ColorShard from '../../../components/ColorShard'
-import LoadingError from '../../../components/LoadingError'
-import LoadingList from '../../../components/LoadingList'
-import utilStyles from '../../../styles/utils.module.scss'
+import { useAreas } from '../../lib/swr-hooks'
+import Nav from '../../components/Nav'
+import ColorShard from '../../components/ColorShard'
+import LoadingError from '../../components/LoadingError'
+import LoadingList from '../../components/LoadingList'
+import utilStyles from '../../styles/utils.module.scss'
 const moment = require('moment')
 
 export default function SpendingReportBreakdown() {
-  const { user } = useContext(UserContext)
+  const { user, setUser } = useContext(UserContext)
   const { primaryChart } = useContext(PrimaryChartContext)
+  const router = useRouter()
+  const { username } = router.query
   const { areas, isAreasError } = useAreas();
   const [transactions, setTransactions] = useState([])
   const [displayedTransactions, setDisplayedTransactions] = useState([])
@@ -21,14 +24,24 @@ export default function SpendingReportBreakdown() {
   const [filterBy, setFilterBy] = useState(0)
 
   const breadcrumbs = [
-    { name: user.name, path: `/${user.name}` },
-    { name: "reports", path: `/${user.name}/reports` },
-    { name: "breakdown", path: `/${user.name}/reports/breakdown` }
+    { name: username, path: `/${username}` },
+    { name: "breakdown", path: `/${username}/breakdown` }
   ]
 
   useEffect(() => {
-    getTransactions()
-  }, [primaryChart])
+    pullUser()
+  }, [router])
+
+  async function pullUser() {
+    if (Object.keys(user).length === 0) {
+      const res = await axios.get(`http://localhost:3000/api/user/get?name=${username}`);
+      setUser(res.data)
+    }
+  }
+
+  // useEffect(() => {
+  //   getTransactions()
+  // }, [primaryChart])
 
   useEffect(() => {
     setRemoteRowCount(displayedTransactions.length)

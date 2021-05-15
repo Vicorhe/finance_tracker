@@ -32,7 +32,8 @@ export default function Account() {
       <Box my="1" />
       <BoxLink title="Sources" path={`/${username}/sources`} />
       <BoxLink title="Transactions" path={`/${username}/transactions`} />
-      <BoxLink title="Reports" path={`/${username}/reports`} />
+      <BoxLink title="Breakdown" path={`/${username}/breakdown`} />
+      <BoxLink title="Spending Report" path={`/${username}/reports`} />
     </Box>
   )
 }

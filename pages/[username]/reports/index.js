@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { UserContext, PrimaryChartContext } from "../../../context"
+import { UserContext } from "../../../context"
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import moment from 'moment'
 import Nav from '../../../components/Nav'
@@ -22,7 +22,6 @@ import utilStyles from '../../../styles/utils.module.scss'
 
 export default function Reports() {
   const { user, setUser } = useContext(UserContext)
-  const { setPrimaryChart } = useContext(PrimaryChartContext)
   const router = useRouter()
   const { username } = router.query
   const [areasAggregate, setAreasAggregate] = useState([])
@@ -47,12 +46,10 @@ export default function Reports() {
   }
 
   async function generateReport() {
-    const formattedFromDate = moment(startDate).format('YYYY-MM-DD')
-    const formattedToDate = moment(endDate).format('YYYY-MM-DD')
     const res = await axios.post(`http://localhost:3000/api/report/areas`, {
       user_id: user.id,
-      start_date: formattedFromDate,
-      end_date: formattedToDate
+      start_date: formatMySQLDate(startDate),
+      end_date: formatMySQLDate(endDate)
     });
     const areas_aggregate = res.data
     setPieChartData(areas_aggregate.filter(a => !a.input))
@@ -66,12 +63,20 @@ export default function Reports() {
     setTotalInput(sumInput)
   }
 
-  function handleClick(a) {
-    setPrimaryChart({
-      area: a,
-      start: moment(startDate).format('YYYY-MM-DD'),
-      end: moment(endDate).format('YYYY-MM-DD')
-    })
+  function formatMySQLDate(d) {
+    return moment(d).format('YYYY-MM-DD')
+  }
+
+  function getBreakdownURLObject(a) {
+    return {
+      pathname: '/[username]/breakdown',
+      query: {
+        username: username,
+        area: a.label,
+        start: formatMySQLDate(startDate),
+        end: formatMySQLDate(endDate)
+      }
+    }
   }
 
   function SpendingReportTable() {
@@ -88,10 +93,7 @@ export default function Reports() {
         <Tbody>
           {areasAggregate.filter((a) => !!a.input)
             .map((a) => (
-              <Tr
-                key={a.label}
-                onClick={() => handleClick(a.label)}
-              >
+              <Tr key={a.label}>
                 <Td alignItems="center">
                   <Icon
                     as={FaRegMoneyBillAlt}
@@ -99,7 +101,7 @@ export default function Reports() {
                     mr={1}
                     width={17}
                   />
-                  <Link href={`/${user.name}/breakdown`}>
+                  <Link href={getBreakdownURLObject(a)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -110,7 +112,7 @@ export default function Reports() {
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={`/${user.name}/breakdown`}>
+                  <Link href={getBreakdownURLObject(a)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -127,12 +129,9 @@ export default function Reports() {
             ))}
           {areasAggregate.filter((a) => !a.input)
             .map((a) => (
-              <Tr
-                key={a.label}
-                onClick={() => handleClick(a.label)}
-              >
+              <Tr key={a.label}>
                 <Td>
-                  <Link href={`/${user.name}/breakdown`}>
+                  <Link href={getBreakdownURLObject(a)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -143,7 +142,7 @@ export default function Reports() {
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={`/${user.name}/breakdown`}>
+                  <Link href={getBreakdownURLObject(a)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -212,8 +211,8 @@ export default function Reports() {
           <Box height="95%">
             <PieChart
               data={pieChartData}
-              startDate={moment(startDate).format('YYYY-MM-DD')}
-              endDate={moment(endDate).format('YYYY-MM-DD')}
+              startDate={formatMySQLDate(startDate)}
+              endDate={formatMySQLDate(endDate)}
             />
           </Box>
           <Box height="5%" mt={3}>

@@ -262,10 +262,10 @@ export default function Comparison() {
           <Box height="95%">
             <BarChart
               data={barChartData}
-              periodOneStartDate={periodOneStartDate}
-              periodOneEndDate={periodOneEndDate}
-              periodTwoStartDate={periodTwoStartDate}
-              periodTwoEndDate={periodTwoEndDate}
+              periodOneStartDate={formatMySQLDate(periodOneStartDate)}
+              periodOneEndDate={formatMySQLDate(periodOneEndDate)}
+              periodTwoStartDate={formatMySQLDate(periodTwoStartDate)}
+              periodTwoEndDate={formatMySQLDate(periodTwoEndDate)}
             />
           </Box>
           <Box>

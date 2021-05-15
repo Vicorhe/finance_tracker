@@ -1,12 +1,10 @@
-import { useContext } from 'react'
 import { ResponsivePie } from '@nivo/pie'
 import { useRouter } from 'next/router'
-import { UserContext } from "../context"
 import { Box, Text } from '@chakra-ui/react'
 
 export default function PieChart({ data, startDate, endDate }) {
   const router = useRouter()
-  const { user } = useContext(UserContext)
+  const { username } = router.query
 
   const theme = {
     "fontSize": 17,
@@ -43,7 +41,7 @@ export default function PieChart({ data, startDate, endDate }) {
     router.push({
       pathname: '/[username]/breakdown',
       query: {
-        username: user.name,
+        username: username,
         area: e.label,
         start: startDate,
         end: endDate

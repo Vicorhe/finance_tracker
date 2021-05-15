@@ -1,9 +1,6 @@
-import { useContext } from 'react'
 import { ResponsiveBar } from '@nivo/bar'
 import { useRouter } from 'next/router'
-import { UserContext, PrimaryChartContext } from "../context"
 import { Box, Text } from '@chakra-ui/react'
-import moment from 'moment'
 
 export default function BarChart({
   data,
@@ -13,18 +10,20 @@ export default function BarChart({
   periodTwoEndDate
 }) {
   const router = useRouter()
-  const { user } = useContext(UserContext)
-  const { setPrimaryChart } = useContext(PrimaryChartContext)
+  const { username } = router.query
 
   function handleClick(e) {
     let start_date = e.id === 'period_one' ? periodOneStartDate : periodTwoStartDate
     let end_date = e.id === 'period_one' ? periodOneEndDate : periodTwoEndDate
-    setPrimaryChart({
-      area: e.data.id,
-      start: moment(start_date).format('YYYY-MM-DD'),
-      end: moment(end_date).format('YYYY-MM-DD')
+    router.push({
+      pathname: '/[username]/breakdown',
+      query: {
+        username: username,
+        area: e.data.id,
+        start: start_date,
+        end: end_date
+      }
     })
-    router.push(`/${user.name}/breakdown`)
   }
 
   function ToolTip({ id, value, color }) {

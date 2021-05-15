@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
-import { UserContext, PrimaryChartContext } from '../../context'
-import { Box, Heading, Text, Flex, Select, Badge } from "@chakra-ui/react"
+import { Box, Heading, Text, Flex, Select, Badge, Spacer } from "@chakra-ui/react"
 import { useAreas } from '../../lib/swr-hooks'
 import Nav from '../../components/Nav'
+import DatePicker from '../../components/DatePicker'
 import ColorShard from '../../components/ColorShard'
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
@@ -13,15 +13,15 @@ import utilStyles from '../../styles/utils.module.scss'
 const moment = require('moment')
 
 export default function SpendingReportBreakdown() {
-  const { user, setUser } = useContext(UserContext)
-  const { primaryChart } = useContext(PrimaryChartContext)
   const router = useRouter()
-  const { username } = router.query
+  const { username, area, start, end } = router.query
   const { areas, isAreasError } = useAreas();
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
   const [transactions, setTransactions] = useState([])
   const [displayedTransactions, setDisplayedTransactions] = useState([])
   const [remoteRowCount, setRemoteRowCount] = useState(0)
-  const [filterBy, setFilterBy] = useState(0)
+  const [filterBy, setFilterBy] = useState(1)
 
   const breadcrumbs = [
     { name: username, path: `/${username}` },
@@ -29,19 +29,16 @@ export default function SpendingReportBreakdown() {
   ]
 
   useEffect(() => {
-    pullUser()
-  }, [router])
-
-  async function pullUser() {
-    if (Object.keys(user).length === 0) {
-      const res = await axios.get(`http://localhost:3000/api/user/get?name=${username}`);
-      setUser(res.data)
+    if (!!area && !!start && !!end) {
+      setFilterBy(parseInt(area))
+      setStartDate(moment(start).toDate())
+      setEndDate(moment(end).toDate())
     }
-  }
+  }, [area, start, end])
 
-  // useEffect(() => {
-  //   getTransactions()
-  // }, [primaryChart])
+  useEffect(() => {
+    getTransactions()   
+  }, [startDate, endDate, username])
 
   useEffect(() => {
     setRemoteRowCount(displayedTransactions.length)
@@ -49,20 +46,23 @@ export default function SpendingReportBreakdown() {
 
   useEffect(() => {
     filterTransactions()
-  }, [filterBy])
+  }, [filterBy, transactions])
 
   async function getTransactions() {
+    if (!username || !startDate || !endDate) return
+    // console.log(`fetching transactions of user ${username} between ${startDate} and ${endDate}`)
     const res = await axios.post(`http://localhost:3000/api/report/transactions`, {
-      user_id: user.id,
-      start_date: primaryChart.start,
-      end_date: primaryChart.end
+      user_name: username,
+      start_date: moment(startDate).format('YYYY-MM-DD'),
+      end_date: moment(endDate).format('YYYY-MM-DD')
     });
     setTransactions(res.data)
-    setFilterBy(primaryChart.area)
   }
 
   function filterTransactions() {
-    setDisplayedTransactions(transactions.filter(t => t.area_id === parseInt(filterBy)))
+    if (transactions.length === 0) return
+    // console.log(`filtering tranactions arr of length ${transactions.length} by area id ${filterBy}`)
+    setDisplayedTransactions(transactions.filter(t => t.area_id === filterBy))
   }
 
   function isRowLoaded({ index }) {
@@ -131,13 +131,32 @@ export default function SpendingReportBreakdown() {
     return (
       <Box>
         <Flex alignItems="center" p="3">
+          <Heading fontSize="lg" pr="3" fontWeight="extrabold">FROM</Heading>
+          <Box width="117px">
+            <DatePicker
+              id="fromDate"
+              selectedDate={startDate}
+              onChange={d => setStartDate(d)}
+              showPopperArrow={true}
+            />
+          </Box>
+          <Heading fontSize="lg" px="3" fontWeight="extrabold">TO</Heading>
+          <Box width="117px">
+            <DatePicker
+              id="toDate"
+              selectedDate={endDate}
+              onChange={d => setEndDate(d)}
+              showPopperArrow={true}
+            />
+          </Box>
+          <Spacer />
           <Heading fontSize="lg" mr="3" fontWeight="extrabold">SHOWING</Heading>
           <Select
             size="md"
             maxWidth="225px"
             disabled={!transactions}
             value={filterBy}
-            onChange={(e) => setFilterBy(e.target.value)}
+            onChange={(e) => setFilterBy(parseInt(e.target.value))}
           >
             {
               areas.map((a) =>

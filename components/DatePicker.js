@@ -19,6 +19,7 @@ const DatePicker = ({
       isClearable={isClearable}
       showPopperArrow={showPopperArrow}
       disabled={disabled}
+      autoComplete="off"
       {...props}
     />
   );

@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import { UserContext } from '../../context'
 import { mutate } from 'swr'
-import { useAccounts, useItems } from '../../lib/swr-hooks'
+import { useAccounts, useItems } from '../../hooks/swr-hooks'
 import {
   Box, Accordion, AccordionItem,
   AccordionButton, AccordionPanel, AccordionIcon,

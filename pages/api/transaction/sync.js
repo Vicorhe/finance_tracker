@@ -1,5 +1,5 @@
-import { query } from '../../../lib/db'
-import client from '../../../lib/plaid'
+import { query } from '../../../utils/db'
+import client from '../../../utils/plaid'
 const moment = require('moment');
 
 // fetch from plaid

@@ -1,4 +1,4 @@
-import { query } from '../../../lib/db'
+import { query } from '../../../utils/db'
 
 export default async function handler(req, res) {
   const { name } = req.body

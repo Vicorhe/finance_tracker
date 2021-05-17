@@ -1,4 +1,4 @@
-import { query } from '../../../lib/db'
+import { query } from '../../../utils/db'
 
 async function createChildSplit(user_id, parent_id, date, split) {
   const { name, amount, area_id, memo } = split

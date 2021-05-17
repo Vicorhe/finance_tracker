@@ -1,5 +1,5 @@
-import client from '../../../lib/plaid'
-import { query } from '../../../lib/db'
+import client from '../../../utils/plaid'
+import { query } from '../../../utils/db'
 
 export default async function handler(req, res) {
   const { publicToken, user_id } = req.body;

@@ -1,4 +1,4 @@
-import client from '../../../lib/plaid'
+import client from '../../../utils/plaid'
 
 export default async function handler(_, res) {
   try {

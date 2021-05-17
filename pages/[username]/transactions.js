@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
 import { UserContext } from "../../context"
 import { mutate } from 'swr'
-import { useAreas, useTransactions } from "../../lib/swr-hooks"
+import { useAreas, useTransactions } from "../../hooks/swr-hooks"
 import Nav from '../../components/Nav'
 import AddCashTransactionModal from '../../components/AddCashTransactionModal'
 import EditTransactionModal from '../../components/EditTransactionModal'

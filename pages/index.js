@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { UserContext } from '../context'
-import { useUsers } from '../lib/swr-hooks'
+import { useUsers } from '../hooks/swr-hooks'
 import Nav from '../components/Nav'
 import AddUserModal from '../components/AddUserModal'
 import EditUserModal from '../components/EditUserModal'

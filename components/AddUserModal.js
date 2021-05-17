@@ -14,6 +14,7 @@ import {
   Input
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
+import validUserName from '../utils/validusername'
 
 export default function AddUserModal() {
   const { isOpen, onOpen, onClose } = useDisclosure(
@@ -66,7 +67,9 @@ export default function AddUserModal() {
             <ModalHeader>Create your account</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
-              <FormControl>
+              <FormControl
+                isInvalid={!validUserName(name)}
+              >
                 <FormLabel>User name</FormLabel>
                 <Input
                   ref={initialRef}

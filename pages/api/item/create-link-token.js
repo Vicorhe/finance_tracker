@@ -7,7 +7,7 @@ export default async function handler(_, res) {
         client_user_id: '123-test-user-id',
       },
       client_name: 'Finance Tracker',
-      products: ['auth', 'transactions'],
+      products: ['transactions'],
       country_codes: ['US'],
       language: 'en',
     });

@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState, useRef } from 'react'
 import axios from 'axios'
+import useSWR from 'swr'
 import { useRouter } from 'next/router'
 import { UserContext } from '../../context'
 import { mutate } from 'swr'
-import { useAccounts, useItems } from '../../hooks/swr-hooks'
 import {
   Box, Accordion, AccordionItem,
   AccordionButton, AccordionPanel, AccordionIcon,
@@ -19,7 +19,32 @@ import Nav from '../../components/Nav'
 import PlaidLink from "../../components/PlaidLink"
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
+import fetcher from '../../utils/fetcher'
 import utilStyles from '../../styles/utils.module.scss'
+
+function useAccounts() {
+  const { data, error } = useSWR(
+    "/api/account/get-all",
+    fetcher
+  );
+  return {
+    accounts: data,
+    isAccountsLoading: !error && !data,
+    isAccountsError: error,
+  }
+}
+
+function useItems() {
+  const { data, error } = useSWR(
+    "/api/item/get-all",
+    fetcher
+  );
+  return {
+    items: data,
+    isItemsLoading: !error && !data,
+    isItemsError: error,
+  }
+}
 
 export default function Sources() {
   const { user, setUser } = useContext(UserContext)

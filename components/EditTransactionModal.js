@@ -25,7 +25,7 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
 } from "@chakra-ui/react"
-import { useAreas } from '../hooks/swr-hooks'
+import useAreas from '../hooks/areas'
 import { mutate } from 'swr'
 import moment from 'moment'
 

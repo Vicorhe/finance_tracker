@@ -1,5 +1,5 @@
 import { Box, Table, Thead, Tbody, Tr, Th, Td } from "@chakra-ui/react"
-import { useAreas } from '../hooks/swr-hooks'
+import useAreas from '../hooks/areas'
 import Nav from '../components/Nav'
 import ColorShard from '../components/ColorShard'
 import LoadingError from '../components/LoadingError'

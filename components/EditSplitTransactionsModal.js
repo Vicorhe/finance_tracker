@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
-import { useAreas } from '../hooks/swr-hooks'
+import useAreas from '../hooks/areas'
 import { UserContext } from '../context'
 import {
   Modal,

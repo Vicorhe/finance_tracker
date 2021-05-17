@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import { UserContext } from '../context'
-import { useUsers } from '../hooks/swr-hooks'
+import useSWR from 'swr'
 import Nav from '../components/Nav'
 import AddUserModal from '../components/AddUserModal'
 import EditUserModal from '../components/EditUserModal'
@@ -10,6 +10,19 @@ import BoxLink from '../components/BoxLink'
 import { Box, Flex, Spacer, Text } from "@chakra-ui/react"
 import Link from 'next/link'
 import utilStyles from '../styles/utils.module.scss'
+import fetcher from '../utils/fetcher'
+
+function useUsers() {
+  const { data, error } = useSWR(
+    "/api/user/get-all",
+    fetcher
+  );
+  return {
+    users: data,
+    isUsersLoading: !error && !data,
+    isUsersError: error,
+  }
+}
 
 export default function Home() {
   const { users, isUsersError } = useUsers();

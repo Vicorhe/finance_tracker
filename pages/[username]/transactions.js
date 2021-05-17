@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
 import { UserContext } from "../../context"
 import { mutate } from 'swr'
-import { useAreas, useTransactions } from "../../hooks/swr-hooks"
+import useAreas from "../../hooks/areas"
 import Nav from '../../components/Nav'
 import AddCashTransactionModal from '../../components/AddCashTransactionModal'
 import EditTransactionModal from '../../components/EditTransactionModal'
@@ -17,6 +17,20 @@ import { useDisclosure, Box, Button, Heading, Text, Flex, Select, IconButton, Ba
 import { EditIcon } from '@chakra-ui/icons'
 import utilStyles from '../../styles/utils.module.scss'
 const moment = require('moment')
+import useSWR from 'swr'
+import fetcher from '../../utils/fetcher'
+
+function useTransactions(user_id){
+  const { data, error } = useSWR(
+    `/api/transaction/get-all?user_id=${user_id}`,
+    fetcher
+  );
+  return {
+    transactions: data,
+    isTransactionsLoading: !error && !data,
+    isTransactionsError: error,
+  }
+}
 
 export default function Transactions() {
   const { user,setUser } = useContext(UserContext)

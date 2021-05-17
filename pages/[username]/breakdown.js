@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useRouter } from 'next/router'
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
 import { Box, Heading, Text, Flex, Select, Badge, Spacer } from "@chakra-ui/react"
-import { useAreas } from '../../hooks/swr-hooks'
+import useAreas from '../../hooks/areas'
 import Nav from '../../components/Nav'
 import DatePicker from '../../components/DatePicker'
 import ColorShard from '../../components/ColorShard'

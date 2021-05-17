@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import { useAreas } from '../hooks/swr-hooks'
+import useAreas from '../hooks/areas'
 import { UserContext } from '../context'
 import DatePicker from "../components/DatePicker";
 import {

@@ -10,11 +10,12 @@ import {
   useDisclosure,
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
-import validUserName from '../utils/validusername'
+import { onlyLowerCaseAlphaNumeric } from '../utils/regular-expressions'
 
 export default function AddUserModal() {
   const { isOpen, onOpen, onClose } = useDisclosure(
@@ -68,7 +69,7 @@ export default function AddUserModal() {
             <ModalCloseButton />
             <ModalBody pb={6}>
               <FormControl
-                isInvalid={!validUserName(name)}
+                isInvalid={!onlyLowerCaseAlphaNumeric(name)}
               >
                 <FormLabel>User name</FormLabel>
                 <Input
@@ -77,11 +78,14 @@ export default function AddUserModal() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
+                <FormErrorMessage>
+                  Must be 2 - 17 characters, lower case alphanumeric
+                </FormErrorMessage>
               </FormControl>
             </ModalBody>
 
             <ModalFooter>
-              <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
+              <Button disabled={submitting || !onlyLowerCaseAlphaNumeric(name)} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Creating ...' : 'Create'}
               </Button>
               <Button onClick={onClose}>Cancel</Button>

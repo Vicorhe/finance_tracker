@@ -10,6 +10,7 @@ import {
   ModalCloseButton,
   Button,
   FormControl,
+  FormErrorMessage,
   FormLabel,
   Input,
   IconButton,
@@ -22,6 +23,7 @@ import {
   AlertDialogOverlay,
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
+import { onlyLowerCaseAlphaNumeric } from '../utils/regular-expressions'
 
 export default function EditUserModal({ user }) {
   const { isOpen, onOpen, onClose } = useDisclosure(
@@ -98,13 +100,19 @@ export default function EditUserModal({ user }) {
           <form onSubmit={submitHandler}>
             <ModalCloseButton />
             <ModalBody pb={6}>
-              <FormControl my="1.15rem">
+              <FormControl
+                my="1.15rem"
+                isInvalid={!onlyLowerCaseAlphaNumeric(name)}
+              >
                 <FormLabel>User name</FormLabel>
                 <Input
                   placeholder="User name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
+                <FormErrorMessage>
+                  Must be 2 - 17 characters, lower case alphanumeric
+                </FormErrorMessage>
               </FormControl>
             </ModalBody>
 
@@ -115,7 +123,7 @@ export default function EditUserModal({ user }) {
                 Delete
               </Button>
               <Spacer />
-              <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
+              <Button disabled={submitting || !onlyLowerCaseAlphaNumeric(name)} colorScheme="blue" mr={3} type="submit">
                 {submitting ? 'Saving ...' : 'Save'}
               </Button>
               <Button onClick={onClose}>Cancel</Button>

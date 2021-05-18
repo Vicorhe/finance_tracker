@@ -1,4 +1,5 @@
 import { query } from '../../../utils/db'
+import {onlyLowerCaseAlphaNumeric } from '../../../utils/regular-expressions'
 
 export default async function handler(req, res) {
   const { id, name } = req.body
@@ -7,6 +8,12 @@ export default async function handler(req, res) {
       return res
         .status(400)
         .json({ message: '`id` and `name` are required' })
+    }
+
+    if (!onlyLowerCaseAlphaNumeric(name)){
+      return res
+        .status(400)
+        .json({message: '`name` must be 2 - 17 characters, lowercase alphanumeric'})
     }
 
     const results = await query(

@@ -75,10 +75,6 @@ export default function Transactions() {
     }
   }
 
-  // useEffect(() => {
-  //   syncTransactions() // commented out during development
-  // }, []);
-
   useEffect(() => {
     if (transactions) {
       filterTransactions()

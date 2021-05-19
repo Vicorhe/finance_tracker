@@ -1,29 +1,11 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { EditIcon } from '@chakra-ui/icons'
 import {
   useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input,
-  IconButton,
-  Spacer,
-  AlertDialog,
-  AlertDialogBody,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogContent,
-  AlertDialogOverlay,
+  IconButton
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
-import { onlyLowerCaseAlphaNumeric } from '../../../utils/regular-expressions'
+import RenderUser from './RenderUser'
 
 export default function EditUser({ user }) {
   const { isOpen, onOpen, onClose } = useDisclosure(
@@ -33,14 +15,8 @@ export default function EditUser({ user }) {
       }
     })
   const [name, setName] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const [isAlertOpen, setIsAlertOpen] = React.useState(false)
-  const onAlertClose = () => setIsAlertOpen(false)
-  const cancelRef = useRef()
-  const [deleting, setDeleting] = useState(false)
 
-  async function submitHandler(e) {
-    setSubmitting(true)
+  async function handleSubmit(e) {
     e.preventDefault()
     try {
       const res = await fetch('/api/user/update', {
@@ -53,7 +29,6 @@ export default function EditUser({ user }) {
           name
         }),
       })
-      setSubmitting(false)
       onClose()
       mutate('/api/user/get-all')
       const json = await res.json()
@@ -64,14 +39,11 @@ export default function EditUser({ user }) {
   }
 
   async function handleDelete(e) {
-    setDeleting(true)
     e.preventDefault()
     try {
       const res = await fetch(`/api/user/delete?id=${user.id}`, {
         method: 'POST'
       })
-      setDeleting(false)
-      onAlertClose()
       onClose()
       mutate('/api/user/get-all')
       const json = await res.json()
@@ -90,76 +62,14 @@ export default function EditUser({ user }) {
         onClick={onOpen}
       />
 
-      <Modal
+      <RenderUser
         isOpen={isOpen}
         onClose={onClose}
-        size="md"
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <form onSubmit={submitHandler}>
-            <ModalCloseButton />
-            <ModalBody pb={6}>
-              <FormControl
-                my="1.15rem"
-                isInvalid={!onlyLowerCaseAlphaNumeric(name)}
-              >
-                <FormLabel>User name</FormLabel>
-                <Input
-                  placeholder="User name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <FormErrorMessage>
-                  Must be 2 - 17 characters, lower case alphanumeric
-                </FormErrorMessage>
-              </FormControl>
-            </ModalBody>
-
-            <ModalFooter>
-              <Button disabled={submitting || deleting}
-                colorScheme="red" mr={3}
-                onClick={() => setIsAlertOpen(true)}>
-                Delete
-              </Button>
-              <Spacer />
-              <Button disabled={submitting || !onlyLowerCaseAlphaNumeric(name)} colorScheme="blue" mr={3} type="submit">
-                {submitting ? 'Saving ...' : 'Save'}
-              </Button>
-              <Button onClick={onClose}>Cancel</Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </Modal>
-
-      <AlertDialog
-        isOpen={isAlertOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onAlertClose}
-        size="sm"
-        isCentered
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete User
-            </AlertDialogHeader>
-
-            <AlertDialogBody>
-              Are you sure? You can't undo this action afterwards.
-            </AlertDialogBody>
-
-            <AlertDialogFooter>
-              <Button ref={cancelRef} onClick={onAlertClose}>
-                Cancel
-              </Button>
-              <Button colorScheme="red" onClick={handleDelete} ml={3}>
-                Delete
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+        handleSubmit={handleSubmit}
+        handleDelete={handleDelete}
+        name={name}
+        handleNameChange={(e) => setName(e.target.value)}
+      />
     </>
   )
 }

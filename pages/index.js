@@ -2,8 +2,8 @@ import { useContext } from 'react'
 import { UserContext } from '../context'
 import useSWR from 'swr'
 import Nav from '../components/Nav'
-import AddUserModal from '../components/AddUserModal'
-import EditUserModal from '../components/EditUserModal'
+import AddUser from '../components/modals/user/AddUser'
+import EditUser from '../components/modals/user/EditUser'
 import LoadingError from '../components/LoadingError'
 import LoadingList from '../components/LoadingList'
 import BoxLink from '../components/BoxLink'
@@ -40,7 +40,7 @@ export default function Home() {
                 <Text className={utilStyles.hover_underline_animation} fontSize="4xl">{u.name}</Text>
               </Link>
               <Spacer />
-              <EditUserModal user={u} />
+              <EditUser user={u} />
             </Flex>
           )
         })}
@@ -51,7 +51,7 @@ export default function Home() {
   return (
     <Box className={utilStyles.page}>
       <Nav>
-        <AddUserModal />
+        <AddUser />
       </Nav>
       {
         isUsersError

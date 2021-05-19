@@ -15,9 +15,9 @@ import {
   Input
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
-import { onlyLowerCaseAlphaNumeric } from '../utils/regular-expressions'
+import { onlyLowerCaseAlphaNumeric } from '../../../utils/regular-expressions'
 
-export default function AddUserModal() {
+export default function AddUser() {
   const { isOpen, onOpen, onClose } = useDisclosure(
     {
       onClose: () => {

@@ -4,8 +4,8 @@ import Nav from '../components/Nav'
 import ColorShard from '../components/ColorShard'
 import LoadingError from '../components/LoadingError'
 import LoadingList from '../components/LoadingList'
-import AddAreaModal from '../components/AddAreaModal'
-import EditAreaModal from '../components/EditAreaModal'
+import AddArea from '../components/modals/area/AddArea'
+import EditArea from '../components/modals/area/EditArea'
 import utilStyles from '../styles/utils.module.scss'
 
 export default function Areas() {
@@ -34,7 +34,7 @@ export default function Areas() {
                   <ColorShard color={a.color} center />
                 </Td>
                 <Td>
-                  <EditAreaModal area={a} />
+                  <EditArea area={a} />
                 </Td>
               </Tr>
             ))}
@@ -57,7 +57,7 @@ export default function Areas() {
                   <ColorShard color={a.color} center />
                 </Td>
                 <Td>
-                  <EditAreaModal area={a} />
+                  <EditArea area={a} />
                 </Td>
               </Tr>
             ))}
@@ -69,7 +69,7 @@ export default function Areas() {
   return (
     <Box className={utilStyles.page}>
       <Nav breadcrumbs={breadcrumbs}>
-        <AddAreaModal />
+        <AddArea />
       </Nav>
       {
         isAreasError

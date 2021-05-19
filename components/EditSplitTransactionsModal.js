@@ -29,7 +29,7 @@ import {
 } from "@chakra-ui/react"
 import { AddIcon } from '@chakra-ui/icons'
 import { mutate } from 'swr'
-import moment from 'moment';
+import { formatMySQLDate } from '../utils/date-formatter'
 
 export default function EditSplitTransactionsModal({ parent, activeSplits, isModalOpen, onModalClose }) {
   const { user } = useContext(UserContext)
@@ -164,7 +164,7 @@ export default function EditSplitTransactionsModal({ parent, activeSplits, isMod
         body: JSON.stringify({
           user_id: user.id,
           parent_id: parent.id,
-          date: moment(parent.date).format('YYYY-MM-DD HH:mm:ss'),
+          date: formatMySQLDate(parent.date),
           splits
         }),
       })

@@ -16,9 +16,9 @@ import LoadingList from '../../components/LoadingList'
 import { useDisclosure, Box, Button, Heading, Text, Flex, Select, IconButton, Badge } from "@chakra-ui/react"
 import { EditIcon } from '@chakra-ui/icons'
 import utilStyles from '../../styles/utils.module.scss'
-const moment = require('moment')
 import useSWR from 'swr'
 import fetcher from '../../utils/fetcher'
+import { formatDisplayDate } from '../../utils/date-formatter'
 
 function useTransactions(user_id){
   const { data, error } = useSWR(
@@ -182,7 +182,7 @@ export default function Transactions() {
         style={style}
       >
         <Flex alignItems="center" pt="3" borderTop="2px solid">
-          <Text fontSize="xl" width="16%">{moment(t.date).format("MMM DD, YYYY")}</Text>
+          <Text fontSize="xl" width="16%">{formatDisplayDate(t.date)}</Text>
           <Text fontSize="xl" width="54%" noOfLines={1}>{t.name}</Text>
           <Flex alignItems="center" width="19%" pl={1}>
             {getColorShard(t.area_id)}

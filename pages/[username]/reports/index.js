@@ -19,6 +19,7 @@ import {
 } from "@chakra-ui/react"
 import Link from 'next/link'
 import utilStyles from '../../../styles/utils.module.scss'
+import { formatMySQLDate } from '../../../utils/date-formatter'
 
 export default function Reports() {
   const { user, setUser } = useContext(UserContext)
@@ -61,10 +62,6 @@ export default function Reports() {
         return a
       }, 0)
     setTotalInput(sumInput)
-  }
-
-  function formatMySQLDate(d) {
-    return moment(d).format('YYYY-MM-DD')
   }
 
   function getBreakdownURLObject(a) {

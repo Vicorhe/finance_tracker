@@ -20,6 +20,7 @@ import {
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 import utilStyles from '../../../styles/utils.module.scss'
+import { formatMySQLDate, formatDisplayDate } from '../../../utils/date-formatter'
 
 export default function Comparison() {
   const { user, setUser } = useContext(UserContext)
@@ -69,14 +70,6 @@ export default function Comparison() {
     const comparison_data = res.data
     setBarChartData(comparison_data.filter(c => !c.input))
     setTableData(comparison_data)
-  }
-
-  function formatMySQLDate(d) {
-    return moment(d).format('YYYY-MM-DD')
-  }
-
-  function formatDisplayDate(d) {
-    return moment(d).format("MMM DD, YYYY")
   }
 
   function getDelta(a, b, input) {

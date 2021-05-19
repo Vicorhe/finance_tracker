@@ -10,6 +10,7 @@ import ColorShard from '../../components/ColorShard'
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
 import utilStyles from '../../styles/utils.module.scss'
+import { formatDisplayDate, formatMySQLDate } from '../../utils/date-formatter'
 const moment = require('moment')
 
 export default function SpendingReportBreakdown() {
@@ -37,7 +38,7 @@ export default function SpendingReportBreakdown() {
   }, [area, start, end])
 
   useEffect(() => {
-    getTransactions()   
+    getTransactions()
   }, [startDate, endDate, username])
 
   useEffect(() => {
@@ -53,8 +54,8 @@ export default function SpendingReportBreakdown() {
     // console.log(`fetching transactions of user ${username} between ${startDate} and ${endDate}`)
     const res = await axios.post(`http://localhost:3000/api/report/transactions`, {
       user_name: username,
-      start_date: moment(startDate).format('YYYY-MM-DD'),
-      end_date: moment(endDate).format('YYYY-MM-DD')
+      start_date: formatMySQLDate(startDate),
+      end_date: formatMySQLDate(endDate)
     });
     setTransactions(res.data)
   }
@@ -97,7 +98,7 @@ export default function SpendingReportBreakdown() {
         style={style}
       >
         <Flex alignItems="center" pt="3" borderTop="2px solid">
-          <Text fontSize="xl" width="16%">{moment(t.date).format("MMM DD, YYYY")}</Text>
+          <Text fontSize="xl" width="16%">{formatDisplayDate(t.date)}</Text>
           <Text fontSize="xl" width="54%" noOfLines={1}>{t.name}</Text>
           <Flex alignItems="center" width="19%" pl={1}>
             {getColorShard(t.area_id)}

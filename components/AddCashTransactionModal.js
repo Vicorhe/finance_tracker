@@ -21,7 +21,7 @@ import {
   Select
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
-import moment from 'moment';
+import { formatMySQLDate } from '../utils/date-formatter'
 
 export default function AddCashTransactionModal() {
   const { user } = useContext(UserContext)
@@ -58,7 +58,7 @@ export default function AddCashTransactionModal() {
           name,
           area_id: area,
           amount,
-          date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
+          date: formatMySQLDate(date),
           memo
         }),
       })

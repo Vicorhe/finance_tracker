@@ -27,7 +27,7 @@ import {
 } from "@chakra-ui/react"
 import useAreas from '../hooks/areas'
 import { mutate } from 'swr'
-import moment from 'moment'
+import { formatMySQLDate } from '../utils/date-formatter'
 
 export default function EditTransactionModal({ transaction, isModalOpen, onModalClose, handleSplit }) {
   const { user } = useContext(UserContext)
@@ -77,7 +77,7 @@ export default function EditTransactionModal({ transaction, isModalOpen, onModal
           name,
           area_id: area,
           amount,
-          date: moment(date).format('YYYY-MM-DD HH:mm:ss'),
+          date: formatMySQLDate(date),
           memo
         }),
       })

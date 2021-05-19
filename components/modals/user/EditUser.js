@@ -63,6 +63,7 @@ export default function EditUser({ user }) {
       />
 
       <RenderUser
+        submitButtonLabel={'Save'}
         isOpen={isOpen}
         onClose={onClose}
         handleSubmit={handleSubmit}

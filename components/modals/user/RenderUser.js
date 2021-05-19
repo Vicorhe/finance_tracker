@@ -4,6 +4,7 @@ import {
   Modal,
   ModalOverlay,
   ModalContent,
+  ModalHeader,
   ModalFooter,
   ModalBody,
   ModalCloseButton,
@@ -23,6 +24,8 @@ import {
 import { onlyLowerCaseAlphaNumeric } from '../../../utils/regular-expressions'
 
 export default function RenderUser({
+  header,
+  submitButtonLabel,
   isOpen,
   onClose,
   handleSubmit,
@@ -47,8 +50,15 @@ export default function RenderUser({
         <ModalOverlay />
         <ModalContent>
           <form onSubmit={handleSubmit}>
+            {
+              !!header &&
+              <ModalHeader pb={0}>{header}</ModalHeader>
+            }
             <ModalCloseButton />
-            <ModalBody pb={6}>
+            <ModalBody 
+            pt={!!header ? 0 : 3}
+            pb={6}
+            >
               <FormControl
                 my="1.15rem"
                 isInvalid={!onlyLowerCaseAlphaNumeric(name)}
@@ -66,13 +76,16 @@ export default function RenderUser({
             </ModalBody>
 
             <ModalFooter>
-              <Button
-                mr={3}
-                colorScheme="red"
-                onClick={onAlertOpen}
-              >
-                Delete
+              {
+                !!handleDelete &&
+                <Button
+                  mr={3}
+                  colorScheme="red"
+                  onClick={onAlertOpen}
+                >
+                  Delete
               </Button>
+              }
               <Spacer />
               <Button
                 disabled={!onlyLowerCaseAlphaNumeric(name)}
@@ -80,7 +93,7 @@ export default function RenderUser({
                 mr={3}
                 type="submit"
               >
-                Save
+                {submitButtonLabel}
               </Button>
               <Button onClick={onClose}>
                 Cancel
@@ -90,41 +103,44 @@ export default function RenderUser({
         </ModalContent>
       </Modal>
 
-      <AlertDialog
-        isOpen={isAlertOpen}
-        leastDestructiveRef={cancelRef}
-        onClose={onAlertClose}
-        size="sm"
-        isCentered
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize="lg" fontWeight="bold">
-              Delete User
+      {
+        !!handleDelete &&
+        <AlertDialog
+          isOpen={isAlertOpen}
+          leastDestructiveRef={cancelRef}
+          onClose={onAlertClose}
+          size="sm"
+          isCentered
+        >
+          <AlertDialogOverlay>
+            <AlertDialogContent>
+              <AlertDialogHeader fontSize="lg" fontWeight="bold">
+                Delete User
             </AlertDialogHeader>
 
-            <AlertDialogBody>
-              Are you sure? You can't undo this action afterwards.
+              <AlertDialogBody>
+                Are you sure? You can't undo this action afterwards.
             </AlertDialogBody>
 
-            <AlertDialogFooter>
-              <Button
-                ref={cancelRef}
-                onClick={onAlertClose}
-              >
-                Cancel
+              <AlertDialogFooter>
+                <Button
+                  ref={cancelRef}
+                  onClick={onAlertClose}
+                >
+                  Cancel
               </Button>
-              <Button
-                ml={3}
-                colorScheme="red"
-                onClick={handleDelete}
-              >
-                Delete
+                <Button
+                  ml={3}
+                  colorScheme="red"
+                  onClick={handleDelete}
+                >
+                  Delete
               </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialogOverlay>
+        </AlertDialog>
+      }
     </>
   )
 }

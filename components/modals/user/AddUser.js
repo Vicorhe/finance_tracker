@@ -1,21 +1,10 @@
 import { useState } from 'react'
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
   useDisclosure,
-  Button,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
-  Input
+  Button
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
-import { onlyLowerCaseAlphaNumeric } from '../../../utils/regular-expressions'
+import RenderUser from './RenderUser'
 
 export default function AddUser() {
   const { isOpen, onOpen, onClose } = useDisclosure(
@@ -26,10 +15,8 @@ export default function AddUser() {
     }
   )
   const [name, setName] = useState('')
-  const [submitting, setSubmitting] = useState(false)
 
-  async function submitHandler(e) {
-    setSubmitting(true)
+  async function handleSubmit(e) {
     e.preventDefault()
     try {
       const res = await fetch('/api/user/create', {
@@ -41,7 +28,6 @@ export default function AddUser() {
           name
         }),
       })
-      setSubmitting(false)
       onClose()
       mutate('/api/user/get-all')
       const json = await res.json()
@@ -51,48 +37,24 @@ export default function AddUser() {
     }
   }
 
-  const initialRef = React.useRef()
-
   return (
     <>
-      <Button onClick={onOpen} size="lg">Add</Button>
-      <Modal
-        initialFocusRef={initialRef}
-        isOpen={isOpen}
-        onClose={onClose}
-        size="md"
+      <Button 
+      onClick={onOpen} 
+      size="lg"
       >
-        <ModalOverlay />
-        <ModalContent>
-          <form onSubmit={submitHandler}>
-            <ModalHeader>Create your account</ModalHeader>
-            <ModalCloseButton />
-            <ModalBody pb={6}>
-              <FormControl
-                isInvalid={!onlyLowerCaseAlphaNumeric(name)}
-              >
-                <FormLabel>User name</FormLabel>
-                <Input
-                  ref={initialRef}
-                  placeholder="User name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-                <FormErrorMessage>
-                  Must be 2 - 17 characters, lower case alphanumeric
-                </FormErrorMessage>
-              </FormControl>
-            </ModalBody>
+        Add
+        </Button>
 
-            <ModalFooter>
-              <Button disabled={submitting || !onlyLowerCaseAlphaNumeric(name)} colorScheme="blue" mr={3} type="submit">
-                {submitting ? 'Creating ...' : 'Create'}
-              </Button>
-              <Button onClick={onClose}>Cancel</Button>
-            </ModalFooter>
-          </form>
-        </ModalContent>
-      </Modal>
+        <RenderUser
+          header={'Create your account'}
+          submitButtonLabel={'Create'}
+          isOpen={isOpen}
+          onClose={onClose}
+          handleSubmit={handleSubmit}
+          name={name}
+          handleNameChange={(e) => setName(e.target.value)}
+        />      
     </>
   )
 }

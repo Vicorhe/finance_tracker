@@ -39,22 +39,22 @@ export default function AddUser() {
 
   return (
     <>
-      <Button 
-      onClick={onOpen} 
-      size="lg"
+      <Button
+        onClick={onOpen}
+        size="lg"
       >
         Add
-        </Button>
+      </Button>
 
-        <RenderUser
-          header={'Create your account'}
-          submitButtonLabel={'Create'}
-          isOpen={isOpen}
-          onClose={onClose}
-          handleSubmit={handleSubmit}
-          name={name}
-          handleNameChange={(e) => setName(e.target.value)}
-        />      
+      <RenderUser
+        header={'Create your account'}
+        submitButtonLabel={'Create'}
+        isOpen={isOpen}
+        onClose={onClose}
+        handleSubmit={handleSubmit}
+        name={name}
+        handleNameChange={(e) => setName(e.target.value)}
+      />
     </>
   )
 }

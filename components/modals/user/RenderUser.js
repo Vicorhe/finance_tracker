@@ -91,7 +91,7 @@ export default function RenderUser({
                   onClick={onAlertOpen}
                 >
                   Delete
-              </Button>
+                </Button>
               }
               <Spacer />
               <Button

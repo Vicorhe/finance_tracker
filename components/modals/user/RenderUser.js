@@ -33,12 +33,19 @@ export default function RenderUser({
   name,
   handleNameChange
 }) {
+
   const {
     isOpen: isAlertOpen,
     onOpen: onAlertOpen,
     onClose: onAlertClose
   } = useDisclosure()
+
   const cancelRef = useRef()
+
+  function closeAlertAfterDelete(e) {
+    handleDelete(e)
+    onAlertClose()
+  }
 
   return (
     <>
@@ -55,9 +62,9 @@ export default function RenderUser({
               <ModalHeader pb={0}>{header}</ModalHeader>
             }
             <ModalCloseButton />
-            <ModalBody 
-            pt={!!header ? 0 : 3}
-            pb={6}
+            <ModalBody
+              pt={!!header ? 0 : 3}
+              pb={6}
             >
               <FormControl
                 my="1.15rem"
@@ -132,7 +139,7 @@ export default function RenderUser({
                 <Button
                   ml={3}
                   colorScheme="red"
-                  onClick={handleDelete}
+                  onClick={closeAlertAfterDelete}
                 >
                   Delete
               </Button>

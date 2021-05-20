@@ -1,20 +1,14 @@
-import { useState } from 'react'
-import { EditIcon } from '@chakra-ui/icons'
-import {
-  useDisclosure,
-  IconButton
-} from "@chakra-ui/react"
+import { useEffect, useState } from 'react'
 import { mutate } from 'swr'
 import RenderUser from './RenderUser'
 
-export default function EditUser({ user }) {
-  const { isOpen, onOpen, onClose } = useDisclosure(
-    {
-      onOpen: () => {
-        setName(user.name)
-      }
-    })
+export default function EditUser({ user, isOpen, onClose }) {
+
   const [name, setName] = useState('')
+
+  useEffect(() => {
+    setName(user.name)
+  }, [isOpen])
 
   async function handleSubmit(e) {
     e.preventDefault()
@@ -54,23 +48,14 @@ export default function EditUser({ user }) {
   }
 
   return (
-    <>
-      <IconButton
-        icon={<EditIcon />}
-        size="sm"
-        variant="outline"
-        onClick={onOpen}
-      />
-
-      <RenderUser
-        submitButtonLabel={'Save'}
-        isOpen={isOpen}
-        onClose={onClose}
-        handleSubmit={handleSubmit}
-        handleDelete={handleDelete}
-        name={name}
-        handleNameChange={(e) => setName(e.target.value)}
-      />
-    </>
+    <RenderUser
+      submitButtonLabel={'Save'}
+      isOpen={isOpen}
+      onClose={onClose}
+      handleSubmit={handleSubmit}
+      handleDelete={handleDelete}
+      name={name}
+      handleNameChange={(e) => setName(e.target.value)}
+    />
   )
 }

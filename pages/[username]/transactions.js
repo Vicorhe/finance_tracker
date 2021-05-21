@@ -20,7 +20,7 @@ import useSWR from 'swr'
 import fetcher from '../../utils/fetcher'
 import { formatDisplayDate } from '../../utils/date-formatter'
 
-function useTransactions(user_id){
+function useTransactions(user_id) {
   const { data, error } = useSWR(
     `/api/transaction/get-all?user_id=${user_id}`,
     fetcher
@@ -33,7 +33,7 @@ function useTransactions(user_id){
 }
 
 export default function Transactions() {
-  const { user,setUser } = useContext(UserContext)
+  const { user, setUser } = useContext(UserContext)
   const router = useRouter()
   const { username } = router.query
   const { areas, isAreasError } = useAreas();
@@ -44,6 +44,7 @@ export default function Transactions() {
   const [syncing, setSyncing] = useState(false)
   const [transaction, setTransaction] = useState({})
   const [activeSplits, setActiveSplits] = useState([])
+
   const {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,
@@ -59,6 +60,7 @@ export default function Transactions() {
     onOpen: onEditSplitsModalOpen,
     onClose: onEditSplitsModalClose
   } = useDisclosure()
+
   const breadcrumbs = [
     { name: username, path: `/${username}` },
     { name: "transactions", path: `/${username}/transactions` }
@@ -70,8 +72,13 @@ export default function Transactions() {
 
   async function pullUser() {
     if (Object.keys(user).length === 0) {
-      const res = await axios.get(`http://localhost:3000/api/user/get?name=${username}`);
-      setUser(res.data)
+      await axios.get(
+        `http://localhost:3000/api/user/get?name=${username}`
+      ).then(res =>
+        setUser(res.data)
+      ).catch(e => {
+        throw Error(e.message)
+      });
     }
   }
 
@@ -128,13 +135,23 @@ export default function Transactions() {
   }
 
   async function getTransaction(id) {
-    const res = await axios.get(`http://localhost:3000/api/transaction/get?id=${id}`);
-    setTransaction(res.data)
+    await axios.get(
+      `http://localhost:3000/api/transactio/get?id=${id}`
+    ).then(res =>
+      setTransaction(res.data)
+    ).catch(e => {
+      throw Error(e.message)
+    });
   }
 
   async function getSplits(parent_id) {
-    const res = await axios.get(`http://localhost:3000/api/split/get-all?parent_id=${parent_id}`);
-    setActiveSplits(res.data)
+    await axios.get(
+      `http://localhost:3000/api/split/get-all?parent_id=${parent_id}`
+    ).then(res =>
+      setActiveSplits(res.data)
+    ).catch(e => {
+      throw Error(e.message)
+    });
   }
 
   function handleCreateSplit() {
@@ -156,17 +173,40 @@ export default function Transactions() {
 
   async function syncTransactions() {
     setSyncing(true)
-    await axios.post('http://localhost:3000/api/transaction/sync', { user_id: user.id });
-    mutate(`/api/transaction/get-all?user_id=${user.id}`)
+    await axios.post(
+      'http://localhost:3000/api/transaction/sync',
+      { user_id: user.id }
+    ).then(
+      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+    ).catch(e => {
+      throw Error(e.message)
+    })
     setSyncing(false)
   }
 
-
   function isRowLoaded({ index }) {
-    return !!transactions[index];
+    return !!displayedTransactions[index];
   }
 
-  function loadMoreRows({ startIndex, stopIndex }) {
+  function FilterDropdown() {
+    return (
+      <Flex alignItems="center" p="3">
+        <Heading fontSize="lg" mr="3" fontWeight="extrabold">SHOWING</Heading>
+        <Select
+          size="md"
+          maxWidth="225px"
+          disabled={!transactions}
+          value={filterBy}
+          onChange={(e) => setFilterBy(e.target.value)}
+        >
+          <option value="all">All</option>
+          <option value="unassigned">Unassigned</option>
+          <option value="hidden">Hidden</option>
+          <option value="cash">Cash Transactions</option>
+          <option value="split">Splits</option>
+        </Select>
+      </Flex>
+    )
   }
 
   function rowRenderer({ key, index, style }) {
@@ -178,7 +218,7 @@ export default function Transactions() {
       <Box
         key={key}
         pt="2"
-        pr="20px"        
+        pr="20px"
         style={style}
       >
         <Flex alignItems="center" pt="3" borderTop="2px solid">
@@ -221,47 +261,30 @@ export default function Transactions() {
 
   function TransactionsTable() {
     return (
-      <Box>
-        <Flex alignItems="center" p="3">
-          <Heading fontSize="lg" mr="3" fontWeight="extrabold">SHOWING</Heading>
-          <Select
-            size="md"
-            maxWidth="225px"
-            disabled={!transactions}
-            value={filterBy}
-            onChange={(e) => setFilterBy(e.target.value)}
-          >
-            <option value="all">All</option>
-            <option value="unassigned">Unassigned</option>
-            <option value="hidden">Hidden</option>
-            <option value="cash">Cash Transactions</option>
-            <option value="split">Splits</option>
-          </Select>
-        </Flex>
-        <InfiniteLoader
-          isRowLoaded={isRowLoaded}
-          loadMoreRows={loadMoreRows}
-          rowCount={remoteRowCount}
-        >
-          {({ onRowsRendered, registerChild }) => (
-            <AutoSizer disableHeight>
-              {
-                ({ width }) => (
-                  <List
-                    height={800}
-                    width={width + 20}
-                    onRowsRendered={onRowsRendered}
-                    ref={registerChild}
-                    rowCount={remoteRowCount}
-                    rowHeight={130}
-                    rowRenderer={rowRenderer}
-                  />
-                )
-              }
-            </AutoSizer>
-          )}
-        </InfiniteLoader>
-      </Box >
+      <InfiniteLoader
+        isRowLoaded={isRowLoaded}
+        loadMoreRows={() => { }}
+        rowCount={remoteRowCount}
+      >
+        {({ onRowsRendered, registerChild }) => (
+          <AutoSizer disableHeight>
+            {
+              ({ width }) => (
+                <List
+                  height={800}
+                  width={width + 20}
+                  onRowsRendered={onRowsRendered}
+                  ref={registerChild}
+                  rowCount={remoteRowCount}
+                  rowHeight={130}
+                  rowRenderer={rowRenderer}
+                />
+              )
+            }
+          </AutoSizer>
+        )}
+      </InfiniteLoader>
+
     )
   }
 
@@ -278,7 +301,10 @@ export default function Transactions() {
           ? LoadingError()
           : (!transactions || !areas)
             ? LoadingList()
-            : TransactionsTable()
+            : <>
+              {FilterDropdown()}
+              {TransactionsTable()}
+            </>
       }
       <AddSplitTransactionsModal
         parent={transaction}

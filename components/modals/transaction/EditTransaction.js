@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState, useRef } from 'react'
-import { UserContext } from '../context'
-import DatePicker from "../components/DatePicker";
+import { UserContext } from '../../../context'
+import DatePicker from "../../DatePicker";
 import {
   useDisclosure,
   Modal,
@@ -25,11 +25,11 @@ import {
   AlertDialogContent,
   AlertDialogOverlay,
 } from "@chakra-ui/react"
-import useAreas from '../hooks/areas'
+import useAreas from '../../../hooks/areas'
 import { mutate } from 'swr'
-import { formatMySQLDate } from '../utils/date-formatter'
+import { formatMySQLDate } from '../../../utils/date-formatter'
 
-export default function EditTransactionModal({ transaction, isModalOpen, onModalClose, handleSplit }) {
+export default function EditTransaction({ transaction, isModalOpen, onModalClose, handleSplit }) {
   const { user } = useContext(UserContext)
   const {
     isOpen: isAlertOpen,

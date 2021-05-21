@@ -1,7 +1,7 @@
 import { useContext, useState } from 'react'
-import useAreas from '../hooks/areas'
-import { UserContext } from '../context'
-import DatePicker from "../components/DatePicker";
+import useAreas from '../../../hooks/areas'
+import { UserContext } from '../../../context'
+import DatePicker from "../../DatePicker";
 import {
   Modal,
   ModalOverlay,
@@ -21,9 +21,9 @@ import {
   Select
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
-import { formatMySQLDate } from '../utils/date-formatter'
+import { formatMySQLDate } from '../../../utils/date-formatter'
 
-export default function AddCashTransactionModal() {
+export default function AddCashTransaction() {
   const { user } = useContext(UserContext)
   const { isOpen, onOpen, onClose } = useDisclosure(
     {

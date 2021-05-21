@@ -1,6 +1,6 @@
-import { useContext, useEffect, useState } from 'react'
-import useAreas from '../hooks/areas'
-import { UserContext } from '../context'
+import { useContext, useEffect, useRef, useState } from 'react'
+import useAreas from '../../../hooks/areas'
+import { UserContext } from '../../../context'
 import {
   Modal,
   ModalOverlay,
@@ -17,13 +17,21 @@ import {
   Text,
   Heading, Box, Flex,
   Tabs, TabList, TabPanels, Tab, TabPanel,
-  IconButton
+  IconButton,
+  Spacer,
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogContent,
+  AlertDialogOverlay,
+  useDisclosure
 } from "@chakra-ui/react"
 import { AddIcon } from '@chakra-ui/icons'
 import { mutate } from 'swr'
-import { formatMySQLDate } from '../utils/date-formatter'
+import { formatMySQLDate } from '../../../utils/date-formatter'
 
-export default function AddSplitTransactionsModal({ parent, isModalOpen, onModalClose }) {
+export default function EditSplitTransactions({ parent, activeSplits, isModalOpen, onModalClose }) {
   const { user } = useContext(UserContext)
   const [errMessage, setErrMessage] = useState('')
   const [parentAmount, setParentAmount] = useState(0)
@@ -31,12 +39,19 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
   const [splits, setSplits] = useState([])
   const [submitting, setSubmitting] = useState(false)
   const { areas, isAreasError } = useAreas();
+  const {
+    isOpen: isAlertOpen,
+    onOpen: onAlertOpen,
+    onClose: onAlertClose
+  } = useDisclosure()
+  const cancelRef = useRef()
+  const [deleting, setDeleting] = useState(false)
 
   useEffect(() => {
     setErrMessage('')
-    setSplits([getBlankSplit()])
+    setSplits(activeSplits)
     setTabIndex(0)
-  }, [parent, isModalOpen])
+  }, [parent, activeSplits, isModalOpen])
 
   useEffect(() => {
     if (parent.amount !== null && parent.amount !== undefined)
@@ -112,13 +127,36 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
     return true
   }
 
-  async function submitHandler(e) {
+  async function handleDeleteSplits(e) {
+    setDeleting(true)
+    e.preventDefault()
+    try {
+      const res = await fetch(`/api/split/delete?parent_id=${parent.id}`, {
+        method: 'POST'
+      })
+      setDeleting(false)
+      onAlertClose()
+      onModalClose()
+      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      const json = await res.json()
+      if (!res.ok) throw Error(json.message)
+    } catch (e) {
+      throw Error(e.message)
+    }
+  }
+
+  async function handleSave(e) {
     e.preventDefault()
     if (!validForm())
       return
     setSubmitting(true)
     try {
-      const res = await fetch('/api/split/create', {
+      let res = await fetch(`/api/split/delete?parent_id=${parent.id}`, {
+        method: 'POST'
+      })
+      let json = await res.json()
+      if (!res.ok) throw Error(json.message)
+      res = await fetch('/api/split/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -133,19 +171,16 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
       setSubmitting(false)
       onModalClose()
       mutate(`/api/transaction/get-all?user_id=${user.id}`)
-      const json = await res.json()
+      json = await res.json()
       if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }
   }
 
-  const initialRef = React.useRef()
-
   return (
     <>
       <Modal
-        initialFocusRef={initialRef}
         isOpen={isModalOpen}
         onClose={onModalClose}
         size="3xl"
@@ -153,7 +188,7 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
         <ModalOverlay />
         <ModalContent>
           <form
-            onSubmit={submitHandler}
+            onSubmit={handleSave}
           >
             <ModalCloseButton />
             <ModalBody pt={6}>
@@ -201,7 +236,6 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                         <FormControl mb="4">
                           <FormLabel>Name</FormLabel>
                           <Input
-                            ref={initialRef}
                             placeholder={`Split #${idx + 1} Name`}
                             value={s.name}
                             name="name"
@@ -224,7 +258,7 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
                             <FormLabel>Area</FormLabel>
                             <Select
                               placeholder={`Split #${idx + 1} Area`}
-                              value={s.area_id}
+                              value={!!s.area_id ? s.area_id : ''}
                               name="area_id"
                               onChange={updateFieldChanged(idx)}
                             >
@@ -263,14 +297,49 @@ export default function AddSplitTransactionsModal({ parent, isModalOpen, onModal
             </ModalBody>
 
             <ModalFooter>
+              <Button disabled={submitting || deleting}
+                colorScheme="red"
+                mr={3}
+                onClick={onAlertOpen}>
+                Delete Split
+              </Button>
+              <Spacer />
               <Button disabled={submitting} colorScheme="blue" mr={3} type="submit">
-                {submitting ? 'Creating ...' : 'Create Splits'}
+                {submitting ? 'Saving ...' : 'Save'}
               </Button>
               <Button onClick={onModalClose}>Cancel</Button>
             </ModalFooter>
           </form>
         </ModalContent>
       </Modal>
+      <AlertDialog
+        isOpen={isAlertOpen}
+        leastDestructiveRef={cancelRef}
+        onClose={onAlertClose}
+        size="sm"
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Undo Split Transaction
+            </AlertDialogHeader>
+
+            <AlertDialogBody>
+              Are you sure? You can't undo this action afterwards.
+            </AlertDialogBody>
+
+            <AlertDialogFooter>
+              <Button ref={cancelRef} onClick={onAlertClose}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={handleDeleteSplits} ml={3}>
+                Delete All Splits
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </>
   )
 }

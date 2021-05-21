@@ -6,10 +6,10 @@ import { UserContext } from "../../context"
 import { mutate } from 'swr'
 import useAreas from "../../hooks/areas"
 import Nav from '../../components/Nav'
-import AddCashTransactionModal from '../../components/AddCashTransactionModal'
-import EditTransactionModal from '../../components/EditTransactionModal'
-import AddSplitTransactionsModal from '../../components/AddSplitTransactionsModal'
-import EditSplitTransactionsModal from '../../components/EditSplitTransactionsModal'
+import AddCashTransaction from '../../components/modals/transaction/AddCashTransaction'
+import EditTransaction from '../../components/modals/transaction/EditTransaction'
+import AddSplitTransactions from '../../components/modals/transaction/AddSplitTransactions'
+import EditSplitTransactions from '../../components/modals/transaction/EditSplitTransactions'
 import ColorShard from '../../components/ColorShard'
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
@@ -294,7 +294,7 @@ export default function Transactions() {
         <Button disabled={syncing} size="lg" mr="3" onClick={syncTransactions}>
           {syncing ? 'Syncing ...' : 'Sync'}
         </Button>
-        <AddCashTransactionModal />
+        <AddCashTransaction />
       </Nav>
       {
         (isTransactionsError || isAreasError)
@@ -306,16 +306,16 @@ export default function Transactions() {
               {TransactionsTable()}
             </>
       }
-      <AddSplitTransactionsModal
+      <AddSplitTransactions
         parent={transaction}
         isModalOpen={isAddSplitsModalOpen}
         onModalClose={onAddSplitsModalClose} />
-      <EditSplitTransactionsModal
+      <EditSplitTransactions
         parent={transaction}
         activeSplits={activeSplits}
         isModalOpen={isEditSplitsModalOpen}
         onModalClose={onEditSplitsModalClose} />
-      <EditTransactionModal
+      <EditTransaction
         transaction={transaction}
         isModalOpen={isEditModalOpen}
         onModalClose={onEditModalClose}

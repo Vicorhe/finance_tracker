@@ -23,3 +23,12 @@ export function validForm(parent, splits) {
   }
   return ''
 }
+
+export function getBlankSplit() {
+  return {
+    name: '',
+    amount: '',
+    area_id: '',
+    memo: ''
+  }
+}

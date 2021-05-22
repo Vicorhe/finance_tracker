@@ -27,7 +27,7 @@ import {
   useDisclosure
 } from "@chakra-ui/react"
 import { AddIcon } from '@chakra-ui/icons'
-import { remainingAmount } from '../../../utils/split-utils'
+import { remainingAmount, getBlankSplit } from '../../../utils/split-utils'
 
 export default function RenderSplitTransactions({
   header,
@@ -59,15 +59,6 @@ export default function RenderSplitTransactions({
   function closeAlertAfterDelete(e) {
     handleDelete(e)
     onAlertClose()
-  }
-
-  function getBlankSplit() {
-    return {
-      name: '',
-      amount: '',
-      area_id: '',
-      memo: ''
-    }
   }
 
   const handleTabsChange = (index) => {

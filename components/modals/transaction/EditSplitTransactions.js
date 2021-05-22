@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react'
+import { useContext, useState } from 'react'
 import { UserContext } from '../../../context'
 import { mutate } from 'swr'
 import { formatMySQLDate } from '../../../utils/date-formatter'
@@ -9,8 +9,8 @@ export default function EditSplitTransactions({
   parent,
   splits,
   setSplits,
-  isModalOpen,
-  onModalClose
+  isOpen,
+  onClose
 }) {
   const { user } = useContext(UserContext)
   const [errorMessage, setErrorMessage] = useState('')
@@ -21,7 +21,7 @@ export default function EditSplitTransactions({
       const res = await fetch(`/api/split/delete?parent_id=${parent.id}`, {
         method: 'POST'
       })
-      onModalClose()
+      onClose()
       mutate(`/api/transaction/get-all?user_id=${user.id}`)
       const json = await res.json()
       if (!res.ok) throw Error(json.message)
@@ -55,7 +55,7 @@ export default function EditSplitTransactions({
           splits
         }),
       })
-      onModalClose()
+      onClose()
       mutate(`/api/transaction/get-all?user_id=${user.id}`)
       json = await res.json()
       if (!res.ok) throw Error(json.message)
@@ -67,8 +67,8 @@ export default function EditSplitTransactions({
   return (
     <RenderSplitTransactions
       submitButtonLabel="Save"
-      isOpen={isModalOpen}
-      onClose={onModalClose}
+      isOpen={isOpen}
+      onClose={onClose}
       handleSubmit={handleSubmit}
       handleDelete={handleDelete}
       parent={parent}

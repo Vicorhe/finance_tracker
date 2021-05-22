@@ -19,6 +19,7 @@ import utilStyles from '../../styles/utils.module.scss'
 import useSWR from 'swr'
 import fetcher from '../../utils/fetcher'
 import { formatDisplayDate } from '../../utils/date-formatter'
+import { getBlankSplit } from '../../utils/split-utils'
 
 function useTransactions(user_id) {
   const { data, error } = useSWR(
@@ -56,7 +57,7 @@ export default function Transactions() {
     onOpen: onAddSplitsModalOpen,
     onClose: onAddSplitsModalClose
   } = useDisclosure()
-  
+
   const {
     isOpen: isEditSplitsModalOpen,
     onOpen: onEditSplitsModalOpen,
@@ -156,8 +157,9 @@ export default function Transactions() {
     });
   }
 
-  function handleCreateSplit() {
+  function handleSplit() {
     onEditModalClose()
+    setSplits([getBlankSplit()])
     onAddSplitsModalOpen()
   }
 
@@ -296,21 +298,23 @@ export default function Transactions() {
           {syncing ? 'Syncing ...' : 'Sync'}
         </Button>
         <AddCashTransaction />
-        <AddSplitTransactions
-          parent={transaction}
-          isModalOpen={isAddSplitsModalOpen}
-          onModalClose={onAddSplitsModalClose} />
-        <EditSplitTransactions
-          parent={transaction}
-          splits={splits}
-          setSplits={setSplits}
-          isModalOpen={isEditSplitsModalOpen}
-          onModalClose={onEditSplitsModalClose} />
         <EditTransaction
           transaction={transaction}
           isModalOpen={isEditModalOpen}
           onModalClose={onEditModalClose}
-          handleSplit={handleCreateSplit} />
+          handleSplit={handleSplit} />
+        <AddSplitTransactions
+          parent={transaction}
+          splits={splits}
+          setSplits={setSplits}
+          isOpen={isAddSplitsModalOpen}
+          onClose={onAddSplitsModalClose} />
+        <EditSplitTransactions
+          parent={transaction}
+          splits={splits}
+          setSplits={setSplits}
+          isOpen={isEditSplitsModalOpen}
+          onClose={onEditSplitsModalClose} />
       </Nav>
       {
         (isTransactionsError || isAreasError)

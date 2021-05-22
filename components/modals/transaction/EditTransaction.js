@@ -29,7 +29,12 @@ import useAreas from '../../../hooks/areas'
 import { mutate } from 'swr'
 import { formatMySQLDate } from '../../../utils/date-formatter'
 
-export default function EditTransaction({ transaction, isModalOpen, onModalClose, handleSplit }) {
+export default function EditTransaction({ 
+  transaction, 
+  isModalOpen, 
+  onModalClose, 
+  handleSplit 
+}) {
   const { user } = useContext(UserContext)
   const {
     isOpen: isAlertOpen,
@@ -63,7 +68,7 @@ export default function EditTransaction({ transaction, isModalOpen, onModalClose
     setMemo(transaction.memo ? transaction.memo : '')
   }, [transaction])
 
-  async function submitHandler(e) {
+  async function handleSubmit(e) {
     setSubmitting(true)
     e.preventDefault()
     try {
@@ -133,7 +138,7 @@ export default function EditTransaction({ transaction, isModalOpen, onModalClose
       >
         <ModalOverlay />
         <ModalContent>
-          <form onSubmit={submitHandler}>
+          <form onSubmit={handleSubmit}>
             <ModalCloseButton />
             <ModalBody py={6}>
               <FormControl mb="4">

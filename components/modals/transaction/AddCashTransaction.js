@@ -44,7 +44,7 @@ export default function AddCashTransaction() {
   const [submitting, setSubmitting] = useState(false)
   const { areas, isAreasError } = useAreas();
 
-  async function submitHandler(e) {
+  async function handleSubmit(e) {
     setSubmitting(true)
     e.preventDefault()
     try {
@@ -85,7 +85,7 @@ export default function AddCashTransaction() {
       >
         <ModalOverlay />
         <ModalContent>
-          <form onSubmit={submitHandler}>
+          <form onSubmit={handleSubmit}>
             <ModalHeader>Add Cash Transaction</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>

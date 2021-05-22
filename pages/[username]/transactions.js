@@ -43,18 +43,20 @@ export default function Transactions() {
   const [filterBy, setFilterBy] = useState('all')
   const [syncing, setSyncing] = useState(false)
   const [transaction, setTransaction] = useState({})
-  const [activeSplits, setActiveSplits] = useState([])
+  const [splits, setSplits] = useState([])
 
   const {
     isOpen: isEditModalOpen,
     onOpen: onEditModalOpen,
     onClose: onEditModalClose
   } = useDisclosure()
+
   const {
     isOpen: isAddSplitsModalOpen,
     onOpen: onAddSplitsModalOpen,
     onClose: onAddSplitsModalClose
   } = useDisclosure()
+  
   const {
     isOpen: isEditSplitsModalOpen,
     onOpen: onEditSplitsModalOpen,
@@ -136,7 +138,7 @@ export default function Transactions() {
 
   async function getTransaction(id) {
     await axios.get(
-      `http://localhost:3000/api/transactio/get?id=${id}`
+      `http://localhost:3000/api/transaction/get?id=${id}`
     ).then(res =>
       setTransaction(res.data)
     ).catch(e => {
@@ -148,7 +150,7 @@ export default function Transactions() {
     await axios.get(
       `http://localhost:3000/api/split/get-all?parent_id=${parent_id}`
     ).then(res =>
-      setActiveSplits(res.data)
+      setSplits(res.data)
     ).catch(e => {
       throw Error(e.message)
     });
@@ -284,7 +286,6 @@ export default function Transactions() {
           </AutoSizer>
         )}
       </InfiniteLoader>
-
     )
   }
 
@@ -295,6 +296,21 @@ export default function Transactions() {
           {syncing ? 'Syncing ...' : 'Sync'}
         </Button>
         <AddCashTransaction />
+        <AddSplitTransactions
+          parent={transaction}
+          isModalOpen={isAddSplitsModalOpen}
+          onModalClose={onAddSplitsModalClose} />
+        <EditSplitTransactions
+          parent={transaction}
+          splits={splits}
+          setSplits={setSplits}
+          isModalOpen={isEditSplitsModalOpen}
+          onModalClose={onEditSplitsModalClose} />
+        <EditTransaction
+          transaction={transaction}
+          isModalOpen={isEditModalOpen}
+          onModalClose={onEditModalClose}
+          handleSplit={handleCreateSplit} />
       </Nav>
       {
         (isTransactionsError || isAreasError)
@@ -306,20 +322,6 @@ export default function Transactions() {
               {TransactionsTable()}
             </>
       }
-      <AddSplitTransactions
-        parent={transaction}
-        isModalOpen={isAddSplitsModalOpen}
-        onModalClose={onAddSplitsModalClose} />
-      <EditSplitTransactions
-        parent={transaction}
-        activeSplits={activeSplits}
-        isModalOpen={isEditSplitsModalOpen}
-        onModalClose={onEditSplitsModalClose} />
-      <EditTransaction
-        transaction={transaction}
-        isModalOpen={isEditModalOpen}
-        onModalClose={onEditModalClose}
-        handleSplit={handleCreateSplit} />
     </Box>
   )
 }

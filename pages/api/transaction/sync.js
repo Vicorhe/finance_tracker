@@ -98,7 +98,7 @@ async function createTransactions(transactionsToStore, accounts, user_id, item_i
             type,
             pending,
             hidden,
-            cash,
+            manual,
             split
           )
         VALUES

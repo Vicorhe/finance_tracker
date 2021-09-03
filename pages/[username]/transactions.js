@@ -6,7 +6,7 @@ import { UserContext } from "../../context"
 import { mutate } from 'swr'
 import useAreas from "../../hooks/areas"
 import Nav from '../../components/Nav'
-import AddCashTransaction from '../../components/modals/transaction/AddCashTransaction'
+import AddManualTransaction from '../../components/modals/transaction/AddManualTransaction'
 import EditTransaction from '../../components/modals/transaction/EditTransaction'
 import AddSplitTransactions from '../../components/modals/transaction/AddSplitTransactions'
 import EditSplitTransactions from '../../components/modals/transaction/EditSplitTransactions'
@@ -109,8 +109,8 @@ export default function Transactions() {
       case 'hidden':
         setDisplayedTransactions(transactions.filter(t => !!t.hidden))
         break
-      case 'cash':
-        setDisplayedTransactions(transactions.filter(t => !!t.cash))
+      case 'manual':
+        setDisplayedTransactions(transactions.filter(t => !!t.manual))
         break
       case 'split':
         setDisplayedTransactions(transactions.filter(t => !!t.split))
@@ -206,7 +206,7 @@ export default function Transactions() {
           <option value="all">All</option>
           <option value="unassigned">Unassigned</option>
           <option value="hidden">Hidden</option>
-          <option value="cash">Cash Transactions</option>
+          <option value="manual">Manual Transactions</option>
           <option value="split">Splits</option>
         </Select>
       </Flex>
@@ -242,7 +242,7 @@ export default function Transactions() {
             {(!!t.split && !!t.parent_id) && <Badge variant="subtle" colorScheme="purple" mr="2">Split Child</Badge>}
             {(!!t.split && !t.parent_id) && <Badge variant="subtle" colorScheme="purple" mr="2">Split Parent</Badge>}
             {!!t.hidden && <Badge variant="subtle" colorScheme="gray" mr="2">Hidden</Badge>}
-            {!!t.cash && <Badge variant="subtle" colorScheme="green">Cash</Badge>}
+            {!!t.manual && <Badge variant="subtle" colorScheme="green">Manual</Badge>}
           </Flex>
           <Flex alignItems="center">
             <Box flex="1">
@@ -297,7 +297,7 @@ export default function Transactions() {
         <Button disabled={syncing} size="lg" mr="3" onClick={syncTransactions}>
           {syncing ? 'Syncing ...' : 'Sync'}
         </Button>
-        <AddCashTransaction />
+        <AddManualTransaction />
         <EditTransaction
           transaction={transaction}
           isModalOpen={isEditModalOpen}

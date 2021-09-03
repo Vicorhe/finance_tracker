@@ -23,7 +23,7 @@ import {
 import { mutate } from 'swr'
 import { formatMySQLDate } from '../../../utils/date-formatter'
 
-export default function AddCashTransaction() {
+export default function AddManualTransaction() {
   const { user } = useContext(UserContext)
   const { isOpen, onOpen, onClose } = useDisclosure(
     {
@@ -48,7 +48,7 @@ export default function AddCashTransaction() {
     setSubmitting(true)
     e.preventDefault()
     try {
-      const res = await fetch('/api/cash/create', {
+      const res = await fetch('/api/manual/create', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ export default function AddCashTransaction() {
         <ModalOverlay />
         <ModalContent>
           <form onSubmit={handleSubmit}>
-            <ModalHeader>Add Cash Transaction</ModalHeader>
+            <ModalHeader>Add Manual Transaction</ModalHeader>
             <ModalCloseButton />
             <ModalBody pb={6}>
               <FormControl mb="4">

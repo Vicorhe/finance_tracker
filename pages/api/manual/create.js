@@ -12,10 +12,10 @@ export default async function handler(req, res) {
 
     const results = await query(
       `
-      INSERT INTO transactions_table (user_id, area_id, name, amount, date, source, type, memo, pending, hidden, cash, split)
+      INSERT INTO transactions_table (user_id, area_id, name, amount, date, source, type, memo, pending, hidden, manual, split)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
-      [user_id, area, name, amount, date, 'user inputted', 'cash', memo, false, false, true, false]
+      [user_id, area, name, amount, date, 'user inputted', 'manual', memo, false, false, true, false]
     )
     return res.json(results)
   } catch (e) {

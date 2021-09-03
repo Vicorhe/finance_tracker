@@ -29,11 +29,11 @@ import useAreas from '../../../hooks/areas'
 import { mutate } from 'swr'
 import { formatMySQLDate } from '../../../utils/date-formatter'
 
-export default function EditTransaction({ 
-  transaction, 
-  isModalOpen, 
-  onModalClose, 
-  handleSplit 
+export default function EditTransaction({
+  transaction,
+  isModalOpen,
+  onModalClose,
+  handleSplit
 }) {
   const { user } = useContext(UserContext)
   const {
@@ -42,7 +42,7 @@ export default function EditTransaction({
     onClose: onAlertClose
   } = useDisclosure()
   const [isHidden, setIsHidden] = useState(false)
-  const [isNotCash, setIsNotCash] = useState(false)
+  const [isNotManual, setIsNotManual] = useState(false)
   const [isSplitParent, setIsSplitParent] = useState(false)
   const [isSplitChild, setIsSplitChild] = useState(false)
   const [name, setName] = useState('')
@@ -57,7 +57,7 @@ export default function EditTransaction({
 
   useEffect(() => {
     setIsHidden(!!transaction.hidden)
-    setIsNotCash(!transaction.cash)
+    setIsNotManual(!transaction.manual)
     setIsSplitParent(!!transaction.split && !transaction.parent_id)
     setIsSplitChild(!!transaction.split && !!transaction.parent_id)
     setName(transaction.name)
@@ -144,7 +144,7 @@ export default function EditTransaction({
               <FormControl mb="4">
                 <FormLabel>Name</FormLabel>
                 <Input
-                  isDisabled={isNotCash && !isSplitChild}
+                  isDisabled={isNotManual && !isSplitChild}
                   placeholder="Paradise Zoanthids"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -153,7 +153,7 @@ export default function EditTransaction({
               <FormControl mb="4">
                 <FormLabel>Amount</FormLabel>
                 <NumberInput
-                  isDisabled={isNotCash && !isSplitChild}
+                  isDisabled={isNotManual && !isSplitChild}
                   precision={2}
                   defaultValue={amount}>
                   <NumberInputField
@@ -190,7 +190,7 @@ export default function EditTransaction({
                   selectedDate={date}
                   onChange={d => setDate(d)}
                   showPopperArrow={true}
-                  disabled={isNotCash}
+                  disabled={isNotManual}
                 />
               </FormControl>
 
@@ -211,7 +211,7 @@ export default function EditTransaction({
 
             <ModalFooter>
               {
-                (!isNotCash || isSplitChild) &&
+                (!isNotManual || isSplitChild) &&
                 <Button disabled={submitting || deleting}
                   colorScheme="red"
                   mr={3}
@@ -220,7 +220,7 @@ export default function EditTransaction({
                 </Button>
               }
               {
-                (isNotCash && !isSplitParent && !isSplitChild) &&
+                (isNotManual && !isSplitParent && !isSplitChild) &&
                 <Button disabled={submitting || deleting}
                   colorScheme="purple"
                   mr={3}
@@ -229,7 +229,7 @@ export default function EditTransaction({
                 </Button>
               }
               {
-                (!isHidden && isNotCash && !isSplitParent && !isSplitChild) &&
+                (!isHidden && isNotManual && !isSplitParent && !isSplitChild) &&
                 <Button disabled={submitting || deleting}
                   colorScheme="yellow"
                   mr={3}

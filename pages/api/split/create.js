@@ -5,7 +5,7 @@ async function createChildSplit(user_id, parent_id, date, split) {
   const area = area_id ? area_id : null
   const results = await query(
     `
-    INSERT INTO transactions_table (user_id, area_id, parent_id, name, amount, date, source, type, memo, pending, hidden, cash, split)
+    INSERT INTO transactions_table (user_id, area_id, parent_id, name, amount, date, source, type, memo, pending, hidden, manual, split)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [user_id, area, parent_id, name, amount, date, 'user splitted', 'split', memo, false, false, false, true]

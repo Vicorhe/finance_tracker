@@ -1,19 +1,27 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
-import { Box, Heading, Text, Flex, Select, Badge, Spacer } from "@chakra-ui/react"
+import { UserContext } from "../../context"
+import { useDisclosure, Box, Heading, Text, Flex, Select, Badge, Spacer, IconButton } from "@chakra-ui/react"
+import { EditIcon } from '@chakra-ui/icons'
 import useAreas from '../../hooks/areas'
 import Nav from '../../components/Nav'
 import DatePicker from '../../components/DatePicker'
+import EditTransaction from '../../components/modals/transaction/EditTransaction'
+import AddSplitTransactions from '../../components/modals/transaction/AddSplitTransactions'
+import EditSplitTransactions from '../../components/modals/transaction/EditSplitTransactions'
 import ColorShard from '../../components/ColorShard'
 import LoadingError from '../../components/LoadingError'
 import LoadingList from '../../components/LoadingList'
 import utilStyles from '../../styles/utils.module.scss'
 import { formatDisplayDate, formatMySQLDate } from '../../utils/date-formatter'
+import { getBlankSplit } from '../../utils/split-utils'
+
 const moment = require('moment')
 
 export default function SpendingReportBreakdown() {
+  const { user, setUser } = useContext(UserContext)
   const router = useRouter()
   const { username, area, start, end } = router.query
   const { areas, isAreasError } = useAreas();
@@ -23,11 +31,47 @@ export default function SpendingReportBreakdown() {
   const [displayedTransactions, setDisplayedTransactions] = useState([])
   const [remoteRowCount, setRemoteRowCount] = useState(0)
   const [filterBy, setFilterBy] = useState(1)
+  const [transaction, setTransaction] = useState({})
+  const [splits, setSplits] = useState([])
+
+  const {
+    isOpen: isEditModalOpen,
+    onOpen: onEditModalOpen,
+    onClose: onEditModalClose
+  } = useDisclosure()
+
+  const {
+    isOpen: isAddSplitsModalOpen,
+    onOpen: onAddSplitsModalOpen,
+    onClose: onAddSplitsModalClose
+  } = useDisclosure()
+
+  const {
+    isOpen: isEditSplitsModalOpen,
+    onOpen: onEditSplitsModalOpen,
+    onClose: onEditSplitsModalClose
+  } = useDisclosure()
 
   const breadcrumbs = [
     { name: username, path: `/${username}` },
     { name: "breakdown", path: `/${username}/breakdown` }
   ]
+
+  useEffect(() => {
+    pullUser()
+  }, [router])
+
+  async function pullUser() {
+    if (Object.keys(user).length === 0) {
+      await axios.get(
+        `http://localhost:3000/api/user/get?name=${username}`
+      ).then(res =>
+        setUser(res.data)
+      ).catch(e => {
+        throw Error(e.message)
+      });
+    }
+  }
 
   useEffect(() => {
     if (!!area && !!start && !!end) {
@@ -73,6 +117,48 @@ export default function SpendingReportBreakdown() {
   function loadMoreRows({ startIndex, stopIndex }) {
   }
 
+  function editTransaction(transaction) {
+    setTransaction(transaction)
+    if (transaction.split) {
+      if (!transaction.parent_id) {
+        getSplits(transaction.id)
+      } else {
+        getTransaction(transaction.parent_id)
+        getSplits(transaction.parent_id)
+      }
+      onEditSplitsModalOpen()
+    }
+    else {
+      onEditModalOpen()
+    }
+    getTransactions();
+  }
+
+  async function getTransaction(id) {
+    await axios.get(
+      `http://localhost:3000/api/transaction/get?id=${id}`
+    ).then(res =>
+      setTransaction(res.data)
+    ).catch(e => {
+      throw Error(e.message)
+    });
+  }
+
+  async function getSplits(parent_id) {
+    await axios.get(
+      `http://localhost:3000/api/split/get-all?parent_id=${parent_id}`
+    ).then(res =>
+      setSplits(res.data)
+    ).catch(e => {
+      throw Error(e.message)
+    });
+  }
+
+  function handleSplit() {
+    onEditModalClose()
+    setSplits([getBlankSplit()])
+    onAddSplitsModalOpen()
+  }
   function getColorShard(area_id) {
     var color = '#EDEDED'
     if (area_id)
@@ -122,6 +208,11 @@ export default function SpendingReportBreakdown() {
                   : <Text fontSize="xl" color="#D3D3D3">Edit to add memo...</Text>
               }
             </Box>
+            <IconButton
+              icon={<EditIcon />}
+              size="sm"
+              variant="outline"
+              onClick={() => editTransaction(t)} />
           </Flex>
         </Box>
       </Box>
@@ -197,7 +288,25 @@ export default function SpendingReportBreakdown() {
 
   return (
     <Box className={utilStyles.page}>
-      <Nav breadcrumbs={breadcrumbs} />
+      <Nav breadcrumbs={breadcrumbs}>
+        <EditTransaction
+          transaction={transaction}
+          isModalOpen={isEditModalOpen}
+          onModalClose={onEditModalClose}
+          handleSplit={handleSplit} />
+        <AddSplitTransactions
+          parent={transaction}
+          splits={splits}
+          setSplits={setSplits}
+          isOpen={isAddSplitsModalOpen}
+          onClose={onAddSplitsModalClose} />
+        <EditSplitTransactions
+          parent={transaction}
+          splits={splits}
+          setSplits={setSplits}
+          isOpen={isEditSplitsModalOpen}
+          onClose={onEditSplitsModalClose} />
+      </Nav>
       {
         isAreasError
           ? LoadingError()

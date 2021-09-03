@@ -35,7 +35,7 @@ export default function Home() {
     onClose: onEditUserClose
   } = useDisclosure()
 
-  function handleSelectUser(u) {
+  function handleEditUser(u) {
     setSelectedUser(u)
     onEditUserOpen()
   }
@@ -56,7 +56,7 @@ export default function Home() {
                 icon={<EditIcon />}
                 size="sm"
                 variant="outline"
-                onClick={() => handleSelectUser(u)}
+                onClick={() => handleEditUser(u)}
               />
             </Flex>
           )

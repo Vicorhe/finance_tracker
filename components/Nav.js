@@ -6,6 +6,11 @@ import {
 } from "@chakra-ui/react"
 import { FaHome } from 'react-icons/fa'
 
+const {
+  NEXT_PUBLIC_USER_NAME
+} = process.env;
+
+
 const HomeNavIcon = forwardRef(({ onClick, href }, ref) => {
   return (
     <a href={href} onClick={onClick} ref={ref}>
@@ -16,7 +21,7 @@ const HomeNavIcon = forwardRef(({ onClick, href }, ref) => {
   )
 })
 
-export default function Nav({ breadcrumbs = [{ name: 'Choose Account', path: '/' }], children }) {
+export default function Nav({ breadcrumbs = [{ name: NEXT_PUBLIC_USER_NAME, path: '/' }], children }) {
   return (
     <nav>
       <Flex pb="1rem">

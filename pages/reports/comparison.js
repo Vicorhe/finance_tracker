@@ -1,12 +1,12 @@
 import { useContext, useEffect, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { UserContext } from "../../../context"
+import { UserContext } from "../../context"
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import moment from 'moment'
-import Nav from '../../../components/Nav'
-import DatePicker from '../../../components/DatePicker'
-import BarChart from '../../../components/BarChart'
+import Nav from '../../components/Nav'
+import DatePicker from '../../components/DatePicker'
+import BarChart from '../../components/BarChart'
 import {
   Box,
   Flex,
@@ -20,7 +20,7 @@ import {
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
 import utilStyles from '../../../styles/utils.module.scss'
-import { formatMySQLDate, formatDisplayDate } from '../../../utils/date-formatter'
+import { formatMySQLDate, formatDisplayDate } from '../../utils/date-formatter'
 
 export default function Comparison() {
   const { user, setUser } = useContext(UserContext)

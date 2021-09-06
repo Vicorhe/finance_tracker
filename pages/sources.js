@@ -2,7 +2,7 @@ import { useContext, useEffect, useState, useRef } from 'react'
 import axios from 'axios'
 import useSWR from 'swr'
 import { useRouter } from 'next/router'
-import { UserContext } from '../../context'
+import { UserContext } from '../context'
 import { mutate } from 'swr'
 import {
   Box, Accordion, AccordionItem,
@@ -15,12 +15,12 @@ import {
   AlertDialogOverlay,
   useDisclosure
 } from "@chakra-ui/react"
-import Nav from '../../components/Nav'
-import PlaidLink from "../../components/PlaidLink"
-import LoadingError from '../../components/LoadingError'
-import LoadingList from '../../components/LoadingList'
-import fetcher from '../../utils/fetcher'
-import utilStyles from '../../styles/utils.module.scss'
+import Nav from '../components/Nav'
+import PlaidLink from "../components/PlaidLink"
+import LoadingError from '../components/LoadingError'
+import LoadingList from '../components/LoadingList'
+import fetcher from '../utils/fetcher'
+import utilStyles from '../styles/utils.module.scss'
 
 function useAccounts() {
   const { data, error } = useSWR(

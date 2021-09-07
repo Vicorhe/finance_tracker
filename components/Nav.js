@@ -10,7 +10,6 @@ const {
   NEXT_PUBLIC_USER_NAME
 } = process.env;
 
-
 const HomeNavIcon = forwardRef(({ onClick, href }, ref) => {
   return (
     <a href={href} onClick={onClick} ref={ref}>

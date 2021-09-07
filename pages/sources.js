@@ -1,8 +1,6 @@
-import { useContext, useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import axios from 'axios'
 import useSWR from 'swr'
-import { useRouter } from 'next/router'
-import { UserContext } from '../context'
 import { mutate } from 'swr'
 import {
   Box, Accordion, AccordionItem,
@@ -21,6 +19,8 @@ import LoadingError from '../components/LoadingError'
 import LoadingList from '../components/LoadingList'
 import fetcher from '../utils/fetcher'
 import utilStyles from '../styles/utils.module.scss'
+
+const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 function useAccounts() {
   const { data, error } = useSWR(
@@ -47,9 +47,6 @@ function useItems() {
 }
 
 export default function Sources() {
-  const { user, setUser } = useContext(UserContext)
-  const router = useRouter()
-  const { username } = router.query
   const { accounts, isAccountsError } = useAccounts();
   const { items, isItemsError } = useItems();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -60,20 +57,8 @@ export default function Sources() {
   const [selectedItem, setSelectedItem] = useState(null)
 
   const breadcrumbs = [
-    { name: username, path: `/${username}` },
-    { name: "sources", path: `/${username}/sources` }
+    { name: "sources", path: "/sources" }
   ]
-
-  useEffect(() => {
-    pullUser()
-  }, [router])
-
-  async function pullUser() {
-    if (Object.keys(user).length === 0) {
-      const res = await axios.get(`http://localhost:3000/api/user/get?name=${username}`);
-      setUser(res.data)
-    }
-  }
 
   useEffect(() => {
     createLinkToken()
@@ -92,12 +77,12 @@ export default function Sources() {
 
   async function createItem(publicToken) {
     console.log("client side public token", publicToken)
-    const res = await axios.post('http://localhost:3000/api/item/create', { publicToken: publicToken, user_id: user.id });
+    const res = await axios.post('http://localhost:3000/api/item/create', { publicToken: publicToken, user_id: NEXT_PUBLIC_USER_ID });
     const data = res.data.access_token;
     setAccessToken(data)
     mutate('/api/item/get-all')
     mutate('/api/account/get-all')
-    await axios.post('http://localhost:3000/api/transaction/sync', { user_id: user.id });
+    await axios.post('http://localhost:3000/api/transaction/sync', { user_id: NEXT_PUBLIC_USER_ID });
   }
 
   async function handleDelete(e) {
@@ -121,7 +106,7 @@ export default function Sources() {
   function SourcesTable() {
     return (
       <Accordion allowMultiple>
-        {items.filter(i => i.user_id == user.id).map(i => (
+        {items.filter(i => i.user_id == NEXT_PUBLIC_USER_ID).map(i => (
           <AccordionItem key={i.id}>
             <AccordionButton py="4" px="5">
               <Text flex="1" textAlign="left" fontSize="3xl">{i.institution_name}</Text>

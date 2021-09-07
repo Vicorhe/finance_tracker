@@ -1,7 +1,5 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useRouter } from 'next/router'
-import { UserContext } from "../../context"
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import moment from 'moment'
 import Nav from '../../components/Nav'
@@ -19,13 +17,12 @@ import {
 } from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
 import Link from 'next/link'
-import utilStyles from '../../../styles/utils.module.scss'
+import utilStyles from '../../styles/utils.module.scss'
 import { formatMySQLDate, formatDisplayDate } from '../../utils/date-formatter'
+import { getBreakdownURLObject } from '../../utils/routing'
+const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function Comparison() {
-  const { user, setUser } = useContext(UserContext)
-  const router = useRouter()
-  const { username } = router.query
   const [periodOneStartDate, setPeriodOneStartDate] = useState(
     moment().subtract(1, "M").toDate()
   )
@@ -39,21 +36,9 @@ export default function Comparison() {
   const [barChartData, setBarChartData] = useState([])
   const [tableData, setTableData] = useState([])
   const breadcrumbs = [
-    { name: username, path: `/${username}` },
-    { name: "reports", path: `/${username}/reports` },
-    { name: "comparison", path: `/${username}/reports/comparison` }
+    { name: "reports", path: "/reports" },
+    { name: "comparison", path: "/reports/comparison" }
   ]
-
-  useEffect(() => {
-    pullUser()
-  }, [router])
-
-  async function pullUser() {
-    if (Object.keys(user).length === 0) {
-      const res = await axios.get(`http://localhost:3000/api/user/get?name=${username}`);
-      setUser(res.data)
-    }
-  }
 
   async function generateReport() {
     const period_one_start_date = formatMySQLDate(periodOneStartDate)
@@ -61,7 +46,7 @@ export default function Comparison() {
     const period_two_start_date = formatMySQLDate(periodTwoStartDate)
     const period_two_end_date = formatMySQLDate(periodTwoEndDate)
     const res = await axios.post(`http://localhost:3000/api/report/comparison`, {
-      user_id: user.id,
+      user_id: NEXT_PUBLIC_USER_ID,
       period_one_start_date,
       period_one_end_date,
       period_two_start_date,
@@ -83,18 +68,10 @@ export default function Comparison() {
     </Text>
   }
 
-  function getBreakdownURLObject(a, period_one) {
+  function getBreakdownRoute(a, period_one) {
     let start_date = period_one ? periodOneStartDate : periodTwoStartDate
     let end_date = period_one ? periodOneEndDate : periodTwoEndDate
-    return {
-      pathname: '/[username]/breakdown',
-      query: {
-        username: username,
-        area: a.id,
-        start: formatMySQLDate(start_date),
-        end: formatMySQLDate(end_date)
-      }
-    }
+    return getBreakdownURLObject(a, start_date, end_date)
   }
 
   function ComparisonReportTable() {
@@ -128,7 +105,7 @@ export default function Comparison() {
                 </Td>
 
                 <Td isNumeric>
-                  <Link href={getBreakdownURLObject(a, true)}>
+                  <Link href={getBreakdownRoute(a, true)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -139,7 +116,7 @@ export default function Comparison() {
                 </Td>
 
                 <Td isNumeric>
-                  <Link href={getBreakdownURLObject(a, false)}>
+                  <Link href={getBreakdownRoute(a, false)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -159,7 +136,7 @@ export default function Comparison() {
               <Tr key={a.area} >
                 <Td alignItems="center">{a.area}</Td>
                 <Td isNumeric>
-                  <Link href={getBreakdownURLObject(a, true)}>
+                  <Link href={getBreakdownRoute(a, true)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -170,7 +147,7 @@ export default function Comparison() {
                 </Td>
 
                 <Td isNumeric>
-                  <Link href={getBreakdownURLObject(a, false)}>
+                  <Link href={getBreakdownRoute(a, false)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"

@@ -51,7 +51,6 @@ export default function Sources() {
   const { items, isItemsError } = useItems();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef()
-  const [deleting, setDeleting] = useState(false)
   const [token, setToken] = useState(null)
   const [access_token, setAccessToken] = useState(null)
   const [selectedItem, setSelectedItem] = useState(null)
@@ -86,13 +85,11 @@ export default function Sources() {
   }
 
   async function handleDelete(e) {
-    setDeleting(true)
     e.preventDefault()
     try {
       const res = await fetch(`/api/item/delete?id=${selectedItem}`, {
         method: 'POST'
       })
-      setDeleting(false)
       onClose()
       mutate('/api/item/get-all')
       mutate('/api/account/get-all')

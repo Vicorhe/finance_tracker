@@ -1,10 +1,10 @@
 import { ResponsivePie } from '@nivo/pie'
 import { useRouter } from 'next/router'
 import { Box, Text } from '@chakra-ui/react'
+import { getBreakdownURLObject } from '../utils/routing'
 
 export default function PieChart({ data, startDate, endDate }) {
   const router = useRouter()
-  const { username } = router.query
 
   const theme = {
     "fontSize": 17,
@@ -38,15 +38,7 @@ export default function PieChart({ data, startDate, endDate }) {
   }
 
   function handleClick(e) {
-    router.push({
-      pathname: '/[username]/breakdown',
-      query: {
-        username: username,
-        area: e.label,
-        start: startDate,
-        end: endDate
-      }
-    })
+    router.push(getBreakdownURLObject(e, startDate, endDate))
   }
 
   function ToolTip({ datum: { id, value } }) {

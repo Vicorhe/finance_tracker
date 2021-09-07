@@ -1,12 +1,10 @@
-import { useContext, useEffect, useState } from 'react'
+import { useState } from 'react'
 import axios from 'axios'
-import { useRouter } from 'next/router'
-import { UserContext } from "../../../context"
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import moment from 'moment'
-import Nav from '../../../components/Nav'
-import DatePicker from '../../../components/DatePicker'
-import PieChart from '../../../components/PieChart'
+import Nav from '../../components/Nav'
+import DatePicker from '../../components/DatePicker'
+import PieChart from '../../components/PieChart'
 import {
   Box,
   Flex,
@@ -18,37 +16,24 @@ import {
   Text
 } from "@chakra-ui/react"
 import Link from 'next/link'
-import utilStyles from '../../../styles/utils.module.scss'
-import { formatMySQLDate } from '../../../utils/date-formatter'
+import utilStyles from '../../styles/utils.module.scss'
+import { formatMySQLDate } from '../../utils/date-formatter'
+import { getBreakdownURLObject } from '../../utils/routing'
+const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function Reports() {
-  const { user, setUser } = useContext(UserContext)
-  const router = useRouter()
-  const { username } = router.query
   const [areasAggregate, setAreasAggregate] = useState([])
   const [totalInput, setTotalInput] = useState(0)
   const [pieChartData, setPieChartData] = useState([])
   const [startDate, setStartDate] = useState(moment().subtract(1, "M").toDate())
   const [endDate, setEndDate] = useState(new Date())
   const breadcrumbs = [
-    { name: username, path: `/${username}` },
-    { name: "reports", path: `/${username}/reports` }
+    { name: "reports", path: "/reports" }
   ]
-
-  useEffect(() => {
-    pullUser()
-  }, [router])
-
-  async function pullUser() {
-    if (Object.keys(user).length === 0) {
-      const res = await axios.get(`http://localhost:3000/api/user/get?name=${username}`);
-      setUser(res.data)
-    }
-  }
 
   async function generateReport() {
     const res = await axios.post(`http://localhost:3000/api/report/areas`, {
-      user_id: user.id,
+      user_id: NEXT_PUBLIC_USER_ID,
       start_date: formatMySQLDate(startDate),
       end_date: formatMySQLDate(endDate)
     });
@@ -62,18 +47,6 @@ export default function Reports() {
         return a
       }, 0)
     setTotalInput(sumInput)
-  }
-
-  function getBreakdownURLObject(a) {
-    return {
-      pathname: '/[username]/breakdown',
-      query: {
-        username: username,
-        area: a.label,
-        start: formatMySQLDate(startDate),
-        end: formatMySQLDate(endDate)
-      }
-    }
   }
 
   function SpendingReportTable() {
@@ -98,7 +71,7 @@ export default function Reports() {
                     mr={1}
                     width={17}
                   />
-                  <Link href={getBreakdownURLObject(a)}>
+                  <Link href={getBreakdownURLObject(a, startDate, endDate)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -109,7 +82,7 @@ export default function Reports() {
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={getBreakdownURLObject(a)}>
+                  <Link href={getBreakdownURLObject(a, startDate, endDate)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -128,7 +101,7 @@ export default function Reports() {
             .map((a) => (
               <Tr key={a.label}>
                 <Td>
-                  <Link href={getBreakdownURLObject(a)}>
+                  <Link href={getBreakdownURLObject(a, startDate, endDate)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -139,7 +112,7 @@ export default function Reports() {
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={getBreakdownURLObject(a)}>
+                  <Link href={getBreakdownURLObject(a, startDate, endDate)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -189,7 +162,7 @@ export default function Reports() {
           />
         </Box>
         <Spacer />
-        <Link href={`/${user.name}/reports/comparison`}>
+        <Link href={"/reports/comparison"}>
           <Button>
             Make a Comparison
           </Button>

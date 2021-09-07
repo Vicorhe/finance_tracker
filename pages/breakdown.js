@@ -2,28 +2,27 @@ import { useEffect, useState, useContext } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
-import { UserContext } from "../../context"
 import { useDisclosure, Box, Heading, Text, Flex, Select, Badge, Spacer, IconButton } from "@chakra-ui/react"
 import { EditIcon } from '@chakra-ui/icons'
-import useAreas from '../../hooks/areas'
-import Nav from '../../components/Nav'
-import DatePicker from '../../components/DatePicker'
-import EditTransaction from '../../components/modals/transaction/EditTransaction'
-import AddSplitTransactions from '../../components/modals/transaction/AddSplitTransactions'
-import EditSplitTransactions from '../../components/modals/transaction/EditSplitTransactions'
-import ColorShard from '../../components/ColorShard'
-import LoadingError from '../../components/LoadingError'
-import LoadingList from '../../components/LoadingList'
-import utilStyles from '../../styles/utils.module.scss'
-import { formatDisplayDate, formatMySQLDate } from '../../utils/date-formatter'
-import { getBlankSplit } from '../../utils/split-utils'
+import useAreas from '../hooks/areas'
+import Nav from '../components/Nav'
+import DatePicker from '../components/DatePicker'
+import EditTransaction from '../components/modals/transaction/EditTransaction'
+import AddSplitTransactions from '../components/modals/transaction/AddSplitTransactions'
+import EditSplitTransactions from '../components/modals/transaction/EditSplitTransactions'
+import ColorShard from '../components/ColorShard'
+import LoadingError from '../components/LoadingError'
+import LoadingList from '../components/LoadingList'
+import utilStyles from '../styles/utils.module.scss'
+import { formatDisplayDate, formatMySQLDate } from '../utils/date-formatter'
+import { getBlankSplit } from '../utils/split-utils'
 
 const moment = require('moment')
+const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function SpendingReportBreakdown() {
-  const { user, setUser } = useContext(UserContext)
-  const router = useRouter()
-  const { username, area, start, end } = router.query
+  const router = useRouter();
+  const { area, start, end } = router.query
   const { areas, isAreasError } = useAreas();
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
@@ -53,25 +52,8 @@ export default function SpendingReportBreakdown() {
   } = useDisclosure()
 
   const breadcrumbs = [
-    { name: username, path: `/${username}` },
-    { name: "breakdown", path: `/${username}/breakdown` }
+    { name: "breakdown", path: "/breakdown" }
   ]
-
-  useEffect(() => {
-    pullUser()
-  }, [router])
-
-  async function pullUser() {
-    if (Object.keys(user).length === 0) {
-      await axios.get(
-        `http://localhost:3000/api/user/get?name=${username}`
-      ).then(res =>
-        setUser(res.data)
-      ).catch(e => {
-        throw Error(e.message)
-      });
-    }
-  }
 
   useEffect(() => {
     if (!!area && !!start && !!end) {
@@ -83,7 +65,7 @@ export default function SpendingReportBreakdown() {
 
   useEffect(() => {
     getTransactions()
-  }, [startDate, endDate, username])
+  }, [startDate, endDate])
 
   useEffect(() => {
     setRemoteRowCount(displayedTransactions.length)
@@ -94,10 +76,10 @@ export default function SpendingReportBreakdown() {
   }, [filterBy, transactions])
 
   async function getTransactions() {
-    if (!username || !startDate || !endDate) return
+    if (!startDate || !endDate) return
     // console.log(`fetching transactions of user ${username} between ${startDate} and ${endDate}`)
     const res = await axios.post(`http://localhost:3000/api/report/transactions`, {
-      user_name: username,
+      user_id: NEXT_PUBLIC_USER_ID,
       start_date: formatMySQLDate(startDate),
       end_date: formatMySQLDate(endDate)
     });

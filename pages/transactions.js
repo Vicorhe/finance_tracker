@@ -1,29 +1,30 @@
-import { useContext, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
-import { useRouter } from 'next/router'
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
-import { UserContext } from "../../context"
 import { mutate } from 'swr'
-import useAreas from "../../hooks/areas"
-import Nav from '../../components/Nav'
-import AddManualTransaction from '../../components/modals/transaction/AddManualTransaction'
-import EditTransaction from '../../components/modals/transaction/EditTransaction'
-import AddSplitTransactions from '../../components/modals/transaction/AddSplitTransactions'
-import EditSplitTransactions from '../../components/modals/transaction/EditSplitTransactions'
-import ColorShard from '../../components/ColorShard'
-import LoadingError from '../../components/LoadingError'
-import LoadingList from '../../components/LoadingList'
+import useAreas from "../hooks/areas"
+import Nav from '../components/Nav'
+import AddManualTransaction from '../components/modals/transaction/AddManualTransaction'
+import EditTransaction from '../components/modals/transaction/EditTransaction'
+import AddSplitTransactions from '../components/modals/transaction/AddSplitTransactions'
+import EditSplitTransactions from '../components/modals/transaction/EditSplitTransactions'
+import ColorShard from '../components/ColorShard'
+import LoadingError from '../components/LoadingError'
+import LoadingList from '../components/LoadingList'
 import { useDisclosure, Box, Button, Heading, Text, Flex, Select, IconButton, Badge } from "@chakra-ui/react"
 import { EditIcon } from '@chakra-ui/icons'
-import utilStyles from '../../styles/utils.module.scss'
+import utilStyles from '../styles/utils.module.scss'
 import useSWR from 'swr'
-import fetcher from '../../utils/fetcher'
-import { formatDisplayDate } from '../../utils/date-formatter'
-import { getBlankSplit } from '../../utils/split-utils'
+import fetcher from '../utils/fetcher'
+import { formatDisplayDate } from '../utils/date-formatter'
+import { getBlankSplit } from '../utils/split-utils'
 
-function useTransactions(user_id) {
+const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
+
+
+function useTransactions() {
   const { data, error } = useSWR(
-    `/api/transaction/get-all?user_id=${user_id}`,
+    `/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`,
     fetcher
   );
   return {
@@ -34,11 +35,8 @@ function useTransactions(user_id) {
 }
 
 export default function Transactions() {
-  const { user, setUser } = useContext(UserContext)
-  const router = useRouter()
-  const { username } = router.query
   const { areas, isAreasError } = useAreas();
-  const { transactions, isTransactionsError } = useTransactions(user.id)
+  const { transactions, isTransactionsError } = useTransactions()
   const [displayedTransactions, setDisplayedTransactions] = useState([])
   const [remoteRowCount, setRemoteRowCount] = useState(0)
   const [filterBy, setFilterBy] = useState('all')
@@ -65,25 +63,8 @@ export default function Transactions() {
   } = useDisclosure()
 
   const breadcrumbs = [
-    { name: username, path: `/${username}` },
-    { name: "transactions", path: `/${username}/transactions` }
+    { name: "transactions", path: "/transactions" }
   ]
-
-  useEffect(() => {
-    pullUser()
-  }, [router])
-
-  async function pullUser() {
-    if (Object.keys(user).length === 0) {
-      await axios.get(
-        `http://localhost:3000/api/user/get?name=${username}`
-      ).then(res =>
-        setUser(res.data)
-      ).catch(e => {
-        throw Error(e.message)
-      });
-    }
-  }
 
   useEffect(() => {
     if (transactions) {
@@ -181,7 +162,7 @@ export default function Transactions() {
       'http://localhost:3000/api/transaction/sync',
       { user_id: user.id }
     ).then(
-      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
     ).catch(e => {
       throw Error(e.message)
     })

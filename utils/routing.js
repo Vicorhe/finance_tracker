@@ -1,12 +1,8 @@
-import { formatMySQLDate } from './date-formatter'
-
-export function getBreakdownURLObject(a, startDate, endDate) {
+export function getBreakdownURLObject(a) {
     return {
         pathname: '/breakdown',
         query: {
             area: extractAreaId(a),
-            start: formatMySQLDate(startDate),
-            end: formatMySQLDate(endDate)
         }
     }
 }

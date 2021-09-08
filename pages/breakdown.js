@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import { InfiniteLoader, List, AutoSizer } from 'react-virtualized'
@@ -22,7 +22,7 @@ const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function SpendingReportBreakdown() {
   const router = useRouter();
-  const { area, start, end } = router.query
+  const { area } = router.query
   const { areas, isAreasError } = useAreas();
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
@@ -56,12 +56,29 @@ export default function SpendingReportBreakdown() {
   ]
 
   useEffect(() => {
-    if (!!area && !!start && !!end) {
-      setFilterBy(parseInt(area))
-      setStartDate(moment(start).toDate())
-      setEndDate(moment(end).toDate())
+    const startDataA = localStorage.getItem("start-date-a")
+    const endDataA = localStorage.getItem("end-date-a")
+    const areaId = localStorage.getItem("area-id")
+    if (!!startDataA && !!endDataA) {
+      setStartDate(moment(startDataA).toDate())
+      setEndDate(moment(endDataA).toDate())
     }
-  }, [area, start, end])
+    if (!!areaId) {
+      setFilterBy(parseInt(areaId))
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("start-date-a", formatMySQLDate(startDate))
+    localStorage.setItem("end-date-a", formatMySQLDate(endDate))
+    localStorage.setItem("area-id", JSON.stringify(filterBy))
+  })
+
+  useEffect(() => {
+    if (!!area) {
+      setFilterBy(parseInt(area))
+    }
+  }, [area])
 
   useEffect(() => {
     getTransactions()

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import moment from 'moment'
@@ -30,6 +30,22 @@ export default function Reports() {
   const breadcrumbs = [
     { name: "reports", path: "/reports" }
   ]
+
+  useEffect(() => {
+    const startDataA = localStorage.getItem("start-date-a")
+    const endDataA = localStorage.getItem("end-date-a")
+    if (!!startDataA && !!endDataA) {
+      setStartDate(moment(startDataA).toDate())
+      setEndDate(moment(endDataA).toDate())
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("start-date-a", formatMySQLDate(startDate))
+    localStorage.setItem("end-date-a", formatMySQLDate(endDate))
+  })
+
+  useEffect(() => { generateReport() }, [startDate, endDate])
 
   async function generateReport() {
     const res = await axios.post(`http://localhost:3000/api/report/areas`, {
@@ -71,7 +87,7 @@ export default function Reports() {
                     mr={1}
                     width={17}
                   />
-                  <Link href={getBreakdownURLObject(a, startDate, endDate)}>
+                  <Link href={getBreakdownURLObject(a)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -82,7 +98,7 @@ export default function Reports() {
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={getBreakdownURLObject(a, startDate, endDate)}>
+                  <Link href={getBreakdownURLObject(a)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -101,7 +117,7 @@ export default function Reports() {
             .map((a) => (
               <Tr key={a.label}>
                 <Td>
-                  <Link href={getBreakdownURLObject(a, startDate, endDate)}>
+                  <Link href={getBreakdownURLObject(a)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"
@@ -112,7 +128,7 @@ export default function Reports() {
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={getBreakdownURLObject(a, startDate, endDate)}>
+                  <Link href={getBreakdownURLObject(a)}>
                     <Text className={utilStyles.hover_underline_animation}
                       lineHeight={1.5}
                       fontWeight="bold"

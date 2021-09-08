@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { Box, Text } from '@chakra-ui/react'
 import { getBreakdownURLObject } from '../utils/routing'
 
-export default function PieChart({ data, startDate, endDate }) {
+export default function PieChart({ data }) {
   const router = useRouter()
 
   const theme = {
@@ -38,7 +38,7 @@ export default function PieChart({ data, startDate, endDate }) {
   }
 
   function handleClick(e) {
-    router.push(getBreakdownURLObject(e, startDate, endDate))
+    router.push(getBreakdownURLObject(e))
   }
 
   function ToolTip({ datum: { id, value } }) {

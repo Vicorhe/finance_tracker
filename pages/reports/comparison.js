@@ -40,6 +40,29 @@ export default function Comparison() {
     { name: "comparison", path: "/reports/comparison" }
   ]
 
+  useEffect(() => {
+    const startDateA = localStorage.getItem("start-date-a")
+    const endDateA = localStorage.getItem("end-date-a")
+    const startDateB = localStorage.getItem("start-date-b")
+    const endDateB = localStorage.getItem("end-date-b")
+    if (!!startDateA && !!endDateA && !!startDateB && !!endDateB) {
+      setPeriodOneStartDate(moment(startDateA).toDate())
+      setPeriodOneEndDate(moment(endDateA).toDate())
+      setPeriodTwoStartDate(moment(startDateB).toDate())
+      setPeriodTwoEndDate(moment(endDateB).toDate())
+    }
+  }, [])
+
+  useEffect(() => {
+    localStorage.setItem("start-date-a", formatMySQLDate(periodOneStartDate))
+    localStorage.setItem("end-date-a", formatMySQLDate(periodOneEndDate))
+    localStorage.setItem("start-date-b", formatMySQLDate(periodTwoStartDate))
+    localStorage.setItem("end-date-b", formatMySQLDate(periodTwoEndDate))
+  })
+
+  useEffect(() => { generateReport() }, [periodOneStartDate, periodOneEndDate, periodTwoStartDate, periodTwoEndDate])
+
+
   async function generateReport() {
     const period_one_start_date = formatMySQLDate(periodOneStartDate)
     const period_one_end_date = formatMySQLDate(periodOneEndDate)

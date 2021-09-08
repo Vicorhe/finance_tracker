@@ -32,11 +32,11 @@ export default function Reports() {
   ]
 
   useEffect(() => {
-    const startDataA = localStorage.getItem("start-date-a")
-    const endDataA = localStorage.getItem("end-date-a")
-    if (!!startDataA && !!endDataA) {
-      setStartDate(moment(startDataA).toDate())
-      setEndDate(moment(endDataA).toDate())
+    const startDateA = localStorage.getItem("start-date-a")
+    const endDateA = localStorage.getItem("end-date-a")
+    if (!!startDateA && !!endDateA) {
+      setStartDate(moment(startDateA).toDate())
+      setEndDate(moment(endDateA).toDate())
     }
   }, [])
 

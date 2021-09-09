@@ -81,15 +81,39 @@ export default function Comparison() {
     setTableData(comparison_data)
   }
 
-  function getDelta(a, b, input) {
-    if (b == 0) return <Text fontWeight="extrabold">N/A</Text>
+  function AreaRow(a) {
+    return (
+      <Tr key={a.area} >
+        <Td alignItems="center">{a.area}</Td>
+        <Td isNumeric>
+          <Text className={utilStyles.hover_underline_animation}
+            lineHeight={1.5}
+            onClick={() => onClick(a.id, true)}
+          >
+            ${a.period_one}
+          </Text>
+        </Td>
+
+        <Td isNumeric>
+          <Text className={utilStyles.hover_underline_animation}
+            lineHeight={1.5}
+            onClick={() => onClick(a.id, false)}
+          >
+            ${a.period_two}
+          </Text>
+        </Td>
+
+        <Td isNumeric fontWeight="bold">{(a.period_one - a.period_two).toFixed(2)}</Td>
+
+        <Td isNumeric>{getDelta(a.period_one, a.period_two)}</Td>
+      </Tr>
+    )
+  }
+
+  function getDelta(a, b) {
+    if (b == 0) return <Text>N/A</Text>
     let percentage = ((a - b) * 100 / b)
-    let color = (percentage < 0 && !input) ? '#2d6a4f' : '#9d0208'
-    let icon = (percentage < 0) ? <TriangleDownIcon color={color} /> : <TriangleUpIcon color={color} />
-    return <Text color={color} fontWeight="extrabold">
-      {icon}
-      {percentage.toFixed(2)}%
-    </Text>
+    return <Text>{percentage.toFixed(2)}%</Text>
   }
 
   function onClick(a, period_one) {
@@ -118,73 +142,11 @@ export default function Comparison() {
         </Thead>
         <Tbody>
           {tableData.filter(t => !!t.input)
-            .map((a) => (
-              <Tr key={a.area}>
-                <Td alignItems="center">
-                  <Icon
-                    as={FaRegMoneyBillAlt}
-                    color="#FFC527"
-                    mr={1}
-                    width={17}
-                  />
-                  {a.area}
-                </Td>
-
-                <Td isNumeric>
-                  <Text className={utilStyles.hover_underline_animation}
-                    lineHeight={1.5}
-                    fontWeight="bold"
-                    onClick={() => onClick(a.id, true)}
-                  >
-                    ${a.period_one}
-                  </Text>
-                </Td>
-
-                <Td isNumeric>
-                  <Text className={utilStyles.hover_underline_animation}
-                    lineHeight={1.5}
-                    fontWeight="bold"
-                    onClick={() => onClick(a.id, false)}
-
-                  >
-                    ${a.period_two}
-                  </Text>
-                </Td>
-
-                <Td isNumeric fontWeight="bold">{(a.period_one - a.period_two).toFixed(2)}</Td>
-
-                <Td isNumeric>{getDelta(a.period_one, a.period_two, true)}</Td>
-              </Tr>
-            ))}
+            .map((a) => AreaRow(a))
+          }
           {tableData.filter(t => !t.input)
-            .map((a) => (
-              <Tr key={a.area} >
-                <Td alignItems="center">{a.area}</Td>
-                <Td isNumeric>
-                  <Text className={utilStyles.hover_underline_animation}
-                    lineHeight={1.5}
-                    fontWeight="bold"
-                    onClick={() => onClick(a.id, true)}
-                  >
-                    ${a.period_one}
-                  </Text>
-                </Td>
-
-                <Td isNumeric>
-                  <Text className={utilStyles.hover_underline_animation}
-                    lineHeight={1.5}
-                    fontWeight="bold"
-                    onClick={() => onClick(a.id, false)}
-                  >
-                    ${a.period_two}
-                  </Text>
-                </Td>
-
-                <Td isNumeric fontWeight="bold">{(a.period_one - a.period_two).toFixed(2)}</Td>
-
-                <Td isNumeric>{getDelta(a.period_one, a.period_two)}</Td>
-              </Tr>
-            ))}
+            .map((a) => AreaRow(a))
+          }
         </Tbody>
       </Table>
     )

@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { FaRegMoneyBillAlt } from "react-icons/fa";
 import moment from 'moment'
 import Nav from '../../components/Nav'
 import DatePicker from '../../components/DatePicker'
@@ -13,7 +12,6 @@ import {
   Heading,
   Button,
   Table, Thead, Tbody, Tr, Th, Td,
-  Icon,
   Text
 } from "@chakra-ui/react"
 import Link from 'next/link'
@@ -72,6 +70,34 @@ export default function Reports() {
     router.push('/breakdown')
   }
 
+  function AreaRow(a) {
+    return (
+      <Tr key={a.label}>
+        <Td alignItems="center">
+          <Text className={utilStyles.hover_underline_animation}
+            lineHeight={1.5}
+            onClick={() => onClick(a.label)}
+          >
+            {a.id}
+          </Text>
+        </Td>
+
+        <Td isNumeric >
+          <Text className={utilStyles.hover_underline_animation}
+            lineHeight={1.5}
+            onClick={() => onClick(a.label)}
+          >
+            {a.count}
+          </Text>
+        </Td>
+
+        <Td isNumeric>${a.value}</Td>
+
+        <Td isNumeric>{getPercentage(a.value)}</Td>
+      </Tr>
+    )
+  }
+
   function SpendingReportTable() {
     return (
       <Table variant="simple" size="md">
@@ -85,67 +111,11 @@ export default function Reports() {
         </Thead>
         <Tbody>
           {areasAggregate.filter((a) => !!a.input)
-            .map((a) => (
-              <Tr key={a.label}>
-                <Td alignItems="center">
-                  <Icon
-                    as={FaRegMoneyBillAlt}
-                    color="#FFC527"
-                    mr={1}
-                    width={17}
-                  />
-                  <Text className={utilStyles.hover_underline_animation}
-                    lineHeight={1.5}
-                    fontWeight="bold"
-                    onClick={() => onClick(a.label)}
-                  >
-                    {a.id}
-                  </Text>
-                </Td>
-
-                <Td isNumeric >
-                  <Text className={utilStyles.hover_underline_animation}
-                    lineHeight={1.5}
-                    fontWeight="bold"
-                    onClick={() => onClick(a.label)}
-                  >
-                    {a.count}
-                  </Text>
-                </Td>
-
-                <Td isNumeric textColor="#2d6a4f" fontWeight="bold">${a.value}</Td>
-
-                <Td isNumeric textColor="#2d6a4f" fontWeight="extrabold">{getPercentage(a.value)}</Td>
-              </Tr>
-            ))}
+            .map((a) => AreaRow(a))
+          }
           {areasAggregate.filter((a) => !a.input)
-            .map((a) => (
-              <Tr key={a.label}>
-                <Td>
-                  <Text className={utilStyles.hover_underline_animation}
-                    lineHeight={1.5}
-                    fontWeight="bold"
-                    onClick={() => onClick(a.label)}
-                  >
-                    {a.id}
-                  </Text>
-                </Td>
-
-                <Td isNumeric >
-                  <Text className={utilStyles.hover_underline_animation}
-                    lineHeight={1.5}
-                    fontWeight="bold"
-                    onClick={() => onClick(a.label)}
-                  >
-                    {a.count}
-                  </Text>
-                </Td>
-
-                <Td isNumeric textColor="#9d0208" fontWeight="bold">${a.value}</Td>
-
-                <Td isNumeric textColor="#9d0208" fontWeight="extrabold">{getPercentage(a.value)}</Td>
-              </Tr>
-            ))}
+            .map((a) => AreaRow(a))
+          }
         </Tbody>
       </Table>
     )

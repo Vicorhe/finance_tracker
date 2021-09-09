@@ -56,8 +56,8 @@ export default function SpendingReportBreakdown() {
   ]
 
   useEffect(() => {
-    const startDataA = localStorage.getItem("start-date-a")
-    const endDataA = localStorage.getItem("end-date-a")
+    const startDataA = localStorage.getItem("breakdown-start-date")
+    const endDataA = localStorage.getItem("breakdown-end-date")
     const areaId = localStorage.getItem("area-id")
     if (!!startDataA && !!endDataA) {
       setStartDate(moment(startDataA).toDate())
@@ -69,8 +69,8 @@ export default function SpendingReportBreakdown() {
   }, [])
 
   useEffect(() => {
-    localStorage.setItem("start-date-a", formatMySQLDate(startDate))
-    localStorage.setItem("end-date-a", formatMySQLDate(endDate))
+    localStorage.setItem("breakdown-start-date", formatMySQLDate(startDate))
+    localStorage.setItem("breakdown-end-date", formatMySQLDate(endDate))
     localStorage.setItem("area-id", JSON.stringify(filterBy))
   })
 

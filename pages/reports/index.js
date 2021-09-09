@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import moment from 'moment'
 import Nav from '../../components/Nav'
@@ -18,7 +19,7 @@ import {
 import Link from 'next/link'
 import utilStyles from '../../styles/utils.module.scss'
 import { formatMySQLDate } from '../../utils/date-formatter'
-import { getBreakdownURLObject } from '../../utils/routing'
+import { setBreakdownState } from '../../utils/persistance'
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function Reports() {
@@ -30,6 +31,7 @@ export default function Reports() {
   const breadcrumbs = [
     { name: "reports", path: "/reports" }
   ]
+  const router = useRouter()
 
   useEffect(() => {
     const startDateA = localStorage.getItem("start-date-a")
@@ -65,6 +67,11 @@ export default function Reports() {
     setTotalInput(sumInput)
   }
 
+  function onClick(a) {
+    setBreakdownState(a, startDate, endDate);
+    router.push('/breakdown')
+  }
+
   function SpendingReportTable() {
     return (
       <Table variant="simple" size="md">
@@ -87,25 +94,23 @@ export default function Reports() {
                     mr={1}
                     width={17}
                   />
-                  <Link href={getBreakdownURLObject(a)}>
-                    <Text className={utilStyles.hover_underline_animation}
-                      lineHeight={1.5}
-                      fontWeight="bold"
-                    >
-                      {a.id}
-                    </Text>
-                  </Link>
+                  <Text className={utilStyles.hover_underline_animation}
+                    lineHeight={1.5}
+                    fontWeight="bold"
+                    onClick={() => onClick(a.label)}
+                  >
+                    {a.id}
+                  </Text>
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={getBreakdownURLObject(a)}>
-                    <Text className={utilStyles.hover_underline_animation}
-                      lineHeight={1.5}
-                      fontWeight="bold"
-                    >
-                      {a.count}
-                    </Text>
-                  </Link>
+                  <Text className={utilStyles.hover_underline_animation}
+                    lineHeight={1.5}
+                    fontWeight="bold"
+                    onClick={() => onClick(a.label)}
+                  >
+                    {a.count}
+                  </Text>
                 </Td>
 
                 <Td isNumeric textColor="#2d6a4f" fontWeight="bold">${a.value}</Td>
@@ -117,25 +122,23 @@ export default function Reports() {
             .map((a) => (
               <Tr key={a.label}>
                 <Td>
-                  <Link href={getBreakdownURLObject(a)}>
-                    <Text className={utilStyles.hover_underline_animation}
-                      lineHeight={1.5}
-                      fontWeight="bold"
-                    >
-                      {a.id}
-                    </Text>
-                  </Link>
+                  <Text className={utilStyles.hover_underline_animation}
+                    lineHeight={1.5}
+                    fontWeight="bold"
+                    onClick={() => onClick(a.label)}
+                  >
+                    {a.id}
+                  </Text>
                 </Td>
 
                 <Td isNumeric >
-                  <Link href={getBreakdownURLObject(a)}>
-                    <Text className={utilStyles.hover_underline_animation}
-                      lineHeight={1.5}
-                      fontWeight="bold"
-                    >
-                      {a.count}
-                    </Text>
-                  </Link>
+                  <Text className={utilStyles.hover_underline_animation}
+                    lineHeight={1.5}
+                    fontWeight="bold"
+                    onClick={() => onClick(a.label)}
+                  >
+                    {a.count}
+                  </Text>
                 </Td>
 
                 <Td isNumeric textColor="#9d0208" fontWeight="bold">${a.value}</Td>
@@ -197,8 +200,7 @@ export default function Reports() {
           <Box height="95%">
             <PieChart
               data={pieChartData}
-              startDate={formatMySQLDate(startDate)}
-              endDate={formatMySQLDate(endDate)}
+              onClick={onClick}
             />
           </Box>
           <Box height="5%" mt={3}>

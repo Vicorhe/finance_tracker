@@ -1,10 +1,7 @@
 import { ResponsivePie } from '@nivo/pie'
-import { useRouter } from 'next/router'
 import { Box, Text } from '@chakra-ui/react'
-import { getBreakdownURLObject } from '../utils/routing'
 
-export default function PieChart({ data }) {
-  const router = useRouter()
+export default function PieChart({ data, onClick }) {
 
   const theme = {
     "fontSize": 17,
@@ -35,10 +32,6 @@ export default function PieChart({ data }) {
         ${total.toPrecision(6)}
       </text>
     )
-  }
-
-  function handleClick(e) {
-    router.push(getBreakdownURLObject(e))
   }
 
   function ToolTip({ datum: { id, value } }) {
@@ -80,7 +73,7 @@ export default function PieChart({ data }) {
     arcLabelsTextColor={{ from: 'color', modifiers: [['darker', 2]] }}
     theme={theme}
     layers={['arcs', 'arcLabels', 'arcLinkLabels', CenteredMetric]}
-    onClick={handleClick}
+    onClick={(e) => onClick(e.label)}
     tooltip={ToolTip}
   />
 }

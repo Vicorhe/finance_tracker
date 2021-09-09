@@ -1,24 +1,7 @@
 import { ResponsiveBar } from '@nivo/bar'
-import { useRouter } from 'next/router'
 import { Box, Text } from '@chakra-ui/react'
-import { getBreakdownURLObject } from '../utils/routing'
 
-
-export default function BarChart({
-  data,
-  periodOneStartDate,
-  periodOneEndDate,
-  periodTwoStartDate,
-  periodTwoEndDate
-}) {
-  const router = useRouter()
-
-  function handleClick(e) {
-    let start_date = e.id === 'period_one' ? periodOneStartDate : periodTwoStartDate
-    let end_date = e.id === 'period_one' ? periodOneEndDate : periodTwoEndDate
-    router.push(getBreakdownURLObject(e, start_date, end_date))
-  }
-
+export default function BarChart({ data, onClick }) {
   function ToolTip({ id, value, color }) {
     return (
       <Box p={3}>
@@ -79,7 +62,7 @@ export default function BarChart({
         itemDirection: 'left-to-right'
       }
     ]}
-    onClick={handleClick}
+    onClick={(e) => onClick(e.data.id, e.id === 'period_one')}
     tooltip={ToolTip}
     animate={true}
     motionStiffness={90}

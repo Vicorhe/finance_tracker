@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
+import { useRouter } from 'next/router'
 import { FaRegMoneyBillAlt } from "react-icons/fa";
 import moment from 'moment'
 import Nav from '../../components/Nav'
@@ -16,10 +17,9 @@ import {
   Text,
 } from "@chakra-ui/react"
 import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
-import Link from 'next/link'
 import utilStyles from '../../styles/utils.module.scss'
 import { formatMySQLDate, formatDisplayDate } from '../../utils/date-formatter'
-import { getBreakdownURLObject } from '../../utils/routing'
+import { setBreakdownState } from '../../utils/persistance'
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function Comparison() {
@@ -39,6 +39,7 @@ export default function Comparison() {
     { name: "reports", path: "/reports" },
     { name: "comparison", path: "/reports/comparison" }
   ]
+  const router = useRouter()
 
   useEffect(() => {
     const startDateA = localStorage.getItem("start-date-a")
@@ -91,10 +92,12 @@ export default function Comparison() {
     </Text>
   }
 
-  function getBreakdownRoute(a, period_one) {
+  function onClick(a, period_one) {
+    console.log(a)
     let start_date = period_one ? periodOneStartDate : periodTwoStartDate
     let end_date = period_one ? periodOneEndDate : periodTwoEndDate
-    return getBreakdownURLObject(a, start_date, end_date)
+    setBreakdownState(a, start_date, end_date)
+    router.push('/breakdown')
   }
 
   function ComparisonReportTable() {
@@ -128,25 +131,24 @@ export default function Comparison() {
                 </Td>
 
                 <Td isNumeric>
-                  <Link href={getBreakdownRoute(a, true)}>
-                    <Text className={utilStyles.hover_underline_animation}
-                      lineHeight={1.5}
-                      fontWeight="bold"
-                    >
-                      ${a.period_one}
-                    </Text>
-                  </Link>
+                  <Text className={utilStyles.hover_underline_animation}
+                    lineHeight={1.5}
+                    fontWeight="bold"
+                    onClick={() => onClick(a.id, true)}
+                  >
+                    ${a.period_one}
+                  </Text>
                 </Td>
 
                 <Td isNumeric>
-                  <Link href={getBreakdownRoute(a, false)}>
-                    <Text className={utilStyles.hover_underline_animation}
-                      lineHeight={1.5}
-                      fontWeight="bold"
-                    >
-                      ${a.period_two}
-                    </Text>
-                  </Link>
+                  <Text className={utilStyles.hover_underline_animation}
+                    lineHeight={1.5}
+                    fontWeight="bold"
+                    onClick={() => onClick(a.id, false)}
+
+                  >
+                    ${a.period_two}
+                  </Text>
                 </Td>
 
                 <Td isNumeric fontWeight="bold">{(a.period_one - a.period_two).toFixed(2)}</Td>
@@ -159,25 +161,23 @@ export default function Comparison() {
               <Tr key={a.area} >
                 <Td alignItems="center">{a.area}</Td>
                 <Td isNumeric>
-                  <Link href={getBreakdownRoute(a, true)}>
-                    <Text className={utilStyles.hover_underline_animation}
-                      lineHeight={1.5}
-                      fontWeight="bold"
-                    >
-                      ${a.period_one}
-                    </Text>
-                  </Link>
+                  <Text className={utilStyles.hover_underline_animation}
+                    lineHeight={1.5}
+                    fontWeight="bold"
+                    onClick={() => onClick(a.id, true)}
+                  >
+                    ${a.period_one}
+                  </Text>
                 </Td>
 
                 <Td isNumeric>
-                  <Link href={getBreakdownRoute(a, false)}>
-                    <Text className={utilStyles.hover_underline_animation}
-                      lineHeight={1.5}
-                      fontWeight="bold"
-                    >
-                      ${a.period_two}
-                    </Text>
-                  </Link>
+                  <Text className={utilStyles.hover_underline_animation}
+                    lineHeight={1.5}
+                    fontWeight="bold"
+                    onClick={() => onClick(a.id, false)}
+                  >
+                    ${a.period_two}
+                  </Text>
                 </Td>
 
                 <Td isNumeric fontWeight="bold">{(a.period_one - a.period_two).toFixed(2)}</Td>
@@ -245,10 +245,7 @@ export default function Comparison() {
           <Box height="95%">
             <BarChart
               data={barChartData}
-              periodOneStartDate={formatMySQLDate(periodOneStartDate)}
-              periodOneEndDate={formatMySQLDate(periodOneEndDate)}
-              periodTwoStartDate={formatMySQLDate(periodTwoStartDate)}
-              periodTwoEndDate={formatMySQLDate(periodTwoEndDate)}
+              onClick={onClick}
             />
           </Box>
           <Box>

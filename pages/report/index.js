@@ -20,14 +20,14 @@ import { formatMySQLDate } from '../../utils/date-formatter'
 import { setBreakdownState } from '../../utils/persistance'
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
-export default function Reports() {
+export default function Report() {
   const [areasAggregate, setAreasAggregate] = useState([])
   const [totalInput, setTotalInput] = useState(0)
   const [pieChartData, setPieChartData] = useState([])
   const [startDate, setStartDate] = useState(moment().subtract(1, "M").toDate())
   const [endDate, setEndDate] = useState(new Date())
   const breadcrumbs = [
-    { name: "reports", path: "/reports" }
+    { name: "report", path: "/report" }
   ]
   const router = useRouter()
 
@@ -152,7 +152,7 @@ export default function Reports() {
           />
         </Box>
         <Spacer />
-        <Link href={"/reports/comparison"}>
+        <Link href={"/report/comparison"}>
           <Button>
             Make a Comparison
           </Button>

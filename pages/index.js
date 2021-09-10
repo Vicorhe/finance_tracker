@@ -9,7 +9,7 @@ export default function Account() {
       <Nav />
       <Box my="1" />
       <BoxLink title="Transactions" path={"/transactions"} />
-      <BoxLink title="Spending Report" path={"/reports"} />
+      <BoxLink title="Spending Report" path={"/report"} />
       <BoxLink title="Breakdown" path={"/breakdown"} />
       <BoxLink title="Sources" path={"/sources"} />
       <BoxLink title="Areas" path="/areas" />

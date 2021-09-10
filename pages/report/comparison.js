@@ -33,8 +33,8 @@ export default function Comparison() {
   const [barChartData, setBarChartData] = useState([])
   const [tableData, setTableData] = useState([])
   const breadcrumbs = [
-    { name: "reports", path: "/reports" },
-    { name: "comparison", path: "/reports/comparison" }
+    { name: "report", path: "/report" },
+    { name: "comparison", path: "/report/comparison" }
   ]
   const router = useRouter()
 

@@ -37,6 +37,7 @@ export default function Reports() {
     if (!!startDateA && !!endDateA) {
       setStartDate(moment(startDateA).toDate())
       setEndDate(moment(endDateA).toDate())
+      generateReport()
     }
   }, [])
 

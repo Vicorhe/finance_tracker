@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import axios from 'axios'
 import { useRouter } from 'next/router'
-import { FaRegMoneyBillAlt } from "react-icons/fa";
 import moment from 'moment'
 import Nav from '../../components/Nav'
 import DatePicker from '../../components/DatePicker'
@@ -13,10 +12,8 @@ import {
   Heading,
   Button,
   Table, Thead, Tbody, Tr, Th, Td,
-  Icon,
   Text,
 } from "@chakra-ui/react"
-import { TriangleDownIcon, TriangleUpIcon } from '@chakra-ui/icons'
 import utilStyles from '../../styles/utils.module.scss'
 import { formatMySQLDate, formatDisplayDate } from '../../utils/date-formatter'
 import { setBreakdownState } from '../../utils/persistance'
@@ -51,6 +48,7 @@ export default function Comparison() {
       setPeriodOneEndDate(moment(endDateA).toDate())
       setPeriodTwoStartDate(moment(startDateB).toDate())
       setPeriodTwoEndDate(moment(endDateB).toDate())
+      generateReport()
     }
   }, [])
 
@@ -117,7 +115,6 @@ export default function Comparison() {
   }
 
   function onClick(a, period_one) {
-    console.log(a)
     let start_date = period_one ? periodOneStartDate : periodTwoStartDate
     let end_date = period_one ? periodOneEndDate : periodTwoEndDate
     setBreakdownState(a, start_date, end_date)

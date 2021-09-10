@@ -12,8 +12,8 @@ export default async function handler(req, res) {
     if (!user_id || !period_one_start_date || !period_one_end_date || !period_two_start_date || !period_two_end_date) {
       return res
         .status(400)
-        .json({ 
-          message: '`user_id`, `period_one_start_date`, `period_one_end_date`, `period_two_start_date`, and `period_two_end_date` are required' 
+        .json({
+          message: '`user_id`, `period_one_start_date`, `period_one_end_date`, `period_two_start_date`, and `period_two_end_date` are required'
         })
     }
     const comparison = await query(
@@ -27,7 +27,7 @@ export default async function handler(req, res) {
                 SELECT A.id, SUM(T.amount) amount
                   FROM transactions_table T
                     INNER JOIN areas_table A ON T.area_id = A.id 
-                  WHERE user_id = 1 AND date >= '`+ period_one_start_date + `' AND date <= '`+ period_one_end_date + `' 
+                  WHERE user_id = ? AND date >= ? AND date <= ?
                     AND hidden = FALSE AND pending = FALSE
                     AND (split = FALSE OR (split = TRUE AND parent_id IS NOT NULL))
                   GROUP BY A.id
@@ -40,7 +40,7 @@ export default async function handler(req, res) {
                 SELECT A.id, SUM(T.amount) amount
                   FROM transactions_table T
                     INNER JOIN areas_table A ON T.area_id = A.id 
-                  WHERE user_id = 1 AND date >= '`+ period_two_start_date + `' AND date <= '`+ period_two_end_date + `' 
+                  WHERE user_id = ? AND date >= ? AND date <= ? 
                     AND hidden = FALSE AND pending = FALSE
                     AND (split = FALSE OR (split = TRUE AND parent_id IS NOT NULL))
                   GROUP BY A.id
@@ -48,7 +48,7 @@ export default async function handler(req, res) {
         ) P2 ON P1.id = P2.id 
         WHERE P1.amount IS NOT NULL OR P2.amount IS NOT NULL     
       `,
-      user_id)
+      [user_id, period_one_start_date, period_one_end_date, user_id, period_two_start_date, period_two_end_date])
     return res.json(comparison)
   } catch (e) {
     res.status(500).json({ message: e.message })

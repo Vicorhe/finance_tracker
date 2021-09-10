@@ -160,10 +160,11 @@ export default function Transactions() {
     setSyncing(true)
     await axios.post(
       'http://localhost:3000/api/transaction/sync',
-      { user_id: user.id }
+      { user_id: NEXT_PUBLIC_USER_ID }
     ).then(
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
     ).catch(e => {
+      setSyncing(false)
       throw Error(e.message)
     })
     setSyncing(false)

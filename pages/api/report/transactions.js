@@ -15,14 +15,15 @@ export default async function handler(req, res) {
     const transactions = await query(
       `
       SELECT t.* FROM transactions_table t
-      WHERE t.user_id = ? AND t.date >= '`+ start_date + `' AND t.date <= '` + end_date + `'
+      WHERE t.user_id = ? AND t.date >= ? AND t.date <= ?
         AND t.hidden = FALSE AND t.area_id IS NOT NULL AND t.pending = FALSE
         AND (t.split = FALSE OR (t.split = TRUE AND t.parent_id IS NOT NULL))
       ORDER BY t.date DESC
       `,
-      user_id)
+      [user_id, start_date, end_date])
     return res.json(transactions)
   } catch (e) {
+    console.log(e)
     res.status(500).json({ message: e.message })
   }
 }

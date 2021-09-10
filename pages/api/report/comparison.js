@@ -27,7 +27,10 @@ export default async function handler(req, res) {
                 SELECT A.id, SUM(T.amount) amount
                   FROM transactions_table T
                     INNER JOIN areas_table A ON T.area_id = A.id 
-                  WHERE user_id = ? AND date >= ? AND date <= ?
+                  WHERE 
+                    user_id = ? 
+                    AND date >= ? 
+                    AND date <= ?
                     AND hidden = FALSE AND pending = FALSE
                     AND (split = FALSE OR (split = TRUE AND parent_id IS NOT NULL))
                   GROUP BY A.id
@@ -40,7 +43,10 @@ export default async function handler(req, res) {
                 SELECT A.id, SUM(T.amount) amount
                   FROM transactions_table T
                     INNER JOIN areas_table A ON T.area_id = A.id 
-                  WHERE user_id = ? AND date >= ? AND date <= ? 
+                  WHERE 
+                    user_id = ? 
+                    AND date >= ? 
+                    AND date <= ? 
                     AND hidden = FALSE AND pending = FALSE
                     AND (split = FALSE OR (split = TRUE AND parent_id IS NOT NULL))
                   GROUP BY A.id

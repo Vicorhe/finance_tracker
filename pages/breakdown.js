@@ -16,20 +16,24 @@ import LoadingList from '../components/LoadingList'
 import utilStyles from '../styles/utils.module.scss'
 import { formatDisplayDate, formatMySQLDate } from '../utils/date-formatter'
 import { getBlankSplit } from '../utils/split-utils'
+import { fetchArea, fetchDate } from '../utils/persistance'
 
 const moment = require('moment')
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
+const breakdownStartDateKey = "breakdown-start-date"
+const breakdownEndDateKey = "breakdown-end-date"
+const areaKey = "area-id"
 
 export default function SpendingReportBreakdown() {
   const router = useRouter();
   const { area } = router.query
   const { areas, isAreasError } = useAreas();
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const [startDate, setStartDate] = useState(fetchDate(breakdownStartDateKey, moment().subtract(1, "M").toDate()))
+  const [endDate, setEndDate] = useState(fetchDate(breakdownEndDateKey, new Date()))
   const [transactions, setTransactions] = useState([])
   const [displayedTransactions, setDisplayedTransactions] = useState([])
   const [remoteRowCount, setRemoteRowCount] = useState(0)
-  const [filterBy, setFilterBy] = useState(1)
+  const [filterBy, setFilterBy] = useState(fetchArea())
   const [transaction, setTransaction] = useState({})
   const [splits, setSplits] = useState([])
 
@@ -56,22 +60,9 @@ export default function SpendingReportBreakdown() {
   ]
 
   useEffect(() => {
-    const startDataA = localStorage.getItem("breakdown-start-date")
-    const endDataA = localStorage.getItem("breakdown-end-date")
-    const areaId = localStorage.getItem("area-id")
-    if (!!startDataA && !!endDataA) {
-      setStartDate(moment(startDataA).toDate())
-      setEndDate(moment(endDataA).toDate())
-    }
-    if (!!areaId) {
-      setFilterBy(parseInt(areaId))
-    }
-  }, [])
-
-  useEffect(() => {
-    localStorage.setItem("breakdown-start-date", formatMySQLDate(startDate))
-    localStorage.setItem("breakdown-end-date", formatMySQLDate(endDate))
-    localStorage.setItem("area-id", JSON.stringify(filterBy))
+    localStorage.setItem(breakdownStartDateKey, formatMySQLDate(startDate))
+    localStorage.setItem(breakdownEndDateKey, formatMySQLDate(endDate))
+    localStorage.setItem(areaKey, JSON.stringify(filterBy))
   })
 
   useEffect(() => {

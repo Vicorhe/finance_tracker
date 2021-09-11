@@ -6,29 +6,29 @@ import Nav from '../../components/Nav'
 import DatePicker from '../../components/DatePicker'
 import BarChart from '../../components/BarChart'
 import {
-  Box,
-  Flex,
-  Spacer,
-  Heading,
-  Button,
-  Table, Thead, Tbody, Tr, Th, Td,
-  Text,
+  Box, Flex, Spacer, Heading, Button, Table, Thead, Tbody, Tr, Th, Td, Text,
 } from "@chakra-ui/react"
 import utilStyles from '../../styles/utils.module.scss'
 import { formatMySQLDate, formatDisplayDate } from '../../utils/date-formatter'
-import { setBreakdownState } from '../../utils/persistance'
+import { fetchDate, setBreakdownState } from '../../utils/persistance'
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
+const periodOneStartDateKey = 'start-date-a'
+const periodOneEndDateKey = 'end-date-a'
+const periodTwoStartDateKey = 'start-date-b'
+const periodTwoEndDateKey = 'end-date-b'
 
 export default function Comparison() {
   const [periodOneStartDate, setPeriodOneStartDate] = useState(
-    moment().subtract(1, "M").toDate()
+    fetchDate(periodOneStartDateKey, moment().subtract(1, "M").toDate())
   )
-  const [periodOneEndDate, setPeriodOneEndDate] = useState(new Date())
+  const [periodOneEndDate, setPeriodOneEndDate] = useState(
+    fetchDate(periodOneEndDateKey, new Date())
+  )
   const [periodTwoStartDate, setPeriodTwoStartDate] = useState(
-    moment().subtract(2, "M").toDate()
+    fetchDate(periodTwoStartDateKey, moment().subtract(2, "M").toDate())
   )
   const [periodTwoEndDate, setPeriodTwoEndDate] = useState(
-    moment().subtract(1, "M").subtract(1, "d").toDate()
+    fetchDate(periodTwoEndDateKey, moment().subtract(1, "M").subtract(1, "d").toDate())
   )
   const [barChartData, setBarChartData] = useState([])
   const [tableData, setTableData] = useState([])
@@ -39,20 +39,6 @@ export default function Comparison() {
   const router = useRouter()
 
   useEffect(() => {
-    const startDateA = localStorage.getItem("start-date-a")
-    const endDateA = localStorage.getItem("end-date-a")
-    const startDateB = localStorage.getItem("start-date-b")
-    const endDateB = localStorage.getItem("end-date-b")
-    if (!!startDateA && !!endDateA && !!startDateB && !!endDateB) {
-      setPeriodOneStartDate(moment(startDateA).toDate())
-      setPeriodOneEndDate(moment(endDateA).toDate())
-      setPeriodTwoStartDate(moment(startDateB).toDate())
-      setPeriodTwoEndDate(moment(endDateB).toDate())
-      generateReport()
-    }
-  }, [])
-
-  useEffect(() => {
     localStorage.setItem("start-date-a", formatMySQLDate(periodOneStartDate))
     localStorage.setItem("end-date-a", formatMySQLDate(periodOneEndDate))
     localStorage.setItem("start-date-b", formatMySQLDate(periodTwoStartDate))
@@ -60,7 +46,6 @@ export default function Comparison() {
   })
 
   useEffect(() => { generateReport() }, [periodOneStartDate, periodOneEndDate, periodTwoStartDate, periodTwoEndDate])
-
 
   async function generateReport() {
     const period_one_start_date = formatMySQLDate(periodOneStartDate)

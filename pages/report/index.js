@@ -37,7 +37,6 @@ export default function Report() {
   async function generateReport() {
     const start_date = formatMySQLDate(startDate)
     const end_date = formatMySQLDate(endDate)
-    console.log(`Generating report from ${start_date} to ${end_date}`)
     const res = await axios.post(`http://localhost:3000/api/report/areas`, {
       user_id: NEXT_PUBLIC_USER_ID,
       start_date: start_date,

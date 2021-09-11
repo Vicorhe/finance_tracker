@@ -1,11 +1,11 @@
 import { formatMySQLDate } from './date-formatter'
+import { breakdownStartDateKey, breakdownEndDateKey, areaKey } from '../static/constants'
 import moment from 'moment'
-const areaKey = "area-id"
 
 export function setBreakdownState(areaId, breakdownStartDate, breakDownEndDate) {
-  localStorage.setItem("breakdown-start-date", formatMySQLDate(breakdownStartDate))
-  localStorage.setItem("breakdown-end-date", formatMySQLDate(breakDownEndDate))
-  localStorage.setItem("area-id", JSON.stringify(areaId))
+  localStorage.setItem(breakdownStartDateKey, formatMySQLDate(breakdownStartDate))
+  localStorage.setItem(breakdownEndDateKey, formatMySQLDate(breakDownEndDate))
+  localStorage.setItem(areaKey, JSON.stringify(areaId))
 }
 
 export function fetchDate(dateKey, defaultDate) {

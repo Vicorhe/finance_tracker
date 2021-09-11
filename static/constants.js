@@ -1,0 +1,9 @@
+export const startDateKey = "start-date"
+export const endDateKey = "end-date"
+export const periodOneStartDateKey = 'start-date-a'
+export const periodOneEndDateKey = 'end-date-a'
+export const periodTwoStartDateKey = 'start-date-b'
+export const periodTwoEndDateKey = 'end-date-b'
+export const breakdownStartDateKey = "breakdown-start-date"
+export const breakdownEndDateKey = "breakdown-end-date"
+export const areaKey = "area"

@@ -17,12 +17,11 @@ import utilStyles from '../styles/utils.module.scss'
 import { formatDisplayDate, formatMySQLDate } from '../utils/date-formatter'
 import { getBlankSplit } from '../utils/split-utils'
 import { fetchArea, fetchDate } from '../utils/persistance'
+import { breakdownStartDateKey, breakdownEndDateKey, areaKey } from '../static/constants'
 
 const moment = require('moment')
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
-const breakdownStartDateKey = "breakdown-start-date"
-const breakdownEndDateKey = "breakdown-end-date"
-const areaKey = "area-id"
+
 
 export default function SpendingReportBreakdown() {
   const router = useRouter();

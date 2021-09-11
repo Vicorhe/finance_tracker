@@ -12,10 +12,7 @@ import utilStyles from '../../styles/utils.module.scss'
 import { formatMySQLDate, formatDisplayDate } from '../../utils/date-formatter'
 import { fetchDate, setBreakdownState } from '../../utils/persistance'
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
-const periodOneStartDateKey = 'start-date-a'
-const periodOneEndDateKey = 'end-date-a'
-const periodTwoStartDateKey = 'start-date-b'
-const periodTwoEndDateKey = 'end-date-b'
+import { periodOneStartDateKey, periodOneEndDateKey, periodTwoStartDateKey, periodTwoEndDateKey } from '../../static/constants'
 
 export default function Comparison() {
   const [periodOneStartDate, setPeriodOneStartDate] = useState(
@@ -39,10 +36,10 @@ export default function Comparison() {
   const router = useRouter()
 
   useEffect(() => {
-    localStorage.setItem("start-date-a", formatMySQLDate(periodOneStartDate))
-    localStorage.setItem("end-date-a", formatMySQLDate(periodOneEndDate))
-    localStorage.setItem("start-date-b", formatMySQLDate(periodTwoStartDate))
-    localStorage.setItem("end-date-b", formatMySQLDate(periodTwoEndDate))
+    localStorage.setItem(periodOneStartDateKey, formatMySQLDate(periodOneStartDate))
+    localStorage.setItem(periodOneEndDateKey, formatMySQLDate(periodOneEndDate))
+    localStorage.setItem(periodTwoStartDateKey, formatMySQLDate(periodTwoStartDate))
+    localStorage.setItem(periodTwoEndDateKey, formatMySQLDate(periodTwoEndDate))
   })
 
   useEffect(() => { generateReport() }, [periodOneStartDate, periodOneEndDate, periodTwoStartDate, periodTwoEndDate])

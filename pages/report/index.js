@@ -13,8 +13,7 @@ import utilStyles from '../../styles/utils.module.scss'
 import { formatMySQLDate } from '../../utils/date-formatter'
 import { fetchDate, setBreakdownState } from '../../utils/persistance'
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
-const startDateKey = 'start-date-a'
-const endDateKey = 'end-date-a'
+import { startDateKey, endDateKey } from '../../static/constants'
 
 export default function Report() {
   const [areasAggregate, setAreasAggregate] = useState([])
@@ -28,8 +27,8 @@ export default function Report() {
   const router = useRouter()
 
   useEffect(() => {
-    localStorage.setItem("start-date-a", formatMySQLDate(startDate))
-    localStorage.setItem("end-date-a", formatMySQLDate(endDate))
+    localStorage.setItem(startDateKey, formatMySQLDate(startDate))
+    localStorage.setItem(endDateKey, formatMySQLDate(endDate))
   })
 
   useEffect(() => { generateReport() }, [startDate, endDate])

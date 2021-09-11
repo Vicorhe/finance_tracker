@@ -6,40 +6,26 @@ import Nav from '../../components/Nav'
 import DatePicker from '../../components/DatePicker'
 import PieChart from '../../components/PieChart'
 import {
-  Box,
-  Flex,
-  Spacer,
-  Heading,
-  Button,
-  Table, Thead, Tbody, Tr, Th, Td,
-  Text
+  Box, Flex, Spacer, Heading, Button, Table, Thead, Tbody, Tr, Th, Td, Text
 } from "@chakra-ui/react"
 import Link from 'next/link'
 import utilStyles from '../../styles/utils.module.scss'
 import { formatMySQLDate } from '../../utils/date-formatter'
-import { setBreakdownState } from '../../utils/persistance'
+import { fetchDate, setBreakdownState } from '../../utils/persistance'
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
+const startDateKey = 'start-date-a'
+const endDateKey = 'end-date-a'
 
 export default function Report() {
   const [areasAggregate, setAreasAggregate] = useState([])
   const [totalInput, setTotalInput] = useState(0)
   const [pieChartData, setPieChartData] = useState([])
-  const [startDate, setStartDate] = useState(moment().subtract(1, "M").toDate())
-  const [endDate, setEndDate] = useState(new Date())
+  const [startDate, setStartDate] = useState(fetchDate(startDateKey, moment().subtract(1, "M").toDate()))
+  const [endDate, setEndDate] = useState(fetchDate(endDateKey, new Date()))
   const breadcrumbs = [
     { name: "report", path: "/report" }
   ]
   const router = useRouter()
-
-  useEffect(() => {
-    const startDateA = localStorage.getItem("start-date-a")
-    const endDateA = localStorage.getItem("end-date-a")
-    if (!!startDateA && !!endDateA) {
-      setStartDate(moment(startDateA).toDate())
-      setEndDate(moment(endDateA).toDate())
-      generateReport()
-    }
-  }, [])
 
   useEffect(() => {
     localStorage.setItem("start-date-a", formatMySQLDate(startDate))
@@ -49,10 +35,13 @@ export default function Report() {
   useEffect(() => { generateReport() }, [startDate, endDate])
 
   async function generateReport() {
+    const start_date = formatMySQLDate(startDate)
+    const end_date = formatMySQLDate(endDate)
+    console.log(`Generating report from ${start_date} to ${end_date}`)
     const res = await axios.post(`http://localhost:3000/api/report/areas`, {
       user_id: NEXT_PUBLIC_USER_ID,
-      start_date: formatMySQLDate(startDate),
-      end_date: formatMySQLDate(endDate)
+      start_date: start_date,
+      end_date: end_date
     });
     const areas_aggregate = res.data
     setPieChartData(areas_aggregate.filter(a => !a.input))

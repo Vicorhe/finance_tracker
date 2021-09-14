@@ -34,23 +34,27 @@ export default function Report() {
   useEffect(() => { generateReport() }, [startDate, endDate])
 
   async function generateReport() {
-    const start_date = formatMySQLDate(startDate)
-    const end_date = formatMySQLDate(endDate)
-    const res = await axios.post(`http://localhost:3000/api/report/areas`, {
-      user_id: NEXT_PUBLIC_USER_ID,
-      start_date: start_date,
-      end_date: end_date
-    });
-    const areas_aggregate = res.data
-    setPieChartData(areas_aggregate.filter(a => !a.input))
-    setAreasAggregate(areas_aggregate)
-    var sumInput = areas_aggregate.reduce(
-      (a, c) => {
-        if (!!c.input)
-          return a + parseFloat(c.value)
-        return a
-      }, 0)
-    setTotalInput(sumInput)
+    try {
+      const start_date = formatMySQLDate(startDate)
+      const end_date = formatMySQLDate(endDate)
+      const res = await axios.post("/api/report/areas", {
+        user_id: NEXT_PUBLIC_USER_ID,
+        start_date: start_date,
+        end_date: end_date
+      });
+      const areas_aggregate = res.data
+      setPieChartData(areas_aggregate.filter(a => !a.input))
+      setAreasAggregate(areas_aggregate)
+      var sumInput = areas_aggregate.reduce(
+        (a, c) => {
+          if (!!c.input)
+            return a + parseFloat(c.value)
+          return a
+        }, 0)
+      setTotalInput(sumInput)
+    } catch (e) {
+      throw Error(e.messsage)
+    }
   }
 
   function onClick(a) {

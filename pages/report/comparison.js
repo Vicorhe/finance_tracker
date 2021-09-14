@@ -45,20 +45,24 @@ export default function Comparison() {
   useEffect(() => { generateReport() }, [periodOneStartDate, periodOneEndDate, periodTwoStartDate, periodTwoEndDate])
 
   async function generateReport() {
-    const period_one_start_date = formatMySQLDate(periodOneStartDate)
-    const period_one_end_date = formatMySQLDate(periodOneEndDate)
-    const period_two_start_date = formatMySQLDate(periodTwoStartDate)
-    const period_two_end_date = formatMySQLDate(periodTwoEndDate)
-    const res = await axios.post(`http://localhost:3000/api/report/comparison`, {
-      user_id: NEXT_PUBLIC_USER_ID,
-      period_one_start_date,
-      period_one_end_date,
-      period_two_start_date,
-      period_two_end_date
-    });
-    const comparison_data = res.data
-    setBarChartData(comparison_data.filter(c => !c.input))
-    setTableData(comparison_data)
+    try {
+      const period_one_start_date = formatMySQLDate(periodOneStartDate)
+      const period_one_end_date = formatMySQLDate(periodOneEndDate)
+      const period_two_start_date = formatMySQLDate(periodTwoStartDate)
+      const period_two_end_date = formatMySQLDate(periodTwoEndDate)
+      const res = await axios.post("/api/report/comparison", {
+        user_id: NEXT_PUBLIC_USER_ID,
+        period_one_start_date,
+        period_one_end_date,
+        period_two_start_date,
+        period_two_end_date
+      });
+      const comparison_data = res.data
+      setBarChartData(comparison_data.filter(c => !c.input))
+      setTableData(comparison_data)
+    } catch (e) {
+      throw Error(e.message)
+    }
   }
 
   function AreaRow(a) {

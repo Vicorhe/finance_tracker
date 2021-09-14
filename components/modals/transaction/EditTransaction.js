@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState, useRef } from 'react'
-import { UserContext } from '../../../context'
+import { useEffect, useState, useRef } from 'react'
 import DatePicker from "../../DatePicker";
 import {
   useDisclosure,
@@ -28,6 +27,7 @@ import {
 import useAreas from '../../../hooks/areas'
 import { mutate } from 'swr'
 import { formatMySQLDate } from '../../../utils/date-formatter'
+const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function EditTransaction({
   transaction,
@@ -35,7 +35,6 @@ export default function EditTransaction({
   onModalClose,
   handleSplit
 }) {
-  const { user } = useContext(UserContext)
   const {
     isOpen: isAlertOpen,
     onOpen: onAlertOpen,
@@ -88,7 +87,7 @@ export default function EditTransaction({
       })
       setSubmitting(false)
       onModalClose()
-      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
       const json = await res.json()
       if (!res.ok) throw Error(json.message)
     } catch (e) {
@@ -106,7 +105,7 @@ export default function EditTransaction({
       setDeleting(false)
       onAlertClose()
       onModalClose()
-      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
       const json = await res.json()
       if (!res.ok) throw Error(json.message)
     } catch (e) {
@@ -120,7 +119,7 @@ export default function EditTransaction({
       const res = await fetch(`/api/transaction/toggle-visibility?id=${transaction.id}`, {
         method: 'POST'
       })
-      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
       const json = await res.json()
       if (!res.ok) throw Error(json.message)
       setIsHidden(!isHidden)

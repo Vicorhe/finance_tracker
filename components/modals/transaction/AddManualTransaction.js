@@ -1,6 +1,5 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import useAreas from '../../../hooks/areas'
-import { UserContext } from '../../../context'
 import DatePicker from "../../DatePicker";
 import {
   Modal,
@@ -22,9 +21,9 @@ import {
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
 import { formatMySQLDate } from '../../../utils/date-formatter'
+const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function AddManualTransaction() {
-  const { user } = useContext(UserContext)
   const { isOpen, onOpen, onClose } = useDisclosure(
     {
       onClose: () => {
@@ -54,7 +53,7 @@ export default function AddManualTransaction() {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_id: user.id,
+          user_id: NEXT_PUBLIC_USER_ID,
           name,
           area_id: area,
           amount,
@@ -64,7 +63,7 @@ export default function AddManualTransaction() {
       })
       setSubmitting(false)
       onClose()
-      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
       const json = await res.json()
       if (!res.ok) throw Error(json.message)
     } catch (e) {

@@ -1,9 +1,9 @@
-import { useContext, useState } from 'react'
-import { UserContext } from '../../../context'
+import { useState } from 'react'
 import { mutate } from 'swr'
 import { formatMySQLDate } from '../../../utils/date-formatter'
 import RenderSplitTransactions from './RenderSplitTransactions'
 import { validForm } from '../../../utils/split-utils'
+const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function EditSplitTransactions({
   parent,
@@ -12,7 +12,6 @@ export default function EditSplitTransactions({
   isOpen,
   onClose
 }) {
-  const { user } = useContext(UserContext)
   const [errorMessage, setErrorMessage] = useState('')
 
   async function handleDelete(e) {
@@ -22,7 +21,7 @@ export default function EditSplitTransactions({
         method: 'POST'
       })
       onClose()
-      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
       const json = await res.json()
       if (!res.ok) throw Error(json.message)
     } catch (e) {
@@ -49,14 +48,14 @@ export default function EditSplitTransactions({
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          user_id: user.id,
+          user_id: NEXT_PUBLIC_USER_ID,
           parent_id: parent.id,
           date: formatMySQLDate(parent.date),
           splits
         }),
       })
       onClose()
-      mutate(`/api/transaction/get-all?user_id=${user.id}`)
+      mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
       json = await res.json()
       if (!res.ok) throw Error(json.message)
     } catch (e) {

@@ -119,23 +119,29 @@ export default function Transactions() {
   }
 
   async function getTransaction(id) {
-    await axios.get(
-      `http://localhost:3000/api/transaction/get?id=${id}`
-    ).then(res =>
+    try {
+
+
+      const res = await axios.get(
+        `/api/transaction/get?id=${id}`
+      )
       setTransaction(res.data)
-    ).catch(e => {
+
+    } catch (e) {
       throw Error(e.message)
-    });
+
+    }
   }
 
   async function getSplits(parent_id) {
-    await axios.get(
-      `http://localhost:3000/api/split/get-all?parent_id=${parent_id}`
-    ).then(res =>
+    try {
+      const res = await axios.get(
+        `/api/split/get-all?parent_id=${parent_id}`
+      )
       setSplits(res.data)
-    ).catch(e => {
+    } catch (e) {
       throw Error(e.message)
-    });
+    }
   }
 
   function handleSplit() {
@@ -158,15 +164,15 @@ export default function Transactions() {
 
   async function syncTransactions() {
     setSyncing(true)
-    await axios.post(
-      'http://localhost:3000/api/transaction/sync',
-      { user_id: NEXT_PUBLIC_USER_ID }
-    ).then(
+    try {
+      await axios.post(
+        '/api/transaction/sync',
+        { user_id: NEXT_PUBLIC_USER_ID }
+      )
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
-    ).catch(e => {
-      setSyncing(false)
+    } catch (e) {
       throw Error(e.message)
-    })
+    }
     setSyncing(false)
   }
 

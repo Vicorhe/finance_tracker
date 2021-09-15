@@ -21,7 +21,6 @@ import { getBlankSplit } from '../utils/split-utils'
 
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
-
 function useTransactions() {
   const { data, error } = useSWR(
     `/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`,
@@ -120,16 +119,12 @@ export default function Transactions() {
 
   async function getTransaction(id) {
     try {
-
-
       const res = await axios.get(
         `/api/transaction/get?id=${id}`
       )
       setTransaction(res.data)
-
     } catch (e) {
       throw Error(e.message)
-
     }
   }
 

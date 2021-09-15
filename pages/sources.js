@@ -69,19 +69,27 @@ export default function Sources() {
   }
 
   async function createLinkToken() {
-    const res = await axios.post('http://localhost:3000/api/item/create-link-token');
-    const data = res.data.link_token
-    setToken(data)
+    try {
+      const res = await axios.post('/api/item/create-link-token');
+      const data = res.data.link_token
+      setToken(data)
+    } catch (e) {
+      throw Error(e.message)
+    }
   }
 
   async function createItem(publicToken) {
-    console.log("client side public token", publicToken)
-    const res = await axios.post('http://localhost:3000/api/item/create', { publicToken: publicToken, user_id: NEXT_PUBLIC_USER_ID });
-    const data = res.data.access_token;
-    setAccessToken(data)
-    mutate('/api/item/get-all')
-    mutate('/api/account/get-all')
-    await axios.post('http://localhost:3000/api/transaction/sync', { user_id: NEXT_PUBLIC_USER_ID });
+    try {
+      console.log("client side public token", publicToken)
+      const res = await axios.post('/api/item/create', { publicToken: publicToken, user_id: NEXT_PUBLIC_USER_ID });
+      const data = res.data.access_token;
+      setAccessToken(data)
+      mutate('/api/item/get-all')
+      mutate('/api/account/get-all')
+      await axios.post('/api/transaction/sync', { user_id: NEXT_PUBLIC_USER_ID });
+    } catch (e) {
+      throw Error(e.message)
+    }
   }
 
   async function handleDelete(e) {

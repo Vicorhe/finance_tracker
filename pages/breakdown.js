@@ -84,13 +84,16 @@ export default function SpendingReportBreakdown() {
 
   async function getTransactions() {
     if (!startDate || !endDate) return
-    // console.log(`fetching transactions of user ${username} between ${startDate} and ${endDate}`)
-    const res = await axios.post(`http://localhost:3000/api/report/transactions`, {
-      user_id: NEXT_PUBLIC_USER_ID,
-      start_date: formatMySQLDate(startDate),
-      end_date: formatMySQLDate(endDate)
-    });
-    setTransactions(res.data)
+    try {
+      const res = await axios.post("/api/report/transactions", {
+        user_id: NEXT_PUBLIC_USER_ID,
+        start_date: formatMySQLDate(startDate),
+        end_date: formatMySQLDate(endDate)
+      });
+      setTransactions(res.data)
+    } catch (e) {
+      throw Error(e.message)
+    }
   }
 
   function filterTransactions() {
@@ -124,23 +127,21 @@ export default function SpendingReportBreakdown() {
   }
 
   async function getTransaction(id) {
-    await axios.get(
-      `http://localhost:3000/api/transaction/get?id=${id}`
-    ).then(res =>
+    try {
+      const res = await axios.get(`/api/transaction/get?id=${id}`)
       setTransaction(res.data)
-    ).catch(e => {
+    } catch (e) {
       throw Error(e.message)
-    });
+    }
   }
 
   async function getSplits(parent_id) {
-    await axios.get(
-      `http://localhost:3000/api/split/get-all?parent_id=${parent_id}`
-    ).then(res =>
+    try {
+      const res = await axios.get(`/api/split/get-all?parent_id=${parent_id}`)
       setSplits(res.data)
-    ).catch(e => {
+    } catch (e) {
       throw Error(e.message)
-    });
+    }
   }
 
   function handleSplit() {

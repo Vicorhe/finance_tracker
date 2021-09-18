@@ -11,7 +11,8 @@ export default function AddSplitTransactions({
   splits,
   setSplits,
   isOpen,
-  onClose
+  onClose,
+  refresh
 }) {
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -31,6 +32,7 @@ export default function AddSplitTransactions({
       })
       onClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
+      refresh()
     } catch (e) {
       throw Error(e.message)
     }

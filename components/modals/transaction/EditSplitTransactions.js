@@ -11,7 +11,8 @@ export default function EditSplitTransactions({
   splits,
   setSplits,
   isOpen,
-  onClose
+  onClose,
+  refresh
 }) {
   const [errorMessage, setErrorMessage] = useState('')
 
@@ -21,6 +22,7 @@ export default function EditSplitTransactions({
       const res = await axios.post(`/api/split/delete?parent_id=${parent.id}`, {})
       onClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
+      refresh()
     } catch (e) {
       throw Error(e.message)
     }
@@ -43,6 +45,7 @@ export default function EditSplitTransactions({
       })
       onClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
+      refresh()
     } catch (e) {
       throw Error(e.message)
     }

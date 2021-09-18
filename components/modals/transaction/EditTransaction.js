@@ -34,7 +34,8 @@ export default function EditTransaction({
   transaction,
   isModalOpen,
   onModalClose,
-  handleSplit
+  handleSplit,
+  refresh
 }) {
   const {
     isOpen: isAlertOpen,
@@ -51,7 +52,7 @@ export default function EditTransaction({
   const [date, setDate] = useState(new Date())
   const [memo, setMemo] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const { areas, isAreasError } = useAreas();
+  const { areas } = useAreas();
   const cancelRef = useRef()
   const [deleting, setDeleting] = useState(false)
 
@@ -83,6 +84,7 @@ export default function EditTransaction({
       setSubmitting(false)
       onModalClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
+      refresh()
     } catch (e) {
       throw Error(e.message)
     }
@@ -97,6 +99,7 @@ export default function EditTransaction({
       onAlertClose()
       onModalClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
+      refresh()
     } catch (e) {
       throw Error(e.message)
     }
@@ -108,6 +111,7 @@ export default function EditTransaction({
       const res = await axios.post(`/api/transaction/toggle-visibility?id=${transaction.id}`, {})
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
       setIsHidden(!isHidden)
+      refresh()
     } catch (e) {
       throw Error(e.message)
     }

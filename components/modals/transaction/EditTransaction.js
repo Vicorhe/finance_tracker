@@ -27,6 +27,7 @@ import {
 import useAreas from '../../../hooks/areas'
 import { mutate } from 'swr'
 import { formatMySQLDate } from '../../../utils/date-formatter'
+import axios from 'axios';
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function EditTransaction({
@@ -71,25 +72,17 @@ export default function EditTransaction({
     setSubmitting(true)
     e.preventDefault()
     try {
-      const res = await fetch('/api/transaction/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: transaction.id,
-          name,
-          area_id: area,
-          amount,
-          date: formatMySQLDate(date),
-          memo
-        }),
+      const res = await axios.post('/api/transaction/update', {
+        id: transaction.id,
+        name,
+        area_id: area,
+        amount,
+        date: formatMySQLDate(date),
+        memo
       })
       setSubmitting(false)
       onModalClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }
@@ -99,15 +92,11 @@ export default function EditTransaction({
     setDeleting(true)
     e.preventDefault()
     try {
-      const res = await fetch(`/api/transaction/delete?id=${transaction.id}`, {
-        method: 'POST'
-      })
+      const res = await axios.post(`/api/transaction/delete?id=${transaction.id}`, {})
       setDeleting(false)
       onAlertClose()
       onModalClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }
@@ -116,12 +105,8 @@ export default function EditTransaction({
   async function handleToggleVisibility(e) {
     e.preventDefault()
     try {
-      const res = await fetch(`/api/transaction/toggle-visibility?id=${transaction.id}`, {
-        method: 'POST'
-      })
+      const res = await axios.post(`/api/transaction/toggle-visibility?id=${transaction.id}`, {})
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
       setIsHidden(!isHidden)
     } catch (e) {
       throw Error(e.message)

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { mutate } from 'swr'
 import RenderArea from './RenderArea'
+import axios from 'axios'
 
 export default function EditArea({ area, isOpen, onClose }) {
 
@@ -19,23 +20,15 @@ export default function EditArea({ area, isOpen, onClose }) {
   async function handleSubmit(e) {
     e.preventDefault()
     try {
-      const res = await fetch('/api/area/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: area.id,
-          name,
-          description,
-          color,
-          input
-        }),
+      const res = await axios.post('/api/area/update', {
+        id: area.id,
+        name,
+        description,
+        color,
+        input
       })
       onClose()
       mutate('/api/area/get-all')
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }
@@ -44,13 +37,9 @@ export default function EditArea({ area, isOpen, onClose }) {
   async function handleDelete(e) {
     e.preventDefault()
     try {
-      const res = await fetch(`/api/area/delete?id=${area.id}`, {
-        method: 'POST'
-      })
+      const res = await axios.post(`/api/area/delete?id=${area.id}`, {})
       onClose()
       mutate('/api/area/get-all')
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

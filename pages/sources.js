@@ -95,14 +95,10 @@ export default function Sources() {
   async function handleDelete(e) {
     e.preventDefault()
     try {
-      const res = await fetch(`/api/item/delete?id=${selectedItem}`, {
-        method: 'POST'
-      })
+      const res = await axios.post(`/api/item/delete?id=${selectedItem}`, {})
       onClose()
       mutate('/api/item/get-all')
       mutate('/api/account/get-all')
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

@@ -3,6 +3,7 @@ import { mutate } from 'swr'
 import { formatMySQLDate } from '../../../utils/date-formatter'
 import RenderSplitTransactions from './RenderSplitTransactions'
 import { validForm } from '../../../utils/split-utils'
+import axios from 'axios'
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function AddSplitTransactions({
@@ -22,22 +23,14 @@ export default function AddSplitTransactions({
       return
     }
     try {
-      const res = await fetch('/api/split/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: NEXT_PUBLIC_USER_ID,
-          parent_id: parent.id,
-          date: formatMySQLDate(parent.date),
-          splits
-        }),
+      const res = await axios.post('/api/split/create', {
+        user_id: NEXT_PUBLIC_USER_ID,
+        parent_id: parent.id,
+        date: formatMySQLDate(parent.date),
+        splits
       })
       onClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

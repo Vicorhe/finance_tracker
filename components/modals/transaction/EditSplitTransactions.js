@@ -3,6 +3,7 @@ import { mutate } from 'swr'
 import { formatMySQLDate } from '../../../utils/date-formatter'
 import RenderSplitTransactions from './RenderSplitTransactions'
 import { validForm } from '../../../utils/split-utils'
+import axios from 'axios'
 const NEXT_PUBLIC_USER_ID = process.env.NEXT_PUBLIC_USER_ID;
 
 export default function EditSplitTransactions({
@@ -17,13 +18,9 @@ export default function EditSplitTransactions({
   async function handleDelete(e) {
     e.preventDefault()
     try {
-      const res = await fetch(`/api/split/delete?parent_id=${parent.id}`, {
-        method: 'POST'
-      })
+      const res = await axios.post(`/api/split/delete?parent_id=${parent.id}`, {})
       onClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }
@@ -37,27 +34,15 @@ export default function EditSplitTransactions({
       return
     }
     try {
-      let res = await fetch(`/api/split/delete?parent_id=${parent.id}`, {
-        method: 'POST'
-      })
-      let json = await res.json()
-      if (!res.ok) throw Error(json.message)
-      res = await fetch('/api/split/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: NEXT_PUBLIC_USER_ID,
-          parent_id: parent.id,
-          date: formatMySQLDate(parent.date),
-          splits
-        }),
+      let res = await axios.post(`/api/split/delete?parent_id=${parent.id}`, {})
+      res = await axios.post('/api/split/create', {
+        user_id: NEXT_PUBLIC_USER_ID,
+        parent_id: parent.id,
+        date: formatMySQLDate(parent.date),
+        splits
       })
       onClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
-      json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

@@ -5,6 +5,7 @@ import {
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
 import RenderUser from './RenderUser'
+import axios from 'axios'
 
 export default function AddUser() {
   const { isOpen, onOpen, onClose } = useDisclosure(
@@ -19,19 +20,9 @@ export default function AddUser() {
   async function handleSubmit(e) {
     e.preventDefault()
     try {
-      const res = await fetch('/api/user/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name
-        }),
-      })
+      const res = await axios.post('/api/user/create', { name })
       onClose()
       mutate('/api/user/get-all')
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

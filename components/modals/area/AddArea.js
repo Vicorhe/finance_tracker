@@ -5,6 +5,7 @@ import {
 } from "@chakra-ui/react"
 import { mutate } from 'swr'
 import RenderArea from './RenderArea'
+import axios from 'axios'
 
 export default function AddArea() {
   const { isOpen, onOpen, onClose } = useDisclosure(
@@ -24,22 +25,14 @@ export default function AddArea() {
   async function handleSubmit(e) {
     e.preventDefault()
     try {
-      const res = await fetch('/api/area/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name,
-          description,
-          color,
-          input
-        }),
+      const res = await axios.post('/api/area/create', {
+        name,
+        description,
+        color,
+        input
       })
       onClose()
       mutate('/api/area/get-all')
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

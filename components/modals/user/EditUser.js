@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 import { mutate } from 'swr'
 import RenderUser from './RenderUser'
@@ -13,20 +14,12 @@ export default function EditUser({ user, isOpen, onClose }) {
   async function handleSubmit(e) {
     e.preventDefault()
     try {
-      const res = await fetch('/api/user/update', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          id: user.id,
-          name
-        }),
+      const res = await axios.post('/api/user/update', {
+        id: user.id,
+        name
       })
       onClose()
       mutate('/api/user/get-all')
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }
@@ -35,13 +28,9 @@ export default function EditUser({ user, isOpen, onClose }) {
   async function handleDelete(e) {
     e.preventDefault()
     try {
-      const res = await fetch(`/api/user/delete?id=${user.id}`, {
-        method: 'POST'
-      })
+      const res = await axios.post(`/api/user/delete?id=${user.id}`, {})
       onClose()
       mutate('/api/user/get-all')
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

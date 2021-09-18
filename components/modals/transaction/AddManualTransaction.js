@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import axios from 'axios';
 import useAreas from '../../../hooks/areas'
 import DatePicker from "../../DatePicker";
 import {
@@ -47,25 +48,17 @@ export default function AddManualTransaction() {
     setSubmitting(true)
     e.preventDefault()
     try {
-      const res = await fetch('/api/manual/create', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: NEXT_PUBLIC_USER_ID,
-          name,
-          area_id: area,
-          amount,
-          date: formatMySQLDate(date),
-          memo
-        }),
+      const res = await axios.post('/api/manual/create', {
+        user_id: NEXT_PUBLIC_USER_ID,
+        name,
+        area_id: area,
+        amount,
+        date: formatMySQLDate(date),
+        memo
       })
       setSubmitting(false)
       onClose()
       mutate(`/api/transaction/get-all?user_id=${NEXT_PUBLIC_USER_ID}`)
-      const json = await res.json()
-      if (!res.ok) throw Error(json.message)
     } catch (e) {
       throw Error(e.message)
     }

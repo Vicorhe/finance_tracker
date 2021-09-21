@@ -42,7 +42,6 @@ export default function SpendingReportBreakdown() {
   }, [filterBy, transactions])
 
   async function getTransactions() {
-    console.log('called')
     if (!startDate || !endDate) return
     try {
       const res = await axios.post("/api/report/transactions", {
@@ -57,7 +56,6 @@ export default function SpendingReportBreakdown() {
   }
 
   function filterTransactions() {
-    console.log('filtering', transactions.length)
     if (transactions.length === 0) return
     setDisplayedTransactions(transactions.filter(t => t.area_id === filterBy))
   }

@@ -80,7 +80,6 @@ export default function Sources() {
 
   async function createItem(publicToken) {
     try {
-      console.log("client side public token", publicToken)
       const res = await axios.post('/api/item/create', { publicToken: publicToken, user_id: NEXT_PUBLIC_USER_ID });
       const data = res.data.access_token;
       setAccessToken(data)

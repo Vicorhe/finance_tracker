@@ -1,33 +1,33 @@
-# Project Structure Reference
-[Here](https://sergiodxa.com/articles/next-file-structure)
 # Example app with next-sass
+This is a personal finance tracking application. 
+It leverages Plaid to pull transactions from financial institutions.
 
-This example demonstrates how to use Next.js' built-in Global Sass/Scss imports and Component-Level Sass/Scss modules support.
+## Prequisites
+[Node](https://nodejs.org/en/)
 
-## Deploy your own
+[MySQL](https://dev.mysql.com/downloads/mysql/)
 
-Deploy the example using [Vercel](https://vercel.com?utm_source=github&utm_medium=readme&utm_campaign=next-example):
+[Plaid Developer Account](https://dashboard.plaid.com/signup)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/git/external?repository-url=https://github.com/vercel/next.js/tree/canary/examples/with-next-sass&project-name=with-next-sass&repository-name=with-next-sass)
+[MySQL Workbench](https://dev.mysql.com/downloads/workbench/) - optional 
 
-## How to use
+## Set Up MySQL Workbench
+Import SQL table structure.
 
-Execute [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) with [npm](https://docs.npmjs.com/cli/init) or [Yarn](https://yarnpkg.com/lang/en/docs/cli/create/) to bootstrap the example:
+## Create a Dedicated User to Access SQL Client
+Grant this user the administrative role of DBA.
+
+## Create a user in the user_table
+Set an ID and a name.
+
+## Set Environment Variables
+Make a copy of `.env.local.example` and rename it to `.env.local`.
+Fill in environment variables.
+
+## Run Locally
 
 ```bash
-npx create-next-app --example with-next-sass with-next-sass-app
-# or
-yarn create next-app --example with-next-sass with-next-sass-app
+npm i
+npm run dev
 ```
 
-Run production build with:
-
-```bash
-npm run build
-npm run start
-# or
-yarn build
-yarn start
-```
-
-Deploy it to the cloud with [Vercel](https://vercel.com/new?utm_source=github&utm_medium=readme&utm_campaign=next-example) ([Documentation](https://nextjs.org/docs/deployment)).
